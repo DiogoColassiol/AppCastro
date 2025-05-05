@@ -112,12 +112,10 @@ class _MainScreenState extends State<MainScreen>
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: [
-                            _segmentos(),
-                            _documentos(),
-                          ],
-                        ),
+                        child: Column(children: [
+                          _segmentos(),
+                          _documentos(),
+                        ]),
                       ),
                     ),
                   ],

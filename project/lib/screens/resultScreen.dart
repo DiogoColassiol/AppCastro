@@ -159,7 +159,7 @@ Widget pdf(Result result) {
                     ),
                     Expanded(
                       child: Text(
-                        doc,
+                        _doc(doc),
                         style: const TextStyle(fontSize: 14),
                       ),
                     ),
@@ -182,10 +182,8 @@ Widget pdf(Result result) {
                 children: [
                   const Text('• ', style: TextStyle(fontSize: 14)),
                   Expanded(
-                    child: Text(
-                      tese.descricao ?? '',
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    child: Text('${tese.id}- ${tese.descricao}',
+                        style: const TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
@@ -194,6 +192,14 @@ Widget pdf(Result result) {
       ),
     ),
   );
+}
+
+_doc(String doc) {
+  int ano = DateTime.now().year - 5;
+  if (doc == 'Balanço' || doc == 'DRE' || doc == 'Balancete') {
+    return '$doc (válido após: $ano)';
+  }
+  return doc;
 }
 
 Widget _buttonPrint(Result? result) {

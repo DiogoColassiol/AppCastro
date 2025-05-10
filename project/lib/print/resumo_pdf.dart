@@ -70,7 +70,8 @@ class ResumoPdfUtil {
         ),
         SizedBox(height: 10),
         if (result.docsNecessarios != null)
-          ...result.docsNecessarios!.map((doc) => Bullet(text: doc)),
+          ...result.docsNecessarios!
+              .map((doc) => Bullet(bulletSize: 3, text: _doc(doc))),
         SizedBox(height: 20),
         Text(
           'Teses Consolidadas:',
@@ -82,13 +83,24 @@ class ResumoPdfUtil {
         ),
         SizedBox(height: 10),
         if (result.teses != null)
-          ...result.teses!.map((tese) => Bullet(text: tese.descricao ?? '')),
+          ...result.teses!.map((tese) => Bullet(
+              bulletSize: 3,
+              text: '${tese.id}- ' '${tese.descricao}',
+              style: const TextStyle(fontSize: 10))),
       ],
     ));
 
     await _print(pdf.save(), suffix: result.cliente);
 
     return pdf;
+  }
+
+  _doc(String doc) {
+    int ano = DateTime.now().year - 5;
+    if (doc == 'Balanço' || doc == 'DRE' || doc == 'Balancete') {
+      return '$doc (válido após: $ano)';
+    }
+    return doc;
   }
 
   Future<void> _print(Future<Uint8List> save, {String? suffix}) async {

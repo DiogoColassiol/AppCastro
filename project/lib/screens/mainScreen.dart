@@ -299,29 +299,29 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
-  Widget _buttonRelGeral() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ButtonApp(
-            text: 'Rel. Geral',
-            icon: Icons.search,
-            textColor: Colors.white,
-            color: ThemeUtils.primaryColor,
-            onPressed: () async {
-              await cubit.build(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ResultScreen()));
-            },
-          ),
-        );
-      },
-    );
-  }
+  // Widget _buttonRelGeral() {
+  //   return BlocBuilder<ProjectCubit, ProjectState>(
+  //     builder: (context, state) {
+  //       final cubit = context.read<ProjectCubit>();
+  //       return Padding(
+  //         padding: const EdgeInsets.all(8.0),
+  //         child: ButtonApp(
+  //           text: 'Rel. Geral',
+  //           icon: Icons.search,
+  //           textColor: Colors.white,
+  //           color: ThemeUtils.primaryColor,
+  //           onPressed: () async {
+  //             await cubit.build(context);
+  //             Navigator.push(
+  //                 context,
+  //                 MaterialPageRoute(
+  //                     builder: (context) => const ResultScreen()));
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _hasObs() {
     return BlocBuilder<ProjectCubit, ProjectState>(

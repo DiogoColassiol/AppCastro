@@ -18,9 +18,10 @@ class ResumoPdfUtil {
   }
 
   Future<Document> createResumoPDF() async {
+    final data = DateTime.now();
     final pdf = Document(theme: await _myTheme());
-    final formatedData = DateFormat('dd/MM/yyyy').format(result.dataDoc!);
-    final formatedHora = DateFormat('HH:mm').format(result.dataDoc!);
+    final formatedData = DateFormat('dd/MM/yyyy').format(data);
+    final formatedHora = DateFormat('HH:mm').format(data);
 
     pdf.addPage(MultiPage(
       maxPages: 100,

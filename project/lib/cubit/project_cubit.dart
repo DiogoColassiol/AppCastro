@@ -47,22 +47,24 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(documentoSelect: doc));
   }
 
-  Future<Result> build(BuildContext context) async {
+  Future<void> checkObs(bool value) async {
+    emit(state.copyWith(hasObs: value));
+  }
+
+  Future<void> setObs(String value) async {
+    emit(state.copyWith(obs: value));
+  }
+
+  Future<void> build(BuildContext context) async {
     final cliente = await searchCliente();
     final segSelect = await searchSeg();
     final docSelect = await searchDoc();
-    final erro = await trataErros(context, cliente, segSelect, docSelect);
     final tesesSelect = await searchTeses(segSelect!, docSelect!);
     final needDocs = await searchDocs(tesesSelect);
 
-    return await _buildResult(
-      cliente,
-      segSelect,
-      docSelect,
-      tesesSelect,
-      needDocs,
-      erro,
-    );
+    emit(state.copyWith(
+        result: await _buildResult(
+            cliente, segSelect, docSelect, tesesSelect, needDocs, '')));
   }
 
   Future<void> delete() async {
@@ -188,21 +190,21 @@ class ProjectCubit extends Cubit<ProjectState> {
   }
 
   Future<Result> _buildResult(
-      String? cliente,
-      Segmento segmento,
-      Documento documento,
-      List<Tese> teses,
-      List<String>? docs,
-      bool? erro) async {
-    final data = DateTime.now();
+    String? cliente,
+    Segmento segmento,
+    Documento documento,
+    List<Tese> teses,
+    List<String>? docs,
+    String? obs,
+  ) async {
     return Result(
-        cliente: cliente,
-        segmento: segmento,
-        documento: documento,
-        teses: teses,
-        docsNecessarios: docs,
-        dataDoc: data,
-        erro: erro);
+      cliente: cliente,
+      segmento: segmento,
+      documento: documento,
+      teses: teses,
+      docsNecessarios: docs,
+      obs: obs,
+    );
   }
 
   Future<void> printResult(Result result) async {

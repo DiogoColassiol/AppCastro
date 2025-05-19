@@ -8,8 +8,7 @@ class Result {
   final Documento? documento;
   final List<Tese>? teses;
   final List<String>? docsNecessarios;
-  final DateTime? dataDoc;
-  final bool? erro;
+  final String? obs;
 
   Result({
     this.cliente,
@@ -17,8 +16,7 @@ class Result {
     this.documento,
     this.teses,
     this.docsNecessarios,
-    this.dataDoc,
-    this.erro = false,
+    this.obs,
   });
 
   Result copyWith({
@@ -28,6 +26,7 @@ class Result {
     List<Tese>? teses,
     List<String>? docsNecessarios,
     DateTime? dataDoc,
+    String? obs,
     bool? erro,
   }) {
     return Result(
@@ -36,8 +35,7 @@ class Result {
       documento: documento ?? this.documento,
       teses: teses ?? this.teses,
       docsNecessarios: docsNecessarios ?? docsNecessarios,
-      dataDoc: dataDoc ?? this.dataDoc,
-      erro: erro ?? this.erro,
+      obs: obs ?? this.obs,
     );
   }
 }

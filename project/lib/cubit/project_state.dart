@@ -11,6 +11,8 @@ class ProjectState {
   final Segmento? segmentoSelect;
   final Documento? documentoSelect;
   final List<Tese>? tesesSelect;
+  final bool hasObs;
+  final String? obs;
   final Result? result;
   // final bool? error;
 
@@ -22,6 +24,8 @@ class ProjectState {
     this.segmentoSelect,
     this.documentoSelect,
     this.tesesSelect,
+    this.hasObs = false,
+    this.obs = '',
     this.result,
     // this.error,
   });
@@ -34,6 +38,8 @@ class ProjectState {
     Documento? documentoSelect,
     List<Tese>? tesesSelect,
     List<Tese>? teses,
+    bool? hasObs,
+    String? obs,
     Result? result,
     //  bool? error,
   }) {
@@ -45,6 +51,8 @@ class ProjectState {
       segmentoSelect: segmentoSelect ?? segmentoSelect,
       documentoSelect: documentoSelect ?? documentoSelect,
       tesesSelect: tesesSelect ?? this.tesesSelect,
+      hasObs: hasObs ?? this.hasObs,
+      obs: obs ?? this.obs,
       result: result ?? this.result,
       //  error: error ?? this.error,
     );

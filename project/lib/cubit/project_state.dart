@@ -13,6 +13,7 @@ class ProjectState {
   final List<Tese>? tesesSelect;
   final bool hasObs;
   final String? obs;
+  final int? obsCount;
   final Result? result;
   // final bool? error;
 
@@ -26,6 +27,7 @@ class ProjectState {
     this.tesesSelect,
     this.hasObs = false,
     this.obs = '',
+    this.obsCount,
     this.result,
     // this.error,
   });
@@ -40,6 +42,7 @@ class ProjectState {
     List<Tese>? teses,
     bool? hasObs,
     String? obs,
+    int? obsCount,
     Result? result,
     //  bool? error,
   }) {
@@ -53,40 +56,9 @@ class ProjectState {
       tesesSelect: tesesSelect ?? this.tesesSelect,
       hasObs: hasObs ?? this.hasObs,
       obs: obs ?? this.obs,
+      obsCount: obsCount ?? this.obsCount,
       result: result ?? this.result,
       //  error: error ?? this.error,
     );
   }
 }
-// import 'package:project/entity/documentos.dart';
-// import 'package:project/entity/result.dart';
-// import 'package:project/entity/segmento.dart';
-// import 'package:project/entity/teses.dart';
-
-// class ProjectState {
-//   final Segmento? segmentoSelect;
-//   final Documento? documentoSelect;
-//   final List<Tese>? teses;
-//   final Result? result;
-
-//   const ProjectState({
-//     this.segmentoSelect,
-//     this.documentoSelect,
-//     this.teses,
-//     this.result,
-//   });
-
-//   ProjectState copyWith({
-//     Segmento? segmentosSelect,
-//     Documento? documentosSelect,
-//     List<Tese>? teses,
-//     Result? result,
-//   }) {
-//     return ProjectState(
-//       segmentoSelect: segmentoSelect ?? segmentoSelect,
-//       documentoSelect: documentoSelect ?? documentoSelect,
-//       result: result ?? this.result,
-//       teses: teses ?? this.teses,
-//     );
-//   }
-// }

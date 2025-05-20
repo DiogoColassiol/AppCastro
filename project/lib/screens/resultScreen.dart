@@ -65,9 +65,12 @@ class ResultScreenState extends State<ResultScreen> {
                 ),
               ),
               Expanded(
-                child: state.hasObs
-                    ? contentEdit(context, state.result)
-                    : content(state.result),
+                child: Container(
+                  color: ThemeUtils.backgroundColor,
+                  child: state.hasObs
+                      ? contentEdit(context, state.result)
+                      : content(state.result),
+                ),
               ),
             ],
           ),
@@ -91,29 +94,30 @@ class ResultScreenState extends State<ResultScreen> {
   Widget contentEdit(BuildContext context, Result? result) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        return Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    pdf(result),
-                  ],
+        return Center(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      pdf(result),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-                flex: 1,
-                child: Container(
-                  height: double.maxFinite,
-                  width: double.maxFinite,
-                  color: Colors.blue,
+                const SizedBox(width: 30),
+                SizedBox(
+                  height: double.infinity,
+                  width: 500,
                   child: Card(
+                      elevation: 20,
                       color: ThemeUtils.backgroundColor,
                       child: addObsContainer(context, result)),
-                ))
-          ],
+                )
+              ],
+            ),
+          ),
         );
       },
     );
@@ -124,23 +128,29 @@ class ResultScreenState extends State<ResultScreen> {
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center, // alinha à esquerda
             children: [
               const Text(
                 'Digite as Observações do Relatório',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              Input(
-                value: state.obs,
-                maxLines: 20,
-                controller: _inputControler,
-                onChanged: (value) {
-                  cubit.setObs(value);
-                },
+              const SizedBox(height: 12),
+              SingleChildScrollView(
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 500,
+                  child: Input(
+                    sizeFont: 14,
+                    border: const UnderlineInputBorder(),
+                    value: state.obs,
+                    controller: _inputControler,
+                    onChanged: (value) {
+                      cubit.setObs(value);
+                    },
+                  ),
+                ),
               ),
             ],
           ),

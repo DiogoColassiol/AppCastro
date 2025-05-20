@@ -327,13 +327,17 @@ class _MainScreenState extends State<MainScreen>
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Checkbox(
-            value: state.hasObs,
-            onChanged: (value) {
-              cubit.checkObs(value!);
-            },
+        return Card(
+          child: Row(
+            children: [
+              Checkbox(
+                value: state.hasObs,
+                onChanged: (value) {
+                  cubit.checkObs(value!);
+                },
+              ),
+              Text('Adicionar Observações'),
+            ],
           ),
         );
       },

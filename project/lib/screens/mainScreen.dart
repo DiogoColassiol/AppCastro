@@ -133,8 +133,6 @@ class _MainScreenState extends State<MainScreen>
                     const SizedBox(width: 20),
                     _buttonSearch(),
                     const SizedBox(width: 20),
-                    //   _buttonRelGeral(),
-                    const SizedBox(width: 20),
                     _hasObs()
                   ],
                 ),
@@ -327,18 +325,19 @@ class _MainScreenState extends State<MainScreen>
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
-        return Card(
-          child: Row(
-            children: [
-              Checkbox(
-                value: state.hasObs,
-                onChanged: (value) {
-                  cubit.checkObs(value!);
-                },
-              ),
-              Text('Adicionar Observações'),
-            ],
-          ),
+        return Row(
+          children: [
+            ButtonApp(
+              text: state.hasObs ? 'Com Observações' : 'Sem Observações',
+              color: ThemeUtils.primaryColor,
+              onPressed: () {
+                cubit.checkObs(!state.hasObs);
+              },
+              icon: state.hasObs
+                  ? Icons.comment_outlined
+                  : Icons.comments_disabled_outlined,
+            )
+          ],
         );
       },
     );

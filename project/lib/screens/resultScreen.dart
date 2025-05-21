@@ -130,7 +130,7 @@ class ResultScreenState extends State<ResultScreen> {
         return Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center, // alinha à esquerda
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
                 'Digite as Observações do Relatório',

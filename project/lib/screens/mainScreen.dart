@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
@@ -133,7 +132,7 @@ class _MainScreenState extends State<MainScreen>
                     const SizedBox(width: 20),
                     _buttonSearch(),
                     const SizedBox(width: 20),
-                    _hasObs()
+                    //   _hasObs()
                   ],
                 ),
               ),
@@ -211,9 +210,14 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
+  // visible: state.segmentoSelect != null &&
+  //                     state.segmentoSelect!.id != '7',
+
   Widget _documentos() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        // final outros =
+        //     state.segmentoSelect != null && state.segmentoSelect!.id != '7';
         final cubit = context.read<ProjectCubit>();
         final documentos = state.documentos ?? [];
         return Expanded(
@@ -320,29 +324,6 @@ class _MainScreenState extends State<MainScreen>
   //     },
   //   );
   // }
-
-  Widget _hasObs() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        return Row(
-          children: [
-            ButtonApp(
-              text: state.hasObs ? 'Com Observações' : 'Sem Observações',
-              color: ThemeUtils.primaryColor,
-              onPressed: () {
-                cubit.checkObs(!state.hasObs);
-              },
-              icon: state.hasObs
-                  ? Icons.comment_outlined
-                  : Icons.comments_disabled_outlined,
-            )
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buttonDelete() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {

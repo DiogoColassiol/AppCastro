@@ -69,7 +69,7 @@ class ResultScreenState extends State<ResultScreen> {
                   color: ThemeUtils.backgroundColor,
                   child: state.hasObs
                       ? contentEdit(context, state.result)
-                      : content(state.result),
+                      : content(state.result!),
                 ),
               ),
             ],
@@ -82,7 +82,9 @@ class ResultScreenState extends State<ResultScreen> {
               children: [
                 _buttonDelete(),
                 const SizedBox(width: 30),
-                _buttonPrint(state.result)
+                _buttonPrint(state.result),
+                const SizedBox(width: 30),
+                _hasObs(),
               ],
             ),
           ),
@@ -94,6 +96,7 @@ class ResultScreenState extends State<ResultScreen> {
   Widget contentEdit(BuildContext context, Result? result) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        var outros = result!.segmento!.id == '7' && result.teses!.isEmpty;
         return Center(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -102,7 +105,7 @@ class ResultScreenState extends State<ResultScreen> {
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      pdf(result),
+                      outros ? pdfOutros(result) : pdf(result),
                     ],
                   ),
                 ),
@@ -159,9 +162,10 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget content(Result? result) {
+  Widget content(Result result) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        var outros = result.segmento!.id == '7' && result.teses!.isEmpty;
         return Column(
           children: [
             Expanded(
@@ -170,14 +174,101 @@ class ResultScreenState extends State<ResultScreen> {
                 color: ThemeUtils.backgroundColor,
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [
-                      pdf(result),
-                    ],
+                    children: [outros ? pdfOutros(result) : pdf(result)],
                   ),
                 ),
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Widget pdfOutros(Result? result) {
+    final data = DateTime.now();
+    final formatedData = DateFormat('dd/MM/yyyy').format(data);
+    final formatedHora = DateFormat('HH:mm').format(data);
+
+    return BlocBuilder<ProjectCubit, ProjectState>(
+      builder: (context, state) {
+        // final c = context.read<ProjectCubit>();
+        return Center(
+          child: Container(
+            width: 595,
+            height: 842,
+            color: Colors.white,
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Pdf Outros',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "Data: $formatedData - Horário: $formatedHora",
+                        style: const TextStyle(
+                            fontSize: 12, fontStyle: FontStyle.italic),
+                      )
+                    ]),
+                const SizedBox(height: 1),
+                const Divider(thickness: 1, color: Colors.black),
+                const SizedBox(height: 16),
+                const Text(
+                  'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text('Cliente: ${result!.cliente}'),
+                Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
+                // Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
+                const SizedBox(height: 20),
+                const Text(
+                  'Documentos requeridos:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                if (result.docsNecessarios != null)
+                  ...result.docsNecessarios!.map((doc) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '• ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          Expanded(
+                            child: Text(
+                              _doc(doc),
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      )),
+                const SizedBox(height: 20),
+                if (state.hasObs)
+                  const Text(
+                    'Observações:',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                if (state.hasObs) Text('${state.obs}')
+              ],
+            ),
+          ),
         );
       },
     );
@@ -314,6 +405,28 @@ class ResultScreenState extends State<ResultScreen> {
           onPressed: () async {
             cubit.printResult(result!);
           },
+        );
+      },
+    );
+  }
+
+  Widget _hasObs() {
+    return BlocBuilder<ProjectCubit, ProjectState>(
+      builder: (context, state) {
+        final cubit = context.read<ProjectCubit>();
+        return Row(
+          children: [
+            ButtonApp(
+              text: state.hasObs ? 'Com Observações' : 'Sem Observações',
+              color: ThemeUtils.primaryColor,
+              onPressed: () {
+                cubit.checkObs(!state.hasObs);
+              },
+              icon: state.hasObs
+                  ? Icons.comment_outlined
+                  : Icons.comments_disabled_outlined,
+            )
+          ],
         );
       },
     );

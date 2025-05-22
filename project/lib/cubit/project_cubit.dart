@@ -58,9 +58,16 @@ class ProjectCubit extends Cubit<ProjectState> {
   Future<void> build(BuildContext context) async {
     final cliente = await searchCliente();
     final segSelect = await searchSeg();
+    if (segSelect!.id == '7') {
+      final allDocs = await searchDocs([], true);
+      emit(state.copyWith(
+          result:
+              await _buildResult(cliente, segSelect, null, [], allDocs, '')));
+      return;
+    }
     final docSelect = await searchDoc();
-    final tesesSelect = await searchTeses(segSelect!, docSelect!);
-    final needDocs = await searchDocs(tesesSelect);
+    final tesesSelect = await searchTeses(segSelect, docSelect!);
+    final needDocs = await searchDocs(tesesSelect, false);
 
     emit(state.copyWith(
         result: await _buildResult(
@@ -174,9 +181,12 @@ class ProjectCubit extends Cubit<ProjectState> {
     return null;
   }
 
-  Future<List<String>> searchDocs(List<Tese> teses) async {
+  Future<List<String>> searchDocs(List<Tese> teses, bool allDocs) async {
     List<String> docsNeed = [];
 
+    if (allDocs) {
+      teses = await separaTeses('1,2,3,4,5,6,7,8,9');
+    }
     for (final tese in teses) {
       final docs = tese.docs!
           .split(',')
@@ -191,9 +201,9 @@ class ProjectCubit extends Cubit<ProjectState> {
 
   Future<Result> _buildResult(
     String? cliente,
-    Segmento segmento,
-    Documento documento,
-    List<Tese> teses,
+    Segmento? segmento,
+    Documento? documento,
+    List<Tese>? teses,
     List<String>? docs,
     String? obs,
   ) async {
@@ -417,6 +427,7 @@ Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das
       Segmento(id: '4', nome: 'Agro/Cerealistas'),
       Segmento(id: '5', nome: 'Distribuidores de Alimentos'),
       Segmento(id: '6', nome: 'Hortifrutigranjeiros'),
+      Segmento(id: '7', nome: 'Outros')
     ];
     emit(state.copyWith(segmentos: segmentos));
   }

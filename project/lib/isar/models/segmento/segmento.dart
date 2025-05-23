@@ -1,9 +1,10 @@
 import 'package:isar/isar.dart';
-part 'regime.g.dart';
+part 'segmento.g.dart';
 
 @Collection()
-class Regime {
+class SegmentoDB {
   Id id = Isar.autoIncrement;
-  late String num;
+  late String numId;
   late String nome;
+  late bool selecionado;
 }

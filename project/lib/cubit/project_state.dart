@@ -1,7 +1,7 @@
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
-import 'package:project/entity/segmento.dart';
-import 'package:project/entity/teses.dart';
+import 'package:project/entity/segmentoss.dart';
+import 'package:project/entity/tesess.dart';
 
 class ProjectState {
   final String? cliente;

@@ -1,5 +1,3 @@
-import 'package:project/entity/documentos.dart';
-
 class Segmento {
   final String? id;
   final String? nome;
@@ -14,8 +12,6 @@ class Segmento {
   Segmento copyWith({
     String? id,
     String? nome,
-    List<Documento>? docs,
-    Segmento? segGerado,
     bool? selecionado,
   }) {
     return Segmento(

@@ -9,74 +9,81 @@ part of 'regime.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetRegimeCollection on Isar {
-  IsarCollection<Regime> get regimes => this.collection();
+extension GetRegimeDBCollection on Isar {
+  IsarCollection<RegimeDB> get regimeDBs => this.collection();
 }
 
-const RegimeSchema = CollectionSchema(
-  name: r'Regime',
-  id: -620574721712238440,
+const RegimeDBSchema = CollectionSchema(
+  name: r'RegimeDB',
+  id: -5209414690461943008,
   properties: {
     r'nome': PropertySchema(
       id: 0,
       name: r'nome',
       type: IsarType.string,
     ),
-    r'num': PropertySchema(
+    r'numId': PropertySchema(
       id: 1,
-      name: r'num',
+      name: r'numId',
       type: IsarType.string,
+    ),
+    r'selecionado': PropertySchema(
+      id: 2,
+      name: r'selecionado',
+      type: IsarType.bool,
     )
   },
-  estimateSize: _regimeEstimateSize,
-  serialize: _regimeSerialize,
-  deserialize: _regimeDeserialize,
-  deserializeProp: _regimeDeserializeProp,
+  estimateSize: _regimeDBEstimateSize,
+  serialize: _regimeDBSerialize,
+  deserialize: _regimeDBDeserialize,
+  deserializeProp: _regimeDBDeserializeProp,
   idName: r'id',
   indexes: {},
   links: {},
   embeddedSchemas: {},
-  getId: _regimeGetId,
-  getLinks: _regimeGetLinks,
-  attach: _regimeAttach,
+  getId: _regimeDBGetId,
+  getLinks: _regimeDBGetLinks,
+  attach: _regimeDBAttach,
   version: '3.1.0+1',
 );
 
-int _regimeEstimateSize(
-  Regime object,
+int _regimeDBEstimateSize(
+  RegimeDB object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.nome.length * 3;
-  bytesCount += 3 + object.num.length * 3;
+  bytesCount += 3 + object.numId.length * 3;
   return bytesCount;
 }
 
-void _regimeSerialize(
-  Regime object,
+void _regimeDBSerialize(
+  RegimeDB object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.nome);
-  writer.writeString(offsets[1], object.num);
+  writer.writeString(offsets[1], object.numId);
+  writer.writeBool(offsets[2], object.selecionado);
 }
 
-Regime _regimeDeserialize(
+RegimeDB _regimeDBDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Regime();
+  final object = RegimeDB();
   object.id = id;
   object.nome = reader.readString(offsets[0]);
-  object.num = reader.readString(offsets[1]);
+  object.numId = reader.readString(offsets[1]);
+  object.selecionado = reader.readBool(offsets[2]);
   return object;
 }
 
-P _regimeDeserializeProp<P>(
+P _regimeDBDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -87,33 +94,35 @@ P _regimeDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-Id _regimeGetId(Regime object) {
+Id _regimeDBGetId(RegimeDB object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _regimeGetLinks(Regime object) {
+List<IsarLinkBase<dynamic>> _regimeDBGetLinks(RegimeDB object) {
   return [];
 }
 
-void _regimeAttach(IsarCollection<dynamic> col, Id id, Regime object) {
+void _regimeDBAttach(IsarCollection<dynamic> col, Id id, RegimeDB object) {
   object.id = id;
 }
 
-extension RegimeQueryWhereSort on QueryBuilder<Regime, Regime, QWhere> {
-  QueryBuilder<Regime, Regime, QAfterWhere> anyId() {
+extension RegimeDBQueryWhereSort on QueryBuilder<RegimeDB, RegimeDB, QWhere> {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension RegimeQueryWhere on QueryBuilder<Regime, Regime, QWhereClause> {
-  QueryBuilder<Regime, Regime, QAfterWhereClause> idEqualTo(Id id) {
+extension RegimeDBQueryWhere on QueryBuilder<RegimeDB, RegimeDB, QWhereClause> {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -122,7 +131,7 @@ extension RegimeQueryWhere on QueryBuilder<Regime, Regime, QWhereClause> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterWhereClause> idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -144,7 +153,7 @@ extension RegimeQueryWhere on QueryBuilder<Regime, Regime, QWhereClause> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<RegimeDB, RegimeDB, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -153,7 +162,7 @@ extension RegimeQueryWhere on QueryBuilder<Regime, Regime, QWhereClause> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<RegimeDB, RegimeDB, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -162,7 +171,7 @@ extension RegimeQueryWhere on QueryBuilder<Regime, Regime, QWhereClause> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterWhereClause> idBetween(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -179,8 +188,9 @@ extension RegimeQueryWhere on QueryBuilder<Regime, Regime, QWhereClause> {
   }
 }
 
-extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> idEqualTo(Id value) {
+extension RegimeDBQueryFilter
+    on QueryBuilder<RegimeDB, RegimeDB, QFilterCondition> {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -189,7 +199,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -202,7 +212,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> idLessThan(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -215,7 +225,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> idBetween(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -232,7 +242,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeEqualTo(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -245,7 +255,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeGreaterThan(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -260,7 +270,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeLessThan(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -275,7 +285,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeBetween(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -294,7 +304,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeStartsWith(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -307,7 +317,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeEndsWith(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -320,7 +330,8 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeContains(String value,
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeContains(
+      String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -331,7 +342,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeMatches(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -343,7 +354,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeIsEmpty() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'nome',
@@ -352,7 +363,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> nomeIsNotEmpty() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> nomeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'nome',
@@ -361,20 +372,20 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numEqualTo(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numGreaterThan(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -382,14 +393,14 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numLessThan(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -397,14 +408,14 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numBetween(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -413,7 +424,7 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'num',
+        property: r'numId',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -423,173 +434,226 @@ extension RegimeQueryFilter on QueryBuilder<Regime, Regime, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numStartsWith(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numEndsWith(
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numContains(String value,
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdContains(
+      String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numMatches(String pattern,
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdMatches(
+      String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'num',
+        property: r'numId',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numIsEmpty() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'num',
+        property: r'numId',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterFilterCondition> numIsNotEmpty() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> numIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'num',
+        property: r'numId',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<RegimeDB, RegimeDB, QAfterFilterCondition> selecionadoEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'selecionado',
+        value: value,
       ));
     });
   }
 }
 
-extension RegimeQueryObject on QueryBuilder<Regime, Regime, QFilterCondition> {}
+extension RegimeDBQueryObject
+    on QueryBuilder<RegimeDB, RegimeDB, QFilterCondition> {}
 
-extension RegimeQueryLinks on QueryBuilder<Regime, Regime, QFilterCondition> {}
+extension RegimeDBQueryLinks
+    on QueryBuilder<RegimeDB, RegimeDB, QFilterCondition> {}
 
-extension RegimeQuerySortBy on QueryBuilder<Regime, Regime, QSortBy> {
-  QueryBuilder<Regime, Regime, QAfterSortBy> sortByNome() {
+extension RegimeDBQuerySortBy on QueryBuilder<RegimeDB, RegimeDB, QSortBy> {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> sortByNome() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.asc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> sortByNomeDesc() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> sortByNomeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.desc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> sortByNum() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> sortByNumId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.asc);
+      return query.addSortBy(r'numId', Sort.asc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> sortByNumDesc() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> sortByNumIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.desc);
+      return query.addSortBy(r'numId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> sortBySelecionado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.asc);
+    });
+  }
+
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> sortBySelecionadoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.desc);
     });
   }
 }
 
-extension RegimeQuerySortThenBy on QueryBuilder<Regime, Regime, QSortThenBy> {
-  QueryBuilder<Regime, Regime, QAfterSortBy> thenById() {
+extension RegimeDBQuerySortThenBy
+    on QueryBuilder<RegimeDB, RegimeDB, QSortThenBy> {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> thenByNome() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenByNome() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.asc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> thenByNomeDesc() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenByNomeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.desc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> thenByNum() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenByNumId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.asc);
+      return query.addSortBy(r'numId', Sort.asc);
     });
   }
 
-  QueryBuilder<Regime, Regime, QAfterSortBy> thenByNumDesc() {
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenByNumIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.desc);
+      return query.addSortBy(r'numId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenBySelecionado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.asc);
+    });
+  }
+
+  QueryBuilder<RegimeDB, RegimeDB, QAfterSortBy> thenBySelecionadoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.desc);
     });
   }
 }
 
-extension RegimeQueryWhereDistinct on QueryBuilder<Regime, Regime, QDistinct> {
-  QueryBuilder<Regime, Regime, QDistinct> distinctByNome(
+extension RegimeDBQueryWhereDistinct
+    on QueryBuilder<RegimeDB, RegimeDB, QDistinct> {
+  QueryBuilder<RegimeDB, RegimeDB, QDistinct> distinctByNome(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nome', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Regime, Regime, QDistinct> distinctByNum(
+  QueryBuilder<RegimeDB, RegimeDB, QDistinct> distinctByNumId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'num', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'numId', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<RegimeDB, RegimeDB, QDistinct> distinctBySelecionado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'selecionado');
     });
   }
 }
 
-extension RegimeQueryProperty on QueryBuilder<Regime, Regime, QQueryProperty> {
-  QueryBuilder<Regime, int, QQueryOperations> idProperty() {
+extension RegimeDBQueryProperty
+    on QueryBuilder<RegimeDB, RegimeDB, QQueryProperty> {
+  QueryBuilder<RegimeDB, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<Regime, String, QQueryOperations> nomeProperty() {
+  QueryBuilder<RegimeDB, String, QQueryOperations> nomeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nome');
     });
   }
 
-  QueryBuilder<Regime, String, QQueryOperations> numProperty() {
+  QueryBuilder<RegimeDB, String, QQueryOperations> numIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'num');
+      return query.addPropertyName(r'numId');
+    });
+  }
+
+  QueryBuilder<RegimeDB, bool, QQueryOperations> selecionadoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'selecionado');
     });
   }
 }

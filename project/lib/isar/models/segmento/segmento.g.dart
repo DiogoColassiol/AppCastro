@@ -9,74 +9,81 @@ part of 'segmento.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetSegmentoCollection on Isar {
-  IsarCollection<Segmento> get segmentos => this.collection();
+extension GetSegmentoDBCollection on Isar {
+  IsarCollection<SegmentoDB> get segmentoDBs => this.collection();
 }
 
-const SegmentoSchema = CollectionSchema(
-  name: r'Segmento',
-  id: -5316091887966896546,
+const SegmentoDBSchema = CollectionSchema(
+  name: r'SegmentoDB',
+  id: -314411221102957105,
   properties: {
     r'nome': PropertySchema(
       id: 0,
       name: r'nome',
       type: IsarType.string,
     ),
-    r'num': PropertySchema(
+    r'numId': PropertySchema(
       id: 1,
-      name: r'num',
+      name: r'numId',
       type: IsarType.string,
+    ),
+    r'selecionado': PropertySchema(
+      id: 2,
+      name: r'selecionado',
+      type: IsarType.bool,
     )
   },
-  estimateSize: _segmentoEstimateSize,
-  serialize: _segmentoSerialize,
-  deserialize: _segmentoDeserialize,
-  deserializeProp: _segmentoDeserializeProp,
+  estimateSize: _segmentoDBEstimateSize,
+  serialize: _segmentoDBSerialize,
+  deserialize: _segmentoDBDeserialize,
+  deserializeProp: _segmentoDBDeserializeProp,
   idName: r'id',
   indexes: {},
   links: {},
   embeddedSchemas: {},
-  getId: _segmentoGetId,
-  getLinks: _segmentoGetLinks,
-  attach: _segmentoAttach,
+  getId: _segmentoDBGetId,
+  getLinks: _segmentoDBGetLinks,
+  attach: _segmentoDBAttach,
   version: '3.1.0+1',
 );
 
-int _segmentoEstimateSize(
-  Segmento object,
+int _segmentoDBEstimateSize(
+  SegmentoDB object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.nome.length * 3;
-  bytesCount += 3 + object.num.length * 3;
+  bytesCount += 3 + object.numId.length * 3;
   return bytesCount;
 }
 
-void _segmentoSerialize(
-  Segmento object,
+void _segmentoDBSerialize(
+  SegmentoDB object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.nome);
-  writer.writeString(offsets[1], object.num);
+  writer.writeString(offsets[1], object.numId);
+  writer.writeBool(offsets[2], object.selecionado);
 }
 
-Segmento _segmentoDeserialize(
+SegmentoDB _segmentoDBDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Segmento();
+  final object = SegmentoDB();
   object.id = id;
   object.nome = reader.readString(offsets[0]);
-  object.num = reader.readString(offsets[1]);
+  object.numId = reader.readString(offsets[1]);
+  object.selecionado = reader.readBool(offsets[2]);
   return object;
 }
 
-P _segmentoDeserializeProp<P>(
+P _segmentoDBDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -87,33 +94,37 @@ P _segmentoDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-Id _segmentoGetId(Segmento object) {
+Id _segmentoDBGetId(SegmentoDB object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _segmentoGetLinks(Segmento object) {
+List<IsarLinkBase<dynamic>> _segmentoDBGetLinks(SegmentoDB object) {
   return [];
 }
 
-void _segmentoAttach(IsarCollection<dynamic> col, Id id, Segmento object) {
+void _segmentoDBAttach(IsarCollection<dynamic> col, Id id, SegmentoDB object) {
   object.id = id;
 }
 
-extension SegmentoQueryWhereSort on QueryBuilder<Segmento, Segmento, QWhere> {
-  QueryBuilder<Segmento, Segmento, QAfterWhere> anyId() {
+extension SegmentoDBQueryWhereSort
+    on QueryBuilder<SegmentoDB, SegmentoDB, QWhere> {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension SegmentoQueryWhere on QueryBuilder<Segmento, Segmento, QWhereClause> {
-  QueryBuilder<Segmento, Segmento, QAfterWhereClause> idEqualTo(Id id) {
+extension SegmentoDBQueryWhere
+    on QueryBuilder<SegmentoDB, SegmentoDB, QWhereClause> {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -122,7 +133,7 @@ extension SegmentoQueryWhere on QueryBuilder<Segmento, Segmento, QWhereClause> {
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterWhereClause> idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -144,7 +155,7 @@ extension SegmentoQueryWhere on QueryBuilder<Segmento, Segmento, QWhereClause> {
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -153,7 +164,7 @@ extension SegmentoQueryWhere on QueryBuilder<Segmento, Segmento, QWhereClause> {
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -162,7 +173,7 @@ extension SegmentoQueryWhere on QueryBuilder<Segmento, Segmento, QWhereClause> {
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterWhereClause> idBetween(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -179,9 +190,10 @@ extension SegmentoQueryWhere on QueryBuilder<Segmento, Segmento, QWhereClause> {
   }
 }
 
-extension SegmentoQueryFilter
-    on QueryBuilder<Segmento, Segmento, QFilterCondition> {
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> idEqualTo(Id value) {
+extension SegmentoDBQueryFilter
+    on QueryBuilder<SegmentoDB, SegmentoDB, QFilterCondition> {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -190,7 +202,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -203,7 +215,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> idLessThan(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -216,7 +228,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> idBetween(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -233,7 +245,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeEqualTo(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -246,7 +258,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeGreaterThan(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -261,7 +273,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeLessThan(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -276,7 +288,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeBetween(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -295,7 +307,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeStartsWith(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -308,7 +320,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeEndsWith(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -321,7 +333,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeContains(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -333,7 +345,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeMatches(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -345,7 +357,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeIsEmpty() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'nome',
@@ -354,7 +366,7 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> nomeIsNotEmpty() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> nomeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'nome',
@@ -363,20 +375,20 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numEqualTo(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numGreaterThan(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -384,14 +396,14 @@ extension SegmentoQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numLessThan(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -399,14 +411,14 @@ extension SegmentoQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numBetween(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -415,7 +427,7 @@ extension SegmentoQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'num',
+        property: r'numId',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -425,180 +437,228 @@ extension SegmentoQueryFilter
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numStartsWith(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numEndsWith(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numContains(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'num',
+        property: r'numId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numMatches(
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'num',
+        property: r'numId',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numIsEmpty() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition> numIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'num',
+        property: r'numId',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterFilterCondition> numIsNotEmpty() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition>
+      numIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'num',
+        property: r'numId',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterFilterCondition>
+      selecionadoEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'selecionado',
+        value: value,
       ));
     });
   }
 }
 
-extension SegmentoQueryObject
-    on QueryBuilder<Segmento, Segmento, QFilterCondition> {}
+extension SegmentoDBQueryObject
+    on QueryBuilder<SegmentoDB, SegmentoDB, QFilterCondition> {}
 
-extension SegmentoQueryLinks
-    on QueryBuilder<Segmento, Segmento, QFilterCondition> {}
+extension SegmentoDBQueryLinks
+    on QueryBuilder<SegmentoDB, SegmentoDB, QFilterCondition> {}
 
-extension SegmentoQuerySortBy on QueryBuilder<Segmento, Segmento, QSortBy> {
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> sortByNome() {
+extension SegmentoDBQuerySortBy
+    on QueryBuilder<SegmentoDB, SegmentoDB, QSortBy> {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> sortByNome() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.asc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> sortByNomeDesc() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> sortByNomeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.desc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> sortByNum() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> sortByNumId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.asc);
+      return query.addSortBy(r'numId', Sort.asc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> sortByNumDesc() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> sortByNumIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.desc);
+      return query.addSortBy(r'numId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> sortBySelecionado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> sortBySelecionadoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.desc);
     });
   }
 }
 
-extension SegmentoQuerySortThenBy
-    on QueryBuilder<Segmento, Segmento, QSortThenBy> {
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> thenById() {
+extension SegmentoDBQuerySortThenBy
+    on QueryBuilder<SegmentoDB, SegmentoDB, QSortThenBy> {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> thenByNome() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenByNome() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.asc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> thenByNomeDesc() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenByNomeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nome', Sort.desc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> thenByNum() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenByNumId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.asc);
+      return query.addSortBy(r'numId', Sort.asc);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QAfterSortBy> thenByNumDesc() {
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenByNumIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'num', Sort.desc);
+      return query.addSortBy(r'numId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenBySelecionado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SegmentoDB, SegmentoDB, QAfterSortBy> thenBySelecionadoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'selecionado', Sort.desc);
     });
   }
 }
 
-extension SegmentoQueryWhereDistinct
-    on QueryBuilder<Segmento, Segmento, QDistinct> {
-  QueryBuilder<Segmento, Segmento, QDistinct> distinctByNome(
+extension SegmentoDBQueryWhereDistinct
+    on QueryBuilder<SegmentoDB, SegmentoDB, QDistinct> {
+  QueryBuilder<SegmentoDB, SegmentoDB, QDistinct> distinctByNome(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nome', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Segmento, Segmento, QDistinct> distinctByNum(
+  QueryBuilder<SegmentoDB, SegmentoDB, QDistinct> distinctByNumId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'num', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'numId', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<SegmentoDB, SegmentoDB, QDistinct> distinctBySelecionado() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'selecionado');
     });
   }
 }
 
-extension SegmentoQueryProperty
-    on QueryBuilder<Segmento, Segmento, QQueryProperty> {
-  QueryBuilder<Segmento, int, QQueryOperations> idProperty() {
+extension SegmentoDBQueryProperty
+    on QueryBuilder<SegmentoDB, SegmentoDB, QQueryProperty> {
+  QueryBuilder<SegmentoDB, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<Segmento, String, QQueryOperations> nomeProperty() {
+  QueryBuilder<SegmentoDB, String, QQueryOperations> nomeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nome');
     });
   }
 
-  QueryBuilder<Segmento, String, QQueryOperations> numProperty() {
+  QueryBuilder<SegmentoDB, String, QQueryOperations> numIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'num');
+      return query.addPropertyName(r'numId');
+    });
+  }
+
+  QueryBuilder<SegmentoDB, bool, QQueryOperations> selecionadoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'selecionado');
     });
   }
 }

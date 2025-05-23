@@ -9,16 +9,22 @@ import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentoss.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/tesess.dart';
+import 'package:project/isar/models/documento/regime_db.dart';
+import 'package:project/isar/models/segmento/segmento_db.dart';
+import 'package:project/isar/models/tese/tese_db.dart';
 import 'package:project/print/resumo_pdf.dart';
 
 class ProjectCubit extends Cubit<ProjectState> {
+  // final SegmentoDataBase segmentoDataBase;
+  // final RegimeDataBase regimeDataBase;
+  // final TeseDataBase teseDataBase;
   ProjectCubit() : super(const ProjectState()) {
     init();
   }
   Future<void> init() async {
-    loadSegmentos();
-    loadDocumentos();
-    loadTeses();
+    await loadSegmentos();
+    await loadDocumentos();
+    await loadTeses();
   }
 
   Future<void> selectSeg(String? segId, bool? select) async {
@@ -416,8 +422,30 @@ Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das
 ''',
       ),
     ];
+    //  addTesesDB(teses);
     emit(state.copyWith(teses: teses));
   }
+
+  // Future<void> addTesesDB(List<Tese> teses) async {
+  //   for (final tese in teses) {
+  //     await teseDataBase.addTese(
+  //         tese.id!, tese.docs!, tese.descricao!, tese.legenda!);
+  //   }
+  // }
+
+  // Future<void> addSegmentoDB(List<Segmento> segmentos) async {
+  //   for (final segmento in segmentos) {
+  //     await segmentoDataBase.addSegmento(
+  //         segmento.id!, segmento.nome!, segmento.selecionado!);
+  //   }
+  // }
+
+  // Future<void> addRegimeDB(List<Documento> regimes) async {
+  //   for (final regime in regimes) {
+  //     await regimeDataBase.addRegime(
+  //         regime.id!, regime.nome!, regime.selecionado!);
+  //   }
+  // }
 
   Future<void> loadSegmentos() async {
     final segmentos = [
@@ -429,6 +457,7 @@ Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das
       Segmento(id: '6', nome: 'Hortifrutigranjeiros'),
       Segmento(id: '7', nome: 'Outros')
     ];
+    // await addSegmentoDB(segmentos);
     emit(state.copyWith(segmentos: segmentos));
   }
 
@@ -438,6 +467,7 @@ Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das
       Documento(id: '2', nome: 'Lucro Presumido'),
       Documento(id: '3', nome: 'Lucro Real')
     ];
+    // await addRegimeDB(docs);
     emit(state.copyWith(documentos: docs));
   }
 }

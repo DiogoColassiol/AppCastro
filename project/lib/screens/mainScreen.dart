@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
+import 'package:project/entity/teses.dart';
 import 'package:project/screens/resultScreen.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_teses_widget.dart';
@@ -113,6 +114,8 @@ class _MainScreenState extends State<MainScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(children: [
                           _segmentos(),
+                          // if (!state.segmentos!
+                          //     .any((s) => s.id == '7' && s.selecionado!))
                           _documentos(),
                         ]),
                       ),
@@ -210,14 +213,11 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
-  // visible: state.segmentoSelect != null &&
-  //                     state.segmentoSelect!.id != '7',
-
   Widget _documentos() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        // final outros =
-        //     state.segmentoSelect != null && state.segmentoSelect!.id != '7';
+        final outros =
+            !state.segmentos!.any((s) => s.id == '7' && s.selecionado!);
         final cubit = context.read<ProjectCubit>();
         final documentos = state.documentos ?? [];
         return Expanded(
@@ -225,33 +225,39 @@ class _MainScreenState extends State<MainScreen>
             children: [
               const Text('Regimes Tributários',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
-                  childAspectRatio: getScreenWidth(context),
-                  padding: const EdgeInsets.all(8.0),
-                  children: documentos.map((documento) {
-                    return Card(
-                      color: ThemeUtils.backgroundColor,
-                      child: CheckboxListTile(
-                        title: Text(
-                          documento.nome.toString(),
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        value: documento.selecionado,
-                        key: Key(documento.id.toString()),
-                        activeColor: ThemeUtils.primaryColor,
-                        onChanged: (value) {
-                          cubit.selectDoc(documento.id, value);
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
+              outros
+                  ? Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 8.0,
+                        crossAxisSpacing: 8.0,
+                        childAspectRatio: getScreenWidth(context),
+                        padding: const EdgeInsets.all(8.0),
+                        children: documentos.map((documento) {
+                          return Card(
+                            color: ThemeUtils.backgroundColor,
+                            child: CheckboxListTile(
+                              title: Text(
+                                documento.nome.toString(),
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              value: documento.selecionado,
+                              key: Key(documento.id.toString()),
+                              activeColor: ThemeUtils.primaryColor,
+                              onChanged: (value) {
+                                cubit.selectDoc(documento.id, value);
+                              },
+                              controlAffinity: ListTileControlAffinity.leading,
+                            ),
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text(
+                          'Outros não é necessário informar o regime tributário!'),
+                    ),
             ],
           ),
         );

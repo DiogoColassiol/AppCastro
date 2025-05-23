@@ -9,9 +9,6 @@ import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentoss.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/tesess.dart';
-import 'package:project/isar/models/documento/regime_db.dart';
-import 'package:project/isar/models/segmento/segmento_db.dart';
-import 'package:project/isar/models/tese/tese_db.dart';
 import 'package:project/print/resumo_pdf.dart';
 
 class ProjectCubit extends Cubit<ProjectState> {

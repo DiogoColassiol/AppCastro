@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
-import 'package:project/entity/teses.dart';
 import 'package:project/screens/resultScreen.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_teses_widget.dart';

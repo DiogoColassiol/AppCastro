@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
-import 'package:project/entity/segmento.dart';
+import 'package:project/entity/segmentoss.dart';
 import 'package:project/cubit/project_state.dart';
-import 'package:project/entity/teses.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/print/resumo_pdf.dart';
 
 class ProjectCubit extends Cubit<ProjectState> {

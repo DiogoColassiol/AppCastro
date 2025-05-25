@@ -82,7 +82,7 @@ class ResultScreenState extends State<ResultScreen> {
               children: [
                 _buttonDelete(),
                 const SizedBox(width: 30),
-                _buttonPrint(state.result),
+                _buttonPrint(),
                 const SizedBox(width: 30),
                 _hasObs(),
               ],
@@ -149,8 +149,8 @@ class ResultScreenState extends State<ResultScreen> {
                     border: const UnderlineInputBorder(),
                     value: state.obs,
                     controller: _inputControler,
-                    onChanged: (value) {
-                      cubit.setObs(value);
+                    onChanged: (value) async {
+                      await cubit.setObs(value);
                     },
                   ),
                 ),
@@ -192,17 +192,17 @@ class ResultScreenState extends State<ResultScreen> {
 
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        // final c = context.read<ProjectCubit>();
         return Center(
-          child: Container(
-            width: 595,
-            height: 842,
-            color: Colors.white,
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          child: SingleChildScrollView(
+            child: Container(
+              width: 595,
+              constraints: const BoxConstraints(minHeight: 842),
+              color: Colors.white,
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
@@ -215,58 +215,65 @@ class ResultScreenState extends State<ResultScreen> {
                       Text(
                         "Data: $formatedData - Horário: $formatedHora",
                         style: const TextStyle(
-                            fontSize: 12, fontStyle: FontStyle.italic),
-                      )
-                    ]),
-                const SizedBox(height: 1),
-                const Divider(thickness: 1, color: Colors.black),
-                const SizedBox(height: 16),
-                const Text(
-                  'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text('Cliente: ${result!.cliente}'),
-                Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
-                // Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
-                const SizedBox(height: 20),
-                const Text(
-                  'Documentos requeridos:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 10),
-                if (result.docsNecessarios != null)
-                  ...result.docsNecessarios!.map((doc) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '• ',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Expanded(
-                            child: Text(
-                              _doc(doc),
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      )),
-                const SizedBox(height: 20),
-                if (state.hasObs)
+                  const SizedBox(height: 1),
+                  const Divider(thickness: 1, color: Colors.black),
+                  const SizedBox(height: 16),
                   const Text(
-                    'Observações:',
+                    'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text('Cliente: ${result!.cliente}'),
+                  Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Documentos requeridos:',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
                   ),
-                if (state.hasObs) Text('${state.obs}')
-              ],
+                  const SizedBox(height: 10),
+                  if (result.docsNecessarios != null)
+                    ...result.docsNecessarios!.map((doc) => Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              '• ',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            Expanded(
+                              child: Text(
+                                _doc(doc),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        )),
+                  const SizedBox(height: 20),
+                  if (state.hasObs)
+                    const Text(
+                      'Observações:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  if (state.hasObs)
+                    Text(
+                      '${state.obs}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                ],
+              ),
             ),
           ),
         );
@@ -281,17 +288,17 @@ class ResultScreenState extends State<ResultScreen> {
 
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        // final c = context.read<ProjectCubit>();
         return Center(
-          child: Container(
-            width: 595,
-            height: 842,
-            color: Colors.white,
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          child: SingleChildScrollView(
+            child: Container(
+              width: 595,
+              constraints: const BoxConstraints(minHeight: 842),
+              color: Colors.white,
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
@@ -304,81 +311,91 @@ class ResultScreenState extends State<ResultScreen> {
                       Text(
                         "Data: $formatedData - Horário: $formatedHora",
                         style: const TextStyle(
-                            fontSize: 12, fontStyle: FontStyle.italic),
-                      )
-                    ]),
-                const SizedBox(height: 1),
-                const Divider(thickness: 1, color: Colors.black),
-                const SizedBox(height: 16),
-                const Text(
-                  'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text('Cliente: ${result!.cliente}'),
-                Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
-                Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
-                const SizedBox(height: 20),
-                const Text(
-                  'Documentos requeridos:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                if (result.docsNecessarios != null)
-                  ...result.docsNecessarios!.map((doc) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '• ',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Expanded(
-                            child: Text(
-                              _doc(doc),
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      )),
-                const SizedBox(height: 20),
-                const Text(
-                  'Teses Consolidadas:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                if (result.teses != null)
-                  ...result.teses!.map(
-                    (tese) => Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('• ', style: TextStyle(fontSize: 14)),
-                        Expanded(
-                          child: Text('${tese.id}- ${tese.descricao}',
-                              style: const TextStyle(fontSize: 12)),
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                const SizedBox(height: 20),
-                if (state.hasObs)
+                  const SizedBox(height: 1),
+                  const Divider(thickness: 1, color: Colors.black),
+                  const SizedBox(height: 16),
                   const Text(
-                    'Observações:',
+                    'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text('Cliente: ${result!.cliente}'),
+                  Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
+                  Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Documentos requeridos:',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
                   ),
-                if (state.hasObs) Text('${state.obs}')
-              ],
+                  const SizedBox(height: 10),
+                  if (result.docsNecessarios != null)
+                    ...result.docsNecessarios!.map((doc) => Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              '• ',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            Expanded(
+                              child: Text(
+                                _doc(doc),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        )),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Teses Consolidadas:',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  if (result.teses != null)
+                    ...result.teses!.map(
+                      (tese) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('• ', style: TextStyle(fontSize: 14)),
+                          Expanded(
+                            child: Text(
+                              '${tese.id}- ${tese.descricao}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  if (state.hasObs)
+                    const Text(
+                      'Observações:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  if (state.hasObs)
+                    Text(
+                      '${state.obs}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                ],
+              ),
             ),
           ),
         );
@@ -394,16 +411,17 @@ class ResultScreenState extends State<ResultScreen> {
     return doc;
   }
 
-  Widget _buttonPrint(Result? result) {
+  Widget _buttonPrint() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
+
         return ButtonApp(
           text: 'Salvar PDF',
           icon: Icons.print,
           textColor: ThemeUtils.primaryColor,
           onPressed: () async {
-            cubit.printResult(result!);
+            await cubit.printResult();
           },
         );
       },
@@ -420,6 +438,9 @@ class ResultScreenState extends State<ResultScreen> {
               text: state.hasObs ? 'Com Observações' : 'Sem Observações',
               color: ThemeUtils.primaryColor,
               onPressed: () {
+                if (state.hasObs == false) {
+                  cubit.setObs('');
+                }
                 cubit.checkObs(!state.hasObs);
               },
               icon: state.hasObs

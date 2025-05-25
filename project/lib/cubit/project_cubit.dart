@@ -220,10 +220,23 @@ class ProjectCubit extends Cubit<ProjectState> {
     );
   }
 
-  Future<void> printResult(Result result) async {
-    final resumoPdf = ResumoPdfUtil(result: result);
+  Future<void> printResult() async {
+    final currentState = state;
+
+    // Cria uma cópia do result com as observações atualizadas
+    final updatedResult = currentState.result!.copyWith(
+      obs: currentState.obs,
+    );
+
+    final outros =
+        updatedResult.segmento!.id == '7' && updatedResult.teses!.isEmpty;
+
+    final resumoPdf = ResumoPdfUtil(result: updatedResult);
     resumoPdf.format = PdfPageFormat.a4;
-    await resumoPdf.createResumoPDF();
+
+    outros
+        ? await resumoPdf.createResumoOutrosPDF()
+        : await resumoPdf.createResumoPDF();
   }
 
   Future<List<Tese>> searchTeses(Segmento segmento, Documento documento) async {

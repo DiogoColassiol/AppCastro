@@ -3,13 +3,10 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf/pdf.dart';
 import 'package:project/entity/documentos.dart';
-import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentoss.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/tesess.dart';
-import 'package:project/print/resumo_pdf.dart';
 
 class ProjectCubit extends Cubit<ProjectState> {
   // final SegmentoDataBase segmentoDataBase;
@@ -202,23 +199,23 @@ class ProjectCubit extends Cubit<ProjectState> {
     return docsNeed.toSet().toList();
   }
 
-  Future<Result> _buildResult(
-    String? cliente,
-    Segmento? segmento,
-    Documento? documento,
-    List<Tese>? teses,
-    List<String>? docs,
-    String? obs,
-  ) async {
-    return Result(
-      cliente: cliente,
-      segmento: segmento,
-      documento: documento,
-      teses: teses,
-      docsNecessarios: docs,
-      obs: obs,
-    );
-  }
+  // Future<Result> _buildResult(
+  //   String? cliente,
+  //   Segmento? segmento,
+  //   Documento? documento,
+  //   List<Tese>? teses,
+  //   List<String>? docs,
+  //   String? obs,
+  // ) async {
+  //   return Result(
+  //     cliente: cliente,
+  //     segmento: segmento,
+  //     documento: documento,
+  //     teses: teses,
+  //     docsNecessarios: docs,
+  //     obs: obs,
+  //   );
+  // }
 
   Future<void> printResult() async {
     //  final cliente = await searchCliente();
@@ -238,8 +235,8 @@ class ProjectCubit extends Cubit<ProjectState> {
     //     result: await _buildResult(
     //         cliente, segSelect, docSelect, tesesSelect, needDocs, '')));
 
-    final outros =
-        state.result!.segmento!.id == '7' && state.result!.teses!.isEmpty;
+    // final outros =
+    //     state.result!.segmento!.id == '7' && state.result!.teses!.isEmpty;
 
     // final resumoPdf = ResumoPdfUtil(result: );
     // resumoPdf.format = PdfPageFormat.a4;

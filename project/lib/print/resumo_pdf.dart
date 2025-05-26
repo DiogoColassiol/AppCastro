@@ -18,103 +18,7 @@ class ResumoPdfUtil {
   }
 
   Future<Document> createResumoPDF() async {
-    final data = DateTime.now();
     final pdf = Document(theme: await _myTheme());
-    final formatedData = DateFormat('dd/MM/yyyy').format(data);
-    final formatedHora = DateFormat('HH:mm').format(data);
-
-    pdf.addPage(MultiPage(
-      maxPages: 100,
-      pageFormat: PdfPageFormat.a4,
-      mainAxisAlignment: MainAxisAlignment.start,
-      footer: (context) => Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Text(''),
-        ),
-      ),
-      build: (context) => [
-        Header(
-          level: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Relatório Final',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "Data: $formatedData - Horário: $formatedHora",
-                style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 16),
-        Text(
-          'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 10),
-        Text('Cliente: ${result.cliente}'),
-        Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
-        Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
-        SizedBox(height: 20),
-        Text(
-          'Documentos requeridos:',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.underline,
-          ),
-        ),
-        SizedBox(height: 10),
-        if (result.docsNecessarios != null)
-          ...result.docsNecessarios!
-              .map((doc) => Bullet(bulletSize: 3, text: _doc(doc))),
-        SizedBox(height: 20),
-        Text(
-          'Teses Consolidadas:',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.underline,
-          ),
-        ),
-        SizedBox(height: 10),
-        if (result.teses != null)
-          ...result.teses!.map((tese) => Bullet(
-              bulletSize: 3,
-              text: '${tese.id}- ' '${tese.descricao}',
-              style: const TextStyle(fontSize: 10))),
-        if (result.obs != null && result.obs!.trim().isNotEmpty) ...[
-          SizedBox(height: 20),
-          Text(
-            'Observações:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-          SizedBox(height: 6),
-
-          // Quebra o texto longo em parágrafos ou linhas
-          ..._buildObservacoes(result.obs!)
-        ],
-      ],
-    ));
-
-    await _print(pdf.save(), suffix: result.cliente);
-    return pdf;
-  }
-
-  Future<Document> createResumoOutrosPDF() async {
-    final data = DateTime.now();
-    final pdf = Document(theme: await _myTheme());
-    final formatedData = DateFormat('dd/MM/yyyy').format(data);
-    final formatedHora = DateFormat('HH:mm').format(data);
 
     pdf.addPage(
       MultiPage(
@@ -129,58 +33,16 @@ class ResumoPdfUtil {
           ),
         ),
         build: (context) => [
-          Header(
-            level: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Relatório Final',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "Data: $formatedData - Horário: $formatedHora",
-                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                ),
-              ],
-            ),
-          ),
+          _buildHeader('Relatório Final'),
           SizedBox(height: 16),
-          Text(
-            'Relatório gerado com a escolha de "Outros":',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
+          _buildInfoText(
+              'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:'),
           SizedBox(height: 10),
-          Text('Cliente: ${result.cliente}'),
-          Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
+          _buildClientAndSeg(),
           SizedBox(height: 20),
-          Text(
-            'Documentos requeridos:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-          SizedBox(height: 10),
-          if (result.docsNecessarios != null)
-            ...result.docsNecessarios!
-                .map((doc) => Bullet(bulletSize: 3, text: _doc(doc))),
+          ..._buildDocsNedded(),
           SizedBox(height: 20),
-          Text(
-            'Teses Consolidadas:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-          SizedBox(height: 10),
-          if (result.teses != null)
-            ...result.teses!.map((tese) => Bullet(
-                bulletSize: 3,
-                text: '${tese.id}- ${tese.descricao}',
-                style: const TextStyle(fontSize: 10))),
+          ..._buildTeses(),
           if (result.obs != null && result.obs!.trim().isNotEmpty) ...[
             SizedBox(height: 20),
             Text(
@@ -192,9 +54,7 @@ class ResumoPdfUtil {
               ),
             ),
             SizedBox(height: 6),
-
-            // Quebra o texto longo em parágrafos ou linhas
-            ..._buildObservacoes(result.obs!)
+            ..._buildObservacoes()
           ],
         ],
       ),
@@ -204,14 +64,133 @@ class ResumoPdfUtil {
     return pdf;
   }
 
-  List<Widget> _buildObservacoes(String texto) {
-    final linhas = texto.split('\n'); // quebra por linha
+  Future<Document> createResumoOutrosPDF() async {
+    final pdf = Document(theme: await _myTheme());
+
+    pdf.addPage(
+      MultiPage(
+        maxPages: 100,
+        pageFormat: PdfPageFormat.a4,
+        mainAxisAlignment: MainAxisAlignment.start,
+        footer: (context) => Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(''),
+          ),
+        ),
+        build: (context) => [
+          _buildHeader('Relatório Outros'),
+          SizedBox(height: 16),
+          _buildInfoText('Relatório gerado com a escolha de "Outros"'),
+          SizedBox(height: 10),
+          _buildClientAndSeg(),
+          SizedBox(height: 20),
+          ..._buildDocsNedded(),
+          SizedBox(height: 20),
+          ..._buildTeses(),
+          if (result.obs != null && result.obs!.trim().isNotEmpty) ...[
+            SizedBox(height: 20),
+            Text(
+              'Observações:',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            SizedBox(height: 6),
+            ..._buildObservacoes()
+          ],
+        ],
+      ),
+    );
+
+    await _print(pdf.save(), suffix: result.cliente);
+    return pdf;
+  }
+
+  _buildHeader(String? title) {
+    final data = DateTime.now();
+    final formatedData = DateFormat('dd/MM/yyyy').format(data);
+    final formatedHora = DateFormat('HH:mm').format(data);
+    return Header(
+      level: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title ?? 'Relatório Final',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            "Data: $formatedData - Horário: $formatedHora",
+            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildInfoText(String text) {
+    Text(
+      text,
+      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+    );
+  }
+
+  _buildClientAndSeg() {
+    Text('Cliente: ${result.cliente}');
+    Text('Segmento: ${result.segmento?.nome ?? "N/A"}');
+    if (result.segmento!.id != '7' && result.teses!.isNotEmpty) {
+      Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}');
+    }
+  }
+
+  List<Widget> _buildDocsNedded() {
+    return [
+      Text(
+        'Documentos requeridos:',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      SizedBox(height: 10),
+      if (result.docsNecessarios != null)
+        ...result.docsNecessarios!
+            .map((doc) => Bullet(bulletSize: 3, text: _doc(doc))),
+    ];
+  }
+
+  List<Widget> _buildTeses() {
+    return [
+      Text(
+        'Teses Consolidadas:',
+        style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            decoration: TextDecoration.underline),
+      ),
+      SizedBox(height: 10),
+      if (result.teses != null)
+        ...result.teses!.map((tese) => Bullet(
+            bulletSize: 3,
+            text: '${tese.id}- ${tese.descricao}',
+            style: const TextStyle(fontSize: 10))),
+    ];
+  }
+
+  List<Widget> _buildObservacoes() {
+    final texto = result.obs;
+    final linhas = texto!.split('\n');
     return linhas.map((linha) {
       return Padding(
-        padding: const EdgeInsets.only(bottom: 4),
+        padding: const EdgeInsets.only(left: 20),
         child: Text(
           linha,
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ),
       );
     }).toList();

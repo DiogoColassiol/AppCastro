@@ -4,6 +4,8 @@ class ButtonApp extends StatelessWidget {
   final String text;
   final IconData? icon;
   final VoidCallback onPressed;
+  final double heightButton;
+  final double widthButton;
   final Color? color;
   final Color? textColor;
 
@@ -14,6 +16,8 @@ class ButtonApp extends StatelessWidget {
     required this.onPressed,
     this.color,
     this.textColor,
+    this.heightButton = 50,
+    this.widthButton = 160,
   });
 
   @override
@@ -33,7 +37,7 @@ class ButtonApp extends StatelessWidget {
         ),
       ),
       style: ElevatedButton.styleFrom(
-        minimumSize: const Size(160, 50),
+        minimumSize: Size(widthButton, heightButton),
         backgroundColor: color ?? Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

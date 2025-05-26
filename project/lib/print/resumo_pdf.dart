@@ -88,7 +88,6 @@ class ResumoPdfUtil {
           SizedBox(height: 20),
           ..._buildDocsNedded(),
           SizedBox(height: 20),
-          ..._buildTeses(),
           if (result.obs != null && result.obs!.trim().isNotEmpty) ...[
             SizedBox(height: 20),
             Text(

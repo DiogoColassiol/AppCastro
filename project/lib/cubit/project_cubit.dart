@@ -10,6 +10,7 @@ import 'package:project/entity/segmentoss.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/print/resumo_pdf.dart';
+import 'package:project/widgets/alertDialogApp.dart';
 
 class ProjectCubit extends Cubit<ProjectState> {
   // final SegmentoDataBase segmentoDataBase;
@@ -58,25 +59,6 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(obs: value));
   }
 
-  // Future<void> confirmSelect(BuildContext context) async {
-  //   final cliente = await searchCliente();
-  //   final segSelect = await searchSeg();
-  //   if (segSelect!.id == '7') {
-  //     final allDocs = await searchDocs([], true);
-  //     emit(state.copyWith(
-  //         result:
-  //             await _buildResult(cliente, segSelect, null, [], allDocs, '')));
-  //     return;
-  //   }
-  //   final docSelect = await searchDoc();
-  //   final tesesSelect = await searchTeses(segSelect, docSelect!);
-  //   final needDocs = await searchDocs(tesesSelect, false);
-
-  //   emit(state.copyWith(
-  //       result: await _buildResult(
-  //           cliente, segSelect, docSelect, tesesSelect, needDocs, '')));
-  // }
-
   Future<void> delete() async {
     final resetSeg = state.segmentos!
         .map((seg) => seg.copyWith(selecionado: false))
@@ -90,55 +72,50 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(cliente: ''));
   }
 
-  Future<bool> trataErros(BuildContext context, String? cliente, Segmento? doc,
-      Documento? seg) async {
+  Future<bool> trataErros(BuildContext context, String? cliente, Segmento? seg,
+      Documento? doc) async {
     if (cliente == null || cliente == '') {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Cliente não informado!'),
-          content: const Text(
-              'Por favor, adicione o nome do cliente para iniciar a busca!'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Sair'),
-            ),
-          ],
+        builder: (context) => AlertDialogApp(
+          title: 'Cliente não informado!',
+          content:
+              'Por favor, adicione o nome do cliente para iniciar a busca!',
+          onpressed: () => Navigator.of(context).pop(),
         ),
       );
       return true;
     }
-    if (doc == null || seg == null) {
+    if (seg == null) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro na escolha'),
-          content: const Text(
-              'Selecione um segmento ou um documento para iniciar a busca!'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Sair'),
-            ),
-          ],
+        builder: (context) => AlertDialogApp(
+          title: 'Erro na escolha',
+          content: 'Selecione um segmento para iniciar a busca!',
+          onpressed: () => Navigator.of(context).pop(),
         ),
       );
       return true;
     }
-    if (doc.id == '1' && seg.id == '1') {
+    if (doc!.id == '1' && seg.id == '1') {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Não contém Teses!'),
-          content: const Text(
-              'Transportadoras com Simples Nacional não tem teses consolidadas!'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Sair'),
-            ),
-          ],
+        builder: (context) => AlertDialogApp(
+          title: 'Não contém Teses!',
+          content:
+              'Transportadoras com Simples Nacional não tem teses consolidadas!',
+          onpressed: () => Navigator.of(context).pop(),
+        ),
+      );
+      return true;
+    }
+    if (seg.id == '7') {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogApp(
+          title: 'adsdsadsa',
+          content: 'sdasddsa',
+          onpressed: () => Navigator.of(context).pop(),
         ),
       );
       return true;

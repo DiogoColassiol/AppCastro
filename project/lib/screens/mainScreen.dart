@@ -113,8 +113,6 @@ class _MainScreenState extends State<MainScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(children: [
                           _segmentos(),
-                          // if (!state.segmentos!
-                          //     .any((s) => s.id == '7' && s.selecionado!))
                           _documentos(),
                         ]),
                       ),
@@ -300,45 +298,26 @@ class _MainScreenState extends State<MainScreen>
             final nome = await cubit.searchCliente();
             final segmento = await cubit.searchSeg();
             final documento = await cubit.searchDoc();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ResultScreen(
-                  nome: nome!,
-                  segmento: segmento!,
-                  documento: documento,
-                ),
-              ),
-            );
+            final hasErro =
+                await cubit.trataErros(context, nome, segmento, documento);
+            hasErro == false
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ResultScreen(
+                        nome: nome!,
+                        segmento: segmento!,
+                        documento: documento,
+                      ),
+                    ),
+                  )
+                : Container();
           },
         );
       },
     );
   }
 
-  // Widget _buttonRelGeral() {
-  //   return BlocBuilder<ProjectCubit, ProjectState>(
-  //     builder: (context, state) {
-  //       final cubit = context.read<ProjectCubit>();
-  //       return Padding(
-  //         padding: const EdgeInsets.all(8.0),
-  //         child: ButtonApp(
-  //           text: 'Rel. Geral',
-  //           icon: Icons.search,
-  //           textColor: Colors.white,
-  //           color: ThemeUtils.primaryColor,
-  //           onPressed: () async {
-  //             await cubit.build(context);
-  //             Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                     builder: (context) => const ResultScreen()));
-  //           },
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
   Widget _buttonDelete() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {

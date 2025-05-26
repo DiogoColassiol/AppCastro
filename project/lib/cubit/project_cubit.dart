@@ -3,10 +3,13 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
 import 'package:project/entity/documentos.dart';
+import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentoss.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/tesess.dart';
+import 'package:project/print/resumo_pdf.dart';
 
 class ProjectCubit extends Cubit<ProjectState> {
   // final SegmentoDataBase segmentoDataBase;
@@ -199,51 +202,48 @@ class ProjectCubit extends Cubit<ProjectState> {
     return docsNeed.toSet().toList();
   }
 
-  // Future<Result> _buildResult(
-  //   String? cliente,
-  //   Segmento? segmento,
-  //   Documento? documento,
-  //   List<Tese>? teses,
-  //   List<String>? docs,
-  //   String? obs,
-  // ) async {
-  //   return Result(
-  //     cliente: cliente,
-  //     segmento: segmento,
-  //     documento: documento,
-  //     teses: teses,
-  //     docsNecessarios: docs,
-  //     obs: obs,
-  //   );
-  // }
+  Future<Result> _buildResult(
+    String? cliente,
+    Segmento? segmento,
+    Documento? documento,
+    List<Tese>? teses,
+    List<String>? docs,
+    String? obs,
+  ) async {
+    return Result(
+      cliente: cliente,
+      segmento: segmento,
+      documento: documento,
+      teses: teses,
+      docsNecessarios: docs,
+      obs: obs,
+    );
+  }
 
-  Future<void> printResult() async {
-    //  final cliente = await searchCliente();
-    // final segSelect = await searchSeg();
-    // if (segSelect!.id == '7') {
-    //   final allDocs = await searchDocs([], true);
-    //   emit(state.copyWith(
-    //       result:
-    //           await _buildResult(cliente, segSelect, null, [], allDocs, '')));
-    //   return;
-    // }
-    // final docSelect = await searchDoc();
-    // final tesesSelect = await searchTeses(segSelect, docSelect!);
-    // final needDocs = await searchDocs(tesesSelect, false);
+  Future<void> printResult(
+      String nome, Segmento segmento, Documento? documento) async {
+    String? obs;
+    state.hasObs && state.obs!.isNotEmpty ? obs = state.obs : '';
 
-    // emit(state.copyWith(
-    //     result: await _buildResult(
-    //         cliente, segSelect, docSelect, tesesSelect, needDocs, '')));
+    if (segmento.id == '7' && documento == null) {
+      final docs = searchDocs([], true);
+      final result = _buildResult(nome, segmento, documento, [], docs, obs);
+      emit(state.copyWith(result: await result));
+      final resumoPdf = ResumoPdfUtil(result: await result);
+      resumoPdf.format = PdfPageFormat.a4;
+      await resumoPdf.createResumoOutrosPDF();
+      return;
+    }
+    final teses = searchTeses(segmento, documento!);
+    final needDocs = searchDocs(teses, false);
 
-    // final outros =
-    //     state.result!.segmento!.id == '7' && state.result!.teses!.isEmpty;
-
-    // final resumoPdf = ResumoPdfUtil(result: );
-    // resumoPdf.format = PdfPageFormat.a4;
-
-    // outros
-    //     ? await resumoPdf.createResumoOutrosPDF()
-    //     : await resumoPdf.createResumoPDF();
+    final result =
+        _buildResult(nome, segmento, documento, teses, needDocs, obs);
+    emit(state.copyWith(result: await result));
+    final resumoPdf = ResumoPdfUtil(result: await result);
+    resumoPdf.format = PdfPageFormat.a4;
+    await resumoPdf.createResumoPDF();
+    return;
   }
 
   List<Tese> searchTeses(Segmento segmento, Documento documento) {

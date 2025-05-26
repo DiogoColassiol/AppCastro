@@ -306,7 +306,7 @@ class _MainScreenState extends State<MainScreen>
                 builder: (context) => ResultScreen(
                   nome: nome!,
                   segmento: segmento!,
-                  documento: documento!,
+                  documento: documento,
                 ),
               ),
             );

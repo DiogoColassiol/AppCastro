@@ -16,7 +16,7 @@ import 'package:project/widgets/input_widget.dart';
 class ResultScreen extends StatefulWidget {
   final String nome;
   final Segmento segmento;
-  final Documento documento;
+  final Documento? documento;
 
   const ResultScreen(
       {super.key,
@@ -194,14 +194,8 @@ class ResultScreenState extends State<ResultScreen> {
   }
 
   Widget pdfOutros() {
-    final data = DateTime.now();
-    final formatedData = DateFormat('dd/MM/yyyy').format(data);
-    final formatedHora = DateFormat('HH:mm').format(data);
-
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final c = context.read<ProjectCubit>();
-        final docsNeed = c.searchDocs([], true);
         return Center(
           child: SingleChildScrollView(
             child: Container(
@@ -212,60 +206,16 @@ class ResultScreenState extends State<ResultScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Pdf Outros',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "Data: $formatedData - Horário: $formatedHora",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildHeader('Relatório Outros'),
                   const SizedBox(height: 1),
                   const Divider(thickness: 1, color: Colors.black),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
+                  ..._buildInfoText(
+                      'Relatório gerado com a escolha de "Outros"'),
                   const SizedBox(height: 10),
-                  Text('Cliente: ${widget.nome}'),
-                  Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
+                  ..._buildClientAndSeg(),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Documentos requeridos:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ...docsNeed.map((doc) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '• ',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Expanded(
-                            child: Text(
-                              _doc(doc),
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      )),
+                  ..._buildDocsNedded(),
                   const SizedBox(height: 20),
                   if (state.hasObs)
                     const Text(
@@ -298,7 +248,7 @@ class ResultScreenState extends State<ResultScreen> {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final c = context.read<ProjectCubit>();
-        final teses = c.searchTeses(widget.segmento, widget.documento);
+        final teses = c.searchTeses(widget.segmento, widget.documento!);
         final docsNeed = c.searchDocs(teses, false);
         return Center(
           child: SingleChildScrollView(
@@ -339,7 +289,7 @@ class ResultScreenState extends State<ResultScreen> {
                   const SizedBox(height: 10),
                   Text('Cliente: ${widget.nome}'),
                   Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
-                  Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}'),
+                  Text('Regime Tributário: ${widget.documento!.nome ?? "N/A"}'),
                   const SizedBox(height: 20),
                   const Text(
                     'Documentos requeridos:',
@@ -413,6 +363,83 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
+  _buildHeader(String? title) {
+    final data = DateTime.now();
+    final formatedData = DateFormat('dd/MM/yyyy').format(data);
+    final formatedHora = DateFormat('HH:mm').format(data);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title ?? 'Relatório Final',
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          "Data: $formatedData - Horário: $formatedHora",
+          style: const TextStyle(
+            fontSize: 12,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
+  _buildInfoText(String text) {
+    return [
+      Text(
+        text,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      )
+    ];
+  }
+
+  _buildClientAndSeg() {
+    return [
+      Text('Cliente: ${widget.nome}'),
+      Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
+      if (widget.segmento.id != '7')
+        Text('Regime Tributário: ${widget.documento?.nome ?? "N/A"}')
+    ];
+  }
+
+  List<Widget> _buildDocsNedded() {
+    final c = context.read<ProjectCubit>();
+
+    final docsNeed = c.searchDocs([], true);
+    List<Widget> widgets = [
+      const Text(
+        'Documentos requeridos:',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      const SizedBox(height: 10),
+      ...docsNeed.map((doc) => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '• ',
+                style: TextStyle(fontSize: 14),
+              ),
+              Expanded(
+                child: Text(
+                  _doc(doc),
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            ],
+          )),
+    ];
+    return widgets;
+  }
+
   _doc(String doc) {
     int ano = DateTime.now().year - 5;
     if (doc == 'Balanço' || doc == 'DRE' || doc == 'Balancete') {
@@ -431,7 +458,8 @@ class ResultScreenState extends State<ResultScreen> {
           icon: Icons.print,
           textColor: ThemeUtils.primaryColor,
           onPressed: () async {
-            await cubit.printResult();
+            await cubit.printResult(
+                widget.nome, widget.segmento, widget.documento);
           },
         );
       },

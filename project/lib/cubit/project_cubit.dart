@@ -58,24 +58,24 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(obs: value));
   }
 
-  Future<void> build(BuildContext context) async {
-    final cliente = await searchCliente();
-    final segSelect = await searchSeg();
-    if (segSelect!.id == '7') {
-      final allDocs = await searchDocs([], true);
-      emit(state.copyWith(
-          result:
-              await _buildResult(cliente, segSelect, null, [], allDocs, '')));
-      return;
-    }
-    final docSelect = await searchDoc();
-    final tesesSelect = await searchTeses(segSelect, docSelect!);
-    final needDocs = await searchDocs(tesesSelect, false);
+  // Future<void> confirmSelect(BuildContext context) async {
+  //   final cliente = await searchCliente();
+  //   final segSelect = await searchSeg();
+  //   if (segSelect!.id == '7') {
+  //     final allDocs = await searchDocs([], true);
+  //     emit(state.copyWith(
+  //         result:
+  //             await _buildResult(cliente, segSelect, null, [], allDocs, '')));
+  //     return;
+  //   }
+  //   final docSelect = await searchDoc();
+  //   final tesesSelect = await searchTeses(segSelect, docSelect!);
+  //   final needDocs = await searchDocs(tesesSelect, false);
 
-    emit(state.copyWith(
-        result: await _buildResult(
-            cliente, segSelect, docSelect, tesesSelect, needDocs, '')));
-  }
+  //   emit(state.copyWith(
+  //       result: await _buildResult(
+  //           cliente, segSelect, docSelect, tesesSelect, needDocs, '')));
+  // }
 
   Future<void> delete() async {
     final resetSeg = state.segmentos!
@@ -146,7 +146,7 @@ class ProjectCubit extends Cubit<ProjectState> {
     return false;
   }
 
-  Future<List<Tese>> separaTeses(String? tesesId) async {
+  List<Tese> separaTeses(String? tesesId) {
     final listTeses = state.teses;
     final ids = tesesId!.split(',').map((id) => id.trim()).toList();
     final teses =
@@ -184,11 +184,11 @@ class ProjectCubit extends Cubit<ProjectState> {
     return null;
   }
 
-  Future<List<String>> searchDocs(List<Tese> teses, bool allDocs) async {
+  List<String> searchDocs(List<Tese> teses, bool allDocs) {
     List<String> docsNeed = [];
 
-    if (allDocs) {
-      teses = await separaTeses('1,2,3,4,5,6,7,8,9');
+    if (teses.isEmpty && allDocs) {
+      teses = separaTeses('1,2,3,4,5,6,7,8,9');
     }
     for (final tese in teses) {
       final docs = tese.docs!
@@ -221,91 +221,101 @@ class ProjectCubit extends Cubit<ProjectState> {
   }
 
   Future<void> printResult() async {
-    final currentState = state;
+    //  final cliente = await searchCliente();
+    // final segSelect = await searchSeg();
+    // if (segSelect!.id == '7') {
+    //   final allDocs = await searchDocs([], true);
+    //   emit(state.copyWith(
+    //       result:
+    //           await _buildResult(cliente, segSelect, null, [], allDocs, '')));
+    //   return;
+    // }
+    // final docSelect = await searchDoc();
+    // final tesesSelect = await searchTeses(segSelect, docSelect!);
+    // final needDocs = await searchDocs(tesesSelect, false);
 
-    // Cria uma cópia do result com as observações atualizadas
-    final updatedResult = currentState.result!.copyWith(
-      obs: currentState.obs,
-    );
+    // emit(state.copyWith(
+    //     result: await _buildResult(
+    //         cliente, segSelect, docSelect, tesesSelect, needDocs, '')));
 
     final outros =
-        updatedResult.segmento!.id == '7' && updatedResult.teses!.isEmpty;
+        state.result!.segmento!.id == '7' && state.result!.teses!.isEmpty;
 
-    final resumoPdf = ResumoPdfUtil(result: updatedResult);
-    resumoPdf.format = PdfPageFormat.a4;
+    // final resumoPdf = ResumoPdfUtil(result: );
+    // resumoPdf.format = PdfPageFormat.a4;
 
-    outros
-        ? await resumoPdf.createResumoOutrosPDF()
-        : await resumoPdf.createResumoPDF();
+    // outros
+    //     ? await resumoPdf.createResumoOutrosPDF()
+    //     : await resumoPdf.createResumoPDF();
   }
 
-  Future<List<Tese>> searchTeses(Segmento segmento, Documento documento) async {
+  List<Tese> searchTeses(Segmento segmento, Documento documento) {
     List<Tese> teses = [];
     switch (segmento.id) {
       case '1': //Transportadoras
         if (documento.id == '1') {
-          teses = await separaTeses('semtese');
+          teses = separaTeses('semtese');
         }
         if (documento.id == '2') {
-          teses = await separaTeses('8,9');
+          teses = separaTeses('8,9');
         }
         if (documento.id == '3') {
-          teses = await separaTeses('2,3,7,8,9');
+          teses = separaTeses('2,3,7,8,9');
         }
 
       case '2': // Postos
         if (documento.id == '1') {
-          teses = await separaTeses('1');
+          teses = separaTeses('1');
         }
         if (documento.id == '2') {
-          teses = await separaTeses('4,5,6,8,9');
+          teses = separaTeses('4,5,6,8,9');
         }
         if (documento.id == '3') {
-          teses = await separaTeses('2,3,4,5,6,7,8,9');
+          teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
       case '3': //Supermercados
         if (documento.id == '1') {
-          teses = await separaTeses('1');
+          teses = separaTeses('1');
         }
         if (documento.id == '2') {
-          teses = await separaTeses('4,5,6,8,9');
+          teses = separaTeses('4,5,6,8,9');
         }
         if (documento.id == '3') {
-          teses = await separaTeses('2,3,4,5,6,7,8,9');
+          teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
       case '4': //Agro/Cerealistas
         if (documento.id == '1') {
-          teses = await separaTeses('1');
+          teses = separaTeses('1');
         }
         if (documento.id == '2') {
-          teses = await separaTeses('4,5,6,8,9');
+          teses = separaTeses('4,5,6,8,9');
         }
         if (documento.id == '3') {
-          teses = await separaTeses('2,3,4,5,6,7,8,9');
+          teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
       case '5': //Distribuidores de alimentos
         if (documento.id == '1') {
-          teses = await separaTeses('1');
+          teses = separaTeses('1');
         }
         if (documento.id == '2') {
-          teses = await separaTeses('4,5,6,8,9');
+          teses = separaTeses('4,5,6,8,9');
         }
         if (documento.id == '3') {
-          teses = await separaTeses('2,3,4,5,6,7,8,9');
+          teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
       case '6': // Hortifrutigrangeiros
         if (documento.id == '1') {
-          teses = await separaTeses('1');
+          teses = separaTeses('1');
         }
         if (documento.id == '2') {
-          teses = await separaTeses('4,5,6,8,9');
+          teses = separaTeses('4,5,6,8,9');
         }
         if (documento.id == '3') {
-          teses = await separaTeses('2,3,4,5,6,7,8,9');
+          teses = separaTeses('2,3,4,5,6,7,8,9');
         }
     }
     emit(state.copyWith(tesesSelect: teses));

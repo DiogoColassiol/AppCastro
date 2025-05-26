@@ -5,14 +5,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
+import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
+import 'package:project/entity/segmentoss.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/input_widget.dart';
 
+// ignore: must_be_immutable
 class ResultScreen extends StatefulWidget {
-  const ResultScreen({super.key});
+  final String nome;
+  final Segmento segmento;
+  final Documento documento;
+
+  const ResultScreen(
+      {super.key,
+      required this.nome,
+      required this.segmento,
+      required this.documento});
 
   @override
   State<ResultScreen> createState() => ResultScreenState();
@@ -67,9 +79,7 @@ class ResultScreenState extends State<ResultScreen> {
               Expanded(
                 child: Container(
                   color: ThemeUtils.backgroundColor,
-                  child: state.hasObs
-                      ? contentEdit(context, state.result)
-                      : content(state.result!),
+                  child: state.hasObs ? contentEdit(context) : content(),
                 ),
               ),
             ],
@@ -93,10 +103,10 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget contentEdit(BuildContext context, Result? result) {
+  Widget contentEdit(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        var outros = result!.segmento!.id == '7' && result.teses!.isEmpty;
+        var outros = widget.segmento.id == '7';
         return Center(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -105,7 +115,7 @@ class ResultScreenState extends State<ResultScreen> {
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      outros ? pdfOutros(result) : pdf(result),
+                      outros ? pdfOutros() : pdf(),
                     ],
                   ),
                 ),
@@ -116,7 +126,7 @@ class ResultScreenState extends State<ResultScreen> {
                   child: Card(
                       elevation: 20,
                       color: ThemeUtils.backgroundColor,
-                      child: addObsContainer(context, result)),
+                      child: addObsContainer(context)),
                 )
               ],
             ),
@@ -126,7 +136,7 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget addObsContainer(BuildContext context, Result? result) {
+  Widget addObsContainer(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
@@ -162,10 +172,10 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget content(Result result) {
+  Widget content() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        var outros = result.segmento!.id == '7' && result.teses!.isEmpty;
+        var outros = widget.segmento.id == '7';
         return Column(
           children: [
             Expanded(
@@ -174,7 +184,7 @@ class ResultScreenState extends State<ResultScreen> {
                 color: ThemeUtils.backgroundColor,
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [outros ? pdfOutros(result) : pdf(result)],
+                    children: [outros ? pdfOutros() : pdf()],
                   ),
                 ),
               ),
@@ -185,13 +195,15 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget pdfOutros(Result? result) {
+  Widget pdfOutros() {
     final data = DateTime.now();
     final formatedData = DateFormat('dd/MM/yyyy').format(data);
     final formatedHora = DateFormat('HH:mm').format(data);
 
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        final c = context.read<ProjectCubit>();
+        final docsNeed = c.searchDocs([], true);
         return Center(
           child: SingleChildScrollView(
             child: Container(
@@ -229,8 +241,8 @@ class ResultScreenState extends State<ResultScreen> {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Text('Cliente: ${result!.cliente}'),
-                  Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
+                  Text('Cliente: ${widget.nome}'),
+                  Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
                   const SizedBox(height: 20),
                   const Text(
                     'Documentos requeridos:',
@@ -241,22 +253,21 @@ class ResultScreenState extends State<ResultScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  if (result.docsNecessarios != null)
-                    ...result.docsNecessarios!.map((doc) => Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '• ',
-                              style: TextStyle(fontSize: 14),
+                  ...docsNeed.map((doc) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '• ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          Expanded(
+                            child: Text(
+                              _doc(doc),
+                              style: const TextStyle(fontSize: 14),
                             ),
-                            Expanded(
-                              child: Text(
-                                _doc(doc),
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ),
-                          ],
-                        )),
+                          ),
+                        ],
+                      )),
                   const SizedBox(height: 20),
                   if (state.hasObs)
                     const Text(
@@ -281,13 +292,16 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget pdf(Result? result) {
+  Widget pdf() {
     final data = DateTime.now();
     final formatedData = DateFormat('dd/MM/yyyy').format(data);
     final formatedHora = DateFormat('HH:mm').format(data);
 
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        final c = context.read<ProjectCubit>();
+        final teses = c.searchTeses(widget.segmento, widget.documento);
+        final docsNeed = c.searchDocs(teses, false);
         return Center(
           child: SingleChildScrollView(
             child: Container(
@@ -325,9 +339,9 @@ class ResultScreenState extends State<ResultScreen> {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Text('Cliente: ${result!.cliente}'),
-                  Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
-                  Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
+                  Text('Cliente: ${widget.nome}'),
+                  Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
+                  Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}'),
                   const SizedBox(height: 20),
                   const Text(
                     'Documentos requeridos:',
@@ -338,22 +352,21 @@ class ResultScreenState extends State<ResultScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  if (result.docsNecessarios != null)
-                    ...result.docsNecessarios!.map((doc) => Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '• ',
-                              style: TextStyle(fontSize: 14),
+                  ...docsNeed.map((doc) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '• ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          Expanded(
+                            child: Text(
+                              _doc(doc),
+                              style: const TextStyle(fontSize: 14),
                             ),
-                            Expanded(
-                              child: Text(
-                                _doc(doc),
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ),
-                          ],
-                        )),
+                          ),
+                        ],
+                      )),
                   const SizedBox(height: 20),
                   const Text(
                     'Teses Consolidadas:',
@@ -364,21 +377,20 @@ class ResultScreenState extends State<ResultScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  if (result.teses != null)
-                    ...result.teses!.map(
-                      (tese) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('• ', style: TextStyle(fontSize: 14)),
-                          Expanded(
-                            child: Text(
-                              '${tese.id}- ${tese.descricao}',
-                              style: const TextStyle(fontSize: 12),
-                            ),
+                  ...teses.map(
+                    (tese) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('• ', style: TextStyle(fontSize: 14)),
+                        Expanded(
+                          child: Text(
+                            '${tese.id}- ${tese.descricao}',
+                            style: const TextStyle(fontSize: 12),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+                  ),
                   const SizedBox(height: 20),
                   if (state.hasObs)
                     const Text(

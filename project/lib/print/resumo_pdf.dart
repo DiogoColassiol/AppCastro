@@ -35,10 +35,10 @@ class ResumoPdfUtil {
         build: (context) => [
           _buildHeader('Relatório Final'),
           SizedBox(height: 16),
-          _buildInfoText(
+          ..._buildInfoText(
               'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:'),
           SizedBox(height: 10),
-          _buildClientAndSeg(),
+          ..._buildClientAndSeg(),
           SizedBox(height: 20),
           ..._buildDocsNedded(),
           SizedBox(height: 20),
@@ -82,9 +82,9 @@ class ResumoPdfUtil {
         build: (context) => [
           _buildHeader('Relatório Outros'),
           SizedBox(height: 16),
-          _buildInfoText('Relatório gerado com a escolha de "Outros"'),
+          ..._buildInfoText('Relatório gerado com a escolha de "Outros"'),
           SizedBox(height: 10),
-          _buildClientAndSeg(),
+          ..._buildClientAndSeg(),
           SizedBox(height: 20),
           ..._buildDocsNedded(),
           SizedBox(height: 20),
@@ -132,23 +132,26 @@ class ResumoPdfUtil {
     );
   }
 
-  _buildInfoText(String text) {
-    Text(
-      text,
-      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    );
+  List<Widget> _buildInfoText(String text) {
+    return [
+      Text(
+        text,
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      )
+    ];
   }
 
-  _buildClientAndSeg() {
-    Text('Cliente: ${result.cliente}');
-    Text('Segmento: ${result.segmento?.nome ?? "N/A"}');
-    if (result.segmento!.id != '7' && result.teses!.isNotEmpty) {
-      Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}');
-    }
+  List<Widget> _buildClientAndSeg() {
+    return [
+      Text('Cliente: ${result.cliente}'),
+      Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
+      if (result.segmento!.id != '7' && result.teses!.isNotEmpty)
+        Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}')
+    ];
   }
 
   List<Widget> _buildDocsNedded() {
-    return [
+    List<Widget> widgets = [
       Text(
         'Documentos requeridos:',
         style: TextStyle(
@@ -158,14 +161,18 @@ class ResumoPdfUtil {
         ),
       ),
       SizedBox(height: 10),
-      if (result.docsNecessarios != null)
-        ...result.docsNecessarios!
-            .map((doc) => Bullet(bulletSize: 3, text: _doc(doc))),
     ];
+
+    if (result.docsNecessarios != null) {
+      widgets.addAll(result.docsNecessarios!
+          .map((doc) => Bullet(bulletSize: 3, text: _doc(doc))));
+    }
+
+    return widgets;
   }
 
   List<Widget> _buildTeses() {
-    return [
+    List<Widget> widgets = [
       Text(
         'Teses Consolidadas:',
         style: TextStyle(
@@ -174,12 +181,16 @@ class ResumoPdfUtil {
             decoration: TextDecoration.underline),
       ),
       SizedBox(height: 10),
-      if (result.teses != null)
-        ...result.teses!.map((tese) => Bullet(
-            bulletSize: 3,
-            text: '${tese.id}- ${tese.descricao}',
-            style: const TextStyle(fontSize: 10))),
     ];
+
+    if (result.teses != null) {
+      widgets.addAll(result.teses!.map((tese) => Bullet(
+          bulletSize: 3,
+          text: '${tese.id}- ${tese.descricao}',
+          style: const TextStyle(fontSize: 10))));
+    }
+
+    return widgets;
   }
 
   List<Widget> _buildObservacoes() {

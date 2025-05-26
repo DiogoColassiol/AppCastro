@@ -297,9 +297,19 @@ class _MainScreenState extends State<MainScreen>
           textColor: Colors.white,
           color: ThemeUtils.primaryColor,
           onPressed: () async {
-            await cubit.build(context);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const ResultScreen()));
+            final nome = await cubit.searchCliente();
+            final segmento = await cubit.searchSeg();
+            final documento = await cubit.searchDoc();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ResultScreen(
+                  nome: nome!,
+                  segmento: segmento!,
+                  documento: documento!,
+                ),
+              ),
+            );
           },
         );
       },

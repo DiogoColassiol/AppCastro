@@ -154,7 +154,6 @@ class ResultScreenState extends State<ResultScreen> {
                   width: double.infinity,
                   height: 500,
                   child: Input(
-                    sizeFont: 14,
                     border: const UnderlineInputBorder(),
                     value: state.obs,
                     controller: _inputControler,

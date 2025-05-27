@@ -23,7 +23,6 @@ class Input extends StatefulWidget {
   final Widget? preffixIcon;
   final bool haveBorder;
   final Color? labelTextColor;
-  final double? sizeFont;
 
   const Input({
     super.key,
@@ -49,7 +48,6 @@ class Input extends StatefulWidget {
     this.preffixIcon,
     this.haveBorder = true,
     this.labelTextColor,
-    this.sizeFont,
   });
 
   @override
@@ -59,6 +57,7 @@ class Input extends StatefulWidget {
 class _InputState extends State<Input> {
   TextEditingController controller = TextEditingController();
   FocusNode? focusNode;
+  ThemeData? tema;
 
   @override
   void initState() {
@@ -73,15 +72,46 @@ class _InputState extends State<Input> {
   }
 
   @override
+  void didChangeDependencies() {
+    tema = Theme.of(context);
+    super.didChangeDependencies();
+  }
+
+  void onFocus() {
+    if (focusNode != null && focusNode!.hasFocus) {
+      controller.selection =
+          TextSelection(baseOffset: 0, extentOffset: controller.text.length);
+    }
+  }
+
+  void verifyValueChanges() {
+    String? txt = widget.value ?? controller.text;
+    if (controller.text == txt) {
+      return;
+    }
+    controller.text = txt;
+    controller.selection = TextSelection(
+        baseOffset: controller.text.length,
+        extentOffset: controller.text.length);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    verifyValueChanges();
     return Visibility(
       child: Padding(
         padding: const EdgeInsets.only(top: 5.0),
         child: Tooltip(
           message: widget.tooltip ?? '',
           child: TextFormField(
-            style:
-                TextStyle(color: Colors.grey[700], fontSize: widget.sizeFont),
+            style: TextStyle(
+                color: widget.readonly
+                    ? tema!.brightness == Brightness.dark
+                        ? Colors.grey[700]
+                        : Colors.grey[800]
+                    : tema!.brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black),
             textDirection: TextDirection.ltr,
             onChanged: (value) {
               if (widget.onChanged != null) {
@@ -92,16 +122,18 @@ class _InputState extends State<Input> {
             controller: controller,
             focusNode: focusNode,
             readOnly: widget.readonly,
-            maxLines: null,
+            maxLines: widget.maxLines ?? 1,
             textInputAction: widget.action,
             decoration: InputDecoration(
               contentPadding: widget.contentPadding,
               suffixIcon: widget.suffixIcon,
               suffixText: widget.suffixText,
               prefixIcon: widget.preffixIcon,
-              fillColor: Colors.black12,
+              fillColor: tema?.brightness == Brightness.dark
+                  ? Colors.black12
+                  : Colors.grey[100],
               filled: widget.readonly,
-              hintMaxLines: 0,
+              hintMaxLines: 1,
               label: widget.label == null
                   ? null
                   : Text(
@@ -122,7 +154,10 @@ class _InputState extends State<Input> {
                   ? widget.border ??
                       OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.black))
+                          borderSide: BorderSide(
+                              color: tema?.brightness == Brightness.dark
+                                  ? Colors.grey
+                                  : Colors.black))
                   : null,
             ),
             obscureText: widget.obscureText,

@@ -18,11 +18,12 @@ class ResultScreen extends StatefulWidget {
   final Segmento segmento;
   final Documento? documento;
 
-  const ResultScreen(
-      {super.key,
-      required this.nome,
-      required this.segmento,
-      required this.documento});
+  const ResultScreen({
+    super.key,
+    required this.nome,
+    required this.segmento,
+    this.documento,
+  });
 
   @override
   State<ResultScreen> createState() => ResultScreenState();

@@ -15,7 +15,7 @@ class ProjectState {
   final String? obs;
   final int? obsCount;
   final Result? result;
-  // final bool? error;
+  //final String? errorMessage;
 
   const ProjectState({
     this.cliente = '',
@@ -29,7 +29,7 @@ class ProjectState {
     this.obs = '',
     this.obsCount,
     this.result,
-    // this.error,
+    // this.errorMessage = '',
   });
 
   ProjectState copyWith({
@@ -44,7 +44,7 @@ class ProjectState {
     String? obs,
     int? obsCount,
     Result? result,
-    //  bool? error,
+    // String? errorMessage
   }) {
     return ProjectState(
       cliente: cliente ?? this.cliente,
@@ -58,7 +58,7 @@ class ProjectState {
       obs: obs ?? this.obs,
       obsCount: obsCount ?? this.obsCount,
       result: result ?? this.result,
-      //  error: error ?? this.error,
+      //   errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }

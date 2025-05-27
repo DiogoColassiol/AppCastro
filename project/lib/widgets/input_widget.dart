@@ -73,7 +73,6 @@ class _InputState extends State<Input> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Visibility(
       child: Padding(

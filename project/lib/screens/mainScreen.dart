@@ -323,13 +323,13 @@ class _MainScreenState extends State<MainScreen>
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
         return ButtonApp(
-          text: 'Limpar Campos',
-          icon: Icons.delete,
-          textColor: Colors.red,
-          color: Colors.white,
-          // color: Colors.red,
-          onPressed: () => cubit.delete(),
-        );
+            text: 'Limpar Campos',
+            icon: Icons.delete,
+            textColor: Colors.red,
+            color: Colors.white,
+            onPressed: () async {
+              await cubit.delete();
+            });
       },
     );
   }

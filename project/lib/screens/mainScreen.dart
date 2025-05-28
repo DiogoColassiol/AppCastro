@@ -216,7 +216,9 @@ class _MainScreenState extends State<MainScreen>
         final outros =
             !state.segmentos!.any((s) => s.id == '7' && s.selecionado!);
         final cubit = context.read<ProjectCubit>();
-        final documentos = state.documentos ?? [];
+        final documentos =
+            (state.documentos ?? []).where((doc) => doc.id != '4').toList();
+
         return Expanded(
           child: Column(
             children: [
@@ -307,7 +309,7 @@ class _MainScreenState extends State<MainScreen>
                       builder: (context) => ResultScreen(
                         nome: nome!,
                         segmento: segmento!,
-                        documento: documento,
+                        documento: documento!,
                       ),
                     ),
                   )

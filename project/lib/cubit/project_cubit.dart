@@ -36,6 +36,9 @@ class ProjectCubit extends Cubit<ProjectState> {
     seg.selecionado = select;
     emit(state.copyWith(segmentos: [...state.segmentos!]));
     emit(state.copyWith(segmentoSelect: seg));
+    if (seg.id == '7' && select == true) {
+      await selectDoc('4', true);
+    }
   }
 
   Future<void> selectDoc(String? docId, bool? select) async {
@@ -68,8 +71,9 @@ class ProjectCubit extends Cubit<ProjectState> {
     final resetDoc = state.documentos!
         .map((doc) => doc.copyWith(selecionado: false))
         .toList();
+
     emit(state.copyWith(documentos: resetDoc));
-    emit(state.copyWith(cliente: ''));
+    emit(state.copyWith(cliente: '', obs: '', hasObs: false));
   }
 
   Future<bool> trataErros(BuildContext context, String? cliente, Segmento? seg,
@@ -97,7 +101,18 @@ class ProjectCubit extends Cubit<ProjectState> {
       );
       return true;
     }
-    if (doc!.id == '1' && seg.id == '1') {
+    if (doc == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialogApp(
+          title: 'Erro na escolha',
+          content: 'Selecione um documento para iniciar a busca!',
+          onpressed: () => Navigator.of(context).pop(),
+        ),
+      );
+      return true;
+    }
+    if (doc.id == '1' && seg.id == '1') {
       showDialog(
         context: context,
         builder: (context) => AlertDialogApp(
@@ -109,17 +124,7 @@ class ProjectCubit extends Cubit<ProjectState> {
       );
       return true;
     }
-    if (seg.id == '7') {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialogApp(
-          title: 'adsdsadsa',
-          content: 'sdasddsa',
-          onpressed: () => Navigator.of(context).pop(),
-        ),
-      );
-      return true;
-    }
+
     return false;
   }
 
@@ -202,7 +207,7 @@ class ProjectCubit extends Cubit<ProjectState> {
     String? obs;
     state.hasObs && state.obs!.isNotEmpty ? obs = state.obs : '';
 
-    if (segmento.id == '7' && documento == null) {
+    if (segmento.id == '7' && documento!.id == '4') {
       final docs = searchDocs([], true);
       final result = _buildResult(nome, segmento, documento, [], docs, obs);
       emit(state.copyWith(result: await result));
@@ -459,7 +464,8 @@ Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das
     final docs = [
       Documento(id: '1', nome: 'Simples Nacional'),
       Documento(id: '2', nome: 'Lucro Presumido'),
-      Documento(id: '3', nome: 'Lucro Real')
+      Documento(id: '3', nome: 'Lucro Real'),
+      Documento(id: '4', nome: 'Outros')
     ];
     // await addRegimeDB(docs);
     emit(state.copyWith(documentos: docs));

@@ -206,7 +206,7 @@ class ResultScreenState extends State<ResultScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader('Relatório Outros'),
+                  _buildHeader('Relatório Final'),
                   const SizedBox(height: 1),
                   const Divider(thickness: 1, color: Colors.black),
                   const SizedBox(height: 16),

@@ -66,7 +66,6 @@ class ResumoPdfUtil {
 
   Future<Document> createResumoOutrosPDF() async {
     final pdf = Document(theme: await _myTheme());
-
     pdf.addPage(
       MultiPage(
         maxPages: 100,
@@ -80,14 +79,13 @@ class ResumoPdfUtil {
           ),
         ),
         build: (context) => [
-          _buildHeader('Relatório Outros'),
+          _buildHeader('Relatório Final'),
           SizedBox(height: 16),
           ..._buildInfoText('Relatório gerado com a escolha de "Outros"'),
           SizedBox(height: 10),
           ..._buildClientAndSeg(),
           SizedBox(height: 20),
           ..._buildDocsNedded(),
-          SizedBox(height: 20),
           if (result.obs != null && result.obs!.trim().isNotEmpty) ...[
             SizedBox(height: 20),
             Text(
@@ -197,7 +195,7 @@ class ResumoPdfUtil {
     final linhas = texto!.split('\n');
     return linhas.map((linha) {
       return Padding(
-        padding: const EdgeInsets.only(left: 20),
+        padding: const EdgeInsets.only(left: 10),
         child: Text(
           linha,
           style: const TextStyle(fontSize: 12),

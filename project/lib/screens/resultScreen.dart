@@ -16,13 +16,13 @@ import 'package:project/widgets/input_widget.dart';
 class ResultScreen extends StatefulWidget {
   final String nome;
   final Segmento segmento;
-  final Documento? documento;
+  final Documento documento;
 
   const ResultScreen({
     super.key,
     required this.nome,
     required this.segmento,
-    this.documento,
+    required this.documento,
   });
 
   @override
@@ -145,7 +145,7 @@ class ResultScreenState extends State<ResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                'Digite as Observações do Relatório',
+                'Informe as Observações do Relatório',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
@@ -248,7 +248,7 @@ class ResultScreenState extends State<ResultScreen> {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final c = context.read<ProjectCubit>();
-        final teses = c.searchTeses(widget.segmento, widget.documento!);
+        final teses = c.searchTeses(widget.segmento, widget.documento);
         final docsNeed = c.searchDocs(teses, false);
         return Center(
           child: SingleChildScrollView(
@@ -289,7 +289,7 @@ class ResultScreenState extends State<ResultScreen> {
                   const SizedBox(height: 10),
                   Text('Cliente: ${widget.nome}'),
                   Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
-                  Text('Regime Tributário: ${widget.documento!.nome ?? "N/A"}'),
+                  Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}'),
                   const SizedBox(height: 20),
                   const Text(
                     'Documentos requeridos:',
@@ -350,9 +350,12 @@ class ResultScreenState extends State<ResultScreen> {
                       ),
                     ),
                   if (state.hasObs)
-                    Text(
-                      '${state.obs}',
-                      style: const TextStyle(fontSize: 14),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        '${state.obs}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
                     ),
                 ],
               ),
@@ -403,7 +406,7 @@ class ResultScreenState extends State<ResultScreen> {
       Text('Cliente: ${widget.nome}'),
       Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
       if (widget.segmento.id != '7')
-        Text('Regime Tributário: ${widget.documento?.nome ?? "N/A"}')
+        Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}')
     ];
   }
 

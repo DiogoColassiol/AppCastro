@@ -47,27 +47,40 @@ class SearchApiDialog extends StatelessWidget {
   }
 
   _buttonSair(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => Navigator.of(context).pop(),
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(20, 40),
-        backgroundColor: Colors.red[400],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      child: const Text('Sair',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+    return BlocBuilder<ProjectCubit, ProjectState>(
+      builder: (context, state) {
+        final c = context.read<ProjectCubit>();
+        return ElevatedButton(
+          onPressed: () {
+            c.setHasApi(false);
+            Navigator.of(context).pop();
+          },
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(20, 40),
+            backgroundColor: Colors.red[400],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: const Text('Sair',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.white)),
+        );
+      },
     );
   }
 
   _buttonAdd(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        //     final c = context.read<ProjectCubit>();
+        final c = context.read<ProjectCubit>();
         return ElevatedButton(
-          onPressed: () {},
+          onPressed: () async {
+            await c.setHasApi(true);
+            await c.setReturnApi(receita);
+          },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(20, 40),
             backgroundColor: ThemeUtils.primaryColor,

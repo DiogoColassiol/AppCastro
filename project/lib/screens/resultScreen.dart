@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:project/api/models/receita_model.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/documentos.dart';
@@ -17,13 +18,14 @@ class ResultScreen extends StatefulWidget {
   final String nome;
   final Segmento segmento;
   final Documento documento;
+  final ReceitaModel? api;
 
-  const ResultScreen({
-    super.key,
-    required this.nome,
-    required this.segmento,
-    required this.documento,
-  });
+  const ResultScreen(
+      {super.key,
+      required this.nome,
+      required this.segmento,
+      required this.documento,
+      this.api});
 
   @override
   State<ResultScreen> createState() => ResultScreenState();

@@ -73,6 +73,14 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(obs: value));
   }
 
+  Future<void> setReturnApi(ReceitaModel model) async {
+    emit(state.copyWith(apiResult: model));
+  }
+
+  Future<void> setHasApi(bool value) async {
+    emit(state.copyWith(hasApi: value));
+  }
+
   Future<void> delete() async {
     final resetSeg = state.segmentos!
         .map((seg) => seg.copyWith(selecionado: false))

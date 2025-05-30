@@ -1,3 +1,4 @@
+import 'package:project/api/models/receita_model.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentoss.dart';
@@ -15,6 +16,8 @@ class ProjectState {
   final String? obs;
   final int? obsCount;
   final Result? result;
+  final ReceitaModel? apiResult;
+  final bool hasApi;
   //final String? errorMessage;
 
   const ProjectState({
@@ -29,6 +32,8 @@ class ProjectState {
     this.obs = '',
     this.obsCount,
     this.result,
+    this.apiResult,
+    this.hasApi = false,
     // this.errorMessage = '',
   });
 
@@ -44,6 +49,8 @@ class ProjectState {
     String? obs,
     int? obsCount,
     Result? result,
+    ReceitaModel? apiResult,
+    bool? hasApi,
     // String? errorMessage
   }) {
     return ProjectState(
@@ -58,6 +65,8 @@ class ProjectState {
       obs: obs ?? this.obs,
       obsCount: obsCount ?? this.obsCount,
       result: result ?? this.result,
+      apiResult: apiResult ?? this.apiResult,
+      hasApi: hasApi ?? this.hasApi,
       //   errorMessage: errorMessage ?? this.errorMessage,
     );
   }

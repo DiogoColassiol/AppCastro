@@ -107,6 +107,7 @@ class _MainScreenState extends State<MainScreen>
                       child: Column(
                         children: [
                           _cliente(),
+                          //     _apiDados(context),
                         ],
                       ),
                     ),
@@ -149,18 +150,56 @@ class _MainScreenState extends State<MainScreen>
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
-        return Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Input(
-            label: 'Informe o nome do cliente',
-            value: state.cliente,
-            preffixIcon: _iconApiButton(context),
-            focusNode: _node,
-            controller: _inputControler,
-            onChanged: (value) {
-              cubit.setCliente(value);
-            },
-          ),
+        return Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Input(
+                label: 'Informe o nome do cliente',
+                value: state.cliente,
+                preffixIcon: _iconApiButton(context),
+                focusNode: _node,
+                controller: _inputControler,
+                onChanged: (value) {
+                  cubit.setCliente(value);
+                },
+              ),
+            ),
+            if (state.hasApi)
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    ButtonApp(
+                      text: 'Remover Dados',
+                      icon: Icons.delete,
+                      color: Colors.red[400],
+                      onPressed: () {},
+                    )
+                  ],
+                ),
+              )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _apiDados(BuildContext context) {
+    return BlocBuilder<ProjectCubit, ProjectState>(
+      builder: (context, state) {
+        final cubit = context.read<ProjectCubit>();
+        final has = state.hasApi ? true : false;
+        return Row(
+          children: [
+            !has
+                ? Expanded(
+                    child: Column(
+                      children: [],
+                    ),
+                  )
+                : Container(),
+          ],
         );
       },
     );
@@ -340,6 +379,7 @@ class _MainScreenState extends State<MainScreen>
                         nome: nome,
                         segmento: segmento!,
                         documento: documento!,
+                        api: state.apiResult,
                       ),
                     ),
                   )

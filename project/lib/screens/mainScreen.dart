@@ -5,10 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/screens/resultScreen.dart';
+import 'package:project/widgets/alertDialogApp.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_teses_widget.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/input_widget.dart';
+import 'package:project/widgets/searchApiDialog.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -152,13 +154,41 @@ class _MainScreenState extends State<MainScreen>
           child: Input(
             label: 'Informe o nome do cliente',
             value: state.cliente,
-            preffixIcon: const Icon(Icons.person),
+            preffixIcon: _iconApiButton(context),
             focusNode: _node,
             controller: _inputControler,
             onChanged: (value) {
               cubit.setCliente(value);
             },
           ),
+        );
+      },
+    );
+  }
+
+  Widget _iconApiButton(BuildContext context) {
+    return BlocBuilder<ProjectCubit, ProjectState>(
+      builder: (context, state) {
+        final c = context.read<ProjectCubit>();
+        return IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () async {
+            final dados = await c.getDadosClient();
+            if (dados == null) {
+              showDialog(
+                context: context,
+                builder: (context) => const AlertDialogApp(
+                  title: 'Cnpj nao encontrado!',
+                  content: 'Por favor, cala-te macaco!',
+                ),
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => SearchApiDialog(receita: dados),
+              );
+            }
+          },
         );
       },
     );
@@ -297,7 +327,7 @@ class _MainScreenState extends State<MainScreen>
           textColor: Colors.white,
           color: ThemeUtils.primaryColor,
           onPressed: () async {
-            final nome = await cubit.searchCliente();
+            final nome = cubit.searchCliente();
             final segmento = await cubit.searchSeg();
             final documento = await cubit.searchDoc();
             final hasErro =
@@ -307,7 +337,7 @@ class _MainScreenState extends State<MainScreen>
                     context,
                     MaterialPageRoute(
                       builder: (context) => ResultScreen(
-                        nome: nome!,
+                        nome: nome,
                         segmento: segmento!,
                         documento: documento!,
                       ),

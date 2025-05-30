@@ -5,7 +5,7 @@ import 'package:project/api/http/http_client.dart';
 import 'package:project/api/models/receita_model.dart';
 
 abstract class IReceitaReposity {
-  Future<List<ReceitaModel>> getReceita();
+  Future<ReceitaModel> getReceita(String cnpj);
 }
 
 class ReceitaRepository implements IReceitaReposity {
@@ -13,22 +13,18 @@ class ReceitaRepository implements IReceitaReposity {
 
   ReceitaRepository({required this.client});
   @override
-  Future<List<ReceitaModel>> getReceita() async {
-    final response = await client.get(
-      url: 'https://receitaws.com.br/v1/cnpj/{cnpj}',
-    );
+  Future<ReceitaModel> getReceita(String cnpj) async {
+    final response =
+        await client.get(url: 'https://receitaws.com.br/v1/cnpj/$cnpj');
+
     if (response.statusCode == 200) {
-      final List<ReceitaModel> receitaList = [];
-      final body = jsonDecode(response.body);
-      body['receitas'].map((it) {
-        final ReceitaModel receita = ReceitaModel.fromMap(it);
-        receitaList.add(receita);
-      }).toList();
-      return receitaList;
+      final Map<String, dynamic> body = jsonDecode(response.body);
+      final ReceitaModel receita = ReceitaModel.fromMap(body);
+      return receita;
     } else if (response.statusCode == 404) {
-      throw NotFundException('url informada nao é valida!');
+      throw NotFundException('URL informada não é válida!');
     } else {
-      throw NotFundException('nao foi possivel carregar a url');
+      throw NotFundException('Não foi possível carregar a URL.');
     }
   }
 }

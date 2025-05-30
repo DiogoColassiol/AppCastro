@@ -5,13 +5,11 @@ import 'package:project/utils/theme_utils.dart';
 class AlertDialogApp extends StatelessWidget {
   final String title;
   final String content;
-  final VoidCallback onpressed;
 
   const AlertDialogApp({
     super.key,
     required this.title,
     required this.content,
-    required this.onpressed,
   });
 
   @override
@@ -31,7 +29,7 @@ class AlertDialogApp extends StatelessWidget {
 
   _buttonSair(BuildContext context) {
     return ElevatedButton(
-      onPressed: onpressed,
+      onPressed: () => Navigator.of(context).pop(),
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(20, 40),
         backgroundColor: ThemeUtils.primaryColor,

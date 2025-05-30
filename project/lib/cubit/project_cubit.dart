@@ -4,6 +4,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
+import 'package:project/api/http/http_client.dart';
+import 'package:project/api/models/receita_model.dart';
+import 'package:project/api/receita_store.dart';
+import 'package:project/api/repositories/receita_repo.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentoss.dart';
@@ -13,9 +17,11 @@ import 'package:project/print/resumo_pdf.dart';
 import 'package:project/widgets/alertDialogApp.dart';
 
 class ProjectCubit extends Cubit<ProjectState> {
-  // final SegmentoDataBase segmentoDataBase;
-  // final RegimeDataBase regimeDataBase;
-  // final TeseDataBase teseDataBase;
+  final ReceitaStore store = ReceitaStore(
+    repository: ReceitaRepository(
+      client: HttpClient(),
+    ),
+  );
   ProjectCubit() : super(const ProjectState()) {
     init();
   }
@@ -23,6 +29,11 @@ class ProjectCubit extends Cubit<ProjectState> {
     await loadSegmentos();
     await loadDocumentos();
     await loadTeses();
+  }
+
+  Future<ReceitaModel?> getDadosClient() async {
+    String cnpj = searchCliente();
+    return store.getReceitas(cnpj);
   }
 
   Future<void> selectSeg(String? segId, bool? select) async {
@@ -81,11 +92,10 @@ class ProjectCubit extends Cubit<ProjectState> {
     if (cliente == null || cliente == '') {
       showDialog(
         context: context,
-        builder: (context) => AlertDialogApp(
+        builder: (context) => const AlertDialogApp(
           title: 'Cliente não informado!',
           content:
               'Por favor, adicione o nome do cliente para iniciar a busca!',
-          onpressed: () => Navigator.of(context).pop(),
         ),
       );
       return true;
@@ -93,10 +103,9 @@ class ProjectCubit extends Cubit<ProjectState> {
     if (seg == null) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialogApp(
+        builder: (context) => const AlertDialogApp(
           title: 'Erro na escolha',
           content: 'Selecione um segmento para iniciar a busca!',
-          onpressed: () => Navigator.of(context).pop(),
         ),
       );
       return true;
@@ -104,10 +113,9 @@ class ProjectCubit extends Cubit<ProjectState> {
     if (doc == null) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialogApp(
+        builder: (context) => const AlertDialogApp(
           title: 'Erro na escolha',
           content: 'Selecione um documento para iniciar a busca!',
-          onpressed: () => Navigator.of(context).pop(),
         ),
       );
       return true;
@@ -115,11 +123,10 @@ class ProjectCubit extends Cubit<ProjectState> {
     if (doc.id == '1' && seg.id == '1') {
       showDialog(
         context: context,
-        builder: (context) => AlertDialogApp(
+        builder: (context) => const AlertDialogApp(
           title: 'Não contém Teses!',
           content:
               'Transportadoras com Simples Nacional não tem teses consolidadas!',
-          onpressed: () => Navigator.of(context).pop(),
         ),
       );
       return true;
@@ -140,8 +147,8 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(cliente: text));
   }
 
-  Future<String?> searchCliente() async {
-    return state.cliente;
+  String searchCliente() {
+    return state.cliente!;
   }
 
   Future<Segmento?> searchSeg() async {

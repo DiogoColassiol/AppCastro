@@ -8,18 +8,17 @@ class ReceitaStore {
 
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
-  final ValueNotifier<List<ReceitaModel>> state =
-      ValueNotifier<List<ReceitaModel>>([]);
+  final ValueNotifier<ReceitaModel?> state = ValueNotifier<ReceitaModel?>(null);
 
   final ValueNotifier<String> erro = ValueNotifier<String>('');
 
   ReceitaStore({required this.repository});
 
-  getReceitas() async {
+  Future<ReceitaModel> getReceitas(String cnpj) async {
     isLoading.value = true;
 
     try {
-      final result = await repository.getReceita();
+      final result = await repository.getReceita(cnpj);
       state.value = result;
     } on NotFundException catch (e) {
       erro.value = e.message;
@@ -27,5 +26,6 @@ class ReceitaStore {
       erro.value = e.toString();
     }
     isLoading.value = false;
+    return state.value!;
   }
 }

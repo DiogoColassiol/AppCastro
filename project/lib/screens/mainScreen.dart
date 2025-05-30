@@ -185,25 +185,25 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
-  Widget _apiDados(BuildContext context) {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        final has = state.hasApi ? true : false;
-        return Row(
-          children: [
-            !has
-                ? Expanded(
-                    child: Column(
-                      children: [],
-                    ),
-                  )
-                : Container(),
-          ],
-        );
-      },
-    );
-  }
+  // Widget _apiDados(BuildContext context) {
+  //   return BlocBuilder<ProjectCubit, ProjectState>(
+  //     builder: (context, state) {
+  //       final cubit = context.read<ProjectCubit>();
+  //       final has = state.hasApi ? true : false;
+  //       return Row(
+  //         children: [
+  //           !has
+  //               ? Expanded(
+  //                   child: Column(
+  //                     children: [],
+  //                   ),
+  //                 )
+  //               : Container(),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _iconApiButton(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(

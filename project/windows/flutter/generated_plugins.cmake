@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_saver
   isar_flutter_libs
   printing
+  rive_common
   window_size
 )
 

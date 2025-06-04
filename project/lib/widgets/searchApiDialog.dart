@@ -31,7 +31,7 @@ class SearchApiDialog extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
-          children: [Text("Nome da empresa: ${receita.nome}")],
+          children: [Text("Razao social: ${receita.nome}")],
         ),
         Row(
           children: [Text("Nome Fantasia: ${receita.fantasia}")],
@@ -80,6 +80,7 @@ class SearchApiDialog extends StatelessWidget {
           onPressed: () async {
             await c.setHasApi(true);
             await c.setReturnApi(receita);
+            Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(20, 40),

@@ -218,7 +218,7 @@ class _MainScreenState extends State<MainScreen>
                 context: context,
                 builder: (context) => const AlertDialogApp(
                   title: 'Cnpj nao encontrado!',
-                  content: 'Por favor, cala-te macaco!',
+                  content: 'Cala-te macaco!',
                 ),
               );
             } else {

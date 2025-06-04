@@ -246,6 +246,7 @@ class ResultScreenState extends State<ResultScreen> {
     final data = DateTime.now();
     final formatedData = DateFormat('dd/MM/yyyy').format(data);
     final formatedHora = DateFormat('HH:mm').format(data);
+    final hasApi = widget.api != null ? true : false;
 
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
@@ -289,9 +290,11 @@ class ResultScreenState extends State<ResultScreen> {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Text('Cliente: ${widget.nome}'),
+                  Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
+                  if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
                   Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
-                  Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}'),
+                  if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
+                  if (hasApi) Text('Situação: ${widget.api!.situacao}'),
                   const SizedBox(height: 20),
                   const Text(
                     'Documentos requeridos:',
@@ -404,8 +407,12 @@ class ResultScreenState extends State<ResultScreen> {
   }
 
   _buildClientAndSeg() {
+    final hasApi = widget.api != null ? true : false;
     return [
-      Text('Cliente: ${widget.nome}'),
+      Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
+      if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
+      if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
+      if (hasApi) Text('Situação: ${widget.api!.situacao}'),
       Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
       if (widget.segmento.id != '7')
         Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}')

@@ -293,6 +293,9 @@ class ResultScreenState extends State<ResultScreen> {
                   Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
                   if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
                   Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
+                  if (widget.segmento.id != '7' && teses.isNotEmpty)
+                    Text(
+                        'Regime Tributário: ${widget.documento.nome ?? "N/A"}'),
                   if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
                   if (hasApi) Text('Situação: ${widget.api!.situacao}'),
                   const SizedBox(height: 20),
@@ -411,9 +414,9 @@ class ResultScreenState extends State<ResultScreen> {
     return [
       Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
       if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
+      Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
       if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
       if (hasApi) Text('Situação: ${widget.api!.situacao}'),
-      Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
       if (widget.segmento.id != '7')
         Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}')
     ];
@@ -511,8 +514,8 @@ class ResultScreenState extends State<ResultScreen> {
           text: 'Novo Relatório',
           icon: Icons.replay_circle_filled_sharp,
           textColor: Colors.red,
-          onPressed: () {
-            cubit.delete();
+          onPressed: () async {
+            await cubit.delete();
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const MainScreen()));
           },

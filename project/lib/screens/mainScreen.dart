@@ -107,7 +107,8 @@ class _MainScreenState extends State<MainScreen>
                       child: Column(
                         children: [
                           _cliente(),
-                          //     _apiDados(context),
+                          if (state.hasApi == true && state.apiResult != null)
+                            _buttonDeleteApi(),
                         ],
                       ),
                     ),
@@ -135,7 +136,6 @@ class _MainScreenState extends State<MainScreen>
                     const SizedBox(width: 20),
                     _buttonSearch(),
                     const SizedBox(width: 20),
-                    //   _hasObs()
                   ],
                 ),
               ),
@@ -165,20 +165,33 @@ class _MainScreenState extends State<MainScreen>
                 },
               ),
             ),
-            if (state.hasApi)
-              Expanded(
-                flex: 1,
-                child: Column(
-                  children: [
-                    ButtonApp(
-                      text: 'Remover Dados',
-                      icon: Icons.delete,
-                      color: Colors.red[400],
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buttonDeleteApi() {
+    return BlocBuilder<ProjectCubit, ProjectState>(
+      builder: (context, state) {
+        final cubit = context.read<ProjectCubit>();
+        return Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  ButtonApp(
+                    text: 'Remover Dados',
+                    icon: Icons.delete,
+                    color: Colors.red[400],
+                    onPressed: () async {
+                      await cubit.setHasApi(false);
+                      await cubit.setReturnApi(null);
+                    },
+                  )
+                ],
+              ),
+            )
           ],
         );
       },

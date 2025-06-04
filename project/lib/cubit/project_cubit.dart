@@ -73,7 +73,7 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(obs: value));
   }
 
-  Future<void> setReturnApi(ReceitaModel model) async {
+  Future<void> setReturnApi(ReceitaModel? model) async {
     emit(state.copyWith(apiResult: model));
   }
 
@@ -93,6 +93,7 @@ class ProjectCubit extends Cubit<ProjectState> {
 
     emit(state.copyWith(documentos: resetDoc));
     emit(state.copyWith(cliente: '', obs: '', hasObs: false));
+    emit(state.copyWith(apiResult: null, hasApi: false));
   }
 
   Future<bool> trataErros(BuildContext context, String? cliente, Segmento? seg,
@@ -138,6 +139,10 @@ class ProjectCubit extends Cubit<ProjectState> {
 
   String searchCliente() {
     return state.cliente!;
+  }
+
+  ReceitaModel? searchReceita() {
+    return state.apiResult;
   }
 
   Future<Segmento?> searchSeg() async {
@@ -186,6 +191,7 @@ class ProjectCubit extends Cubit<ProjectState> {
     Documento? documento,
     List<Tese>? teses,
     List<String>? docs,
+    ReceitaModel? receita,
     String? obs,
   ) async {
     return Result(
@@ -194,6 +200,7 @@ class ProjectCubit extends Cubit<ProjectState> {
       documento: documento,
       teses: teses,
       docsNecessarios: docs,
+      receita: receita,
       obs: obs,
     );
   }
@@ -205,7 +212,9 @@ class ProjectCubit extends Cubit<ProjectState> {
 
     if (segmento.id == '7' && documento!.id == '4') {
       final docs = searchDocs([], true);
-      final result = _buildResult(nome, segmento, documento, [], docs, obs);
+      final receita = searchReceita();
+      final result =
+          _buildResult(nome, segmento, documento, [], docs, receita, obs);
       emit(state.copyWith(result: await result));
       final resumoPdf = ResumoPdfUtil(result: await result);
       resumoPdf.format = PdfPageFormat.a4;
@@ -214,9 +223,10 @@ class ProjectCubit extends Cubit<ProjectState> {
     }
     final teses = searchTeses(segmento, documento!);
     final needDocs = searchDocs(teses, false);
+    final receita = searchReceita();
 
     final result =
-        _buildResult(nome, segmento, documento, teses, needDocs, obs);
+        _buildResult(nome, segmento, documento, teses, needDocs, receita, obs);
     emit(state.copyWith(result: await result));
     final resumoPdf = ResumoPdfUtil(result: await result);
     resumoPdf.format = PdfPageFormat.a4;

@@ -2,12 +2,31 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project/api/models/receita_model.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/utils/theme_utils.dart';
 
-class SearchApiDialog extends StatelessWidget {
+class SearchApiDialog extends StatefulWidget {
   const SearchApiDialog({super.key});
+
+  @override
+  State<SearchApiDialog> createState() => _SearchApiDialogState();
+}
+
+class _SearchApiDialogState extends State<SearchApiDialog> {
+  late ReceitaModel? receitaReturn;
+
+  @override
+  void initState() {
+    receitaReturn = null;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +43,8 @@ class SearchApiDialog extends StatelessWidget {
           content: _buildContent(context),
           actions: [
             _buttonSair(context),
-            if (state.apiResult == null) _buttonSearch(context),
-            if (state.apiResult != null) _buttonAdd(context)
+            if (receitaReturn == null) _buttonSearch(context),
+            if (receitaReturn != null) _buttonAdd(context)
           ],
         );
       },
@@ -35,7 +54,7 @@ class SearchApiDialog extends StatelessWidget {
   _buildContent(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final receita = state.apiResult;
+        final receita = receitaReturn;
         return receita != null
             ? _resultSearchContent(context)
             : _selectDadosContent(context);
@@ -46,12 +65,12 @@ class SearchApiDialog extends StatelessWidget {
   _resultSearchContent(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final receita = state.apiResult!;
+        final receita = receitaReturn!;
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              children: [Text("Razao social: ${receita.nome}")],
+              children: [Text("Razão Social: ${receita.nome}")],
             ),
             Row(
               children: [Text("Nome Fantasia: ${receita.fantasia}")],
@@ -85,6 +104,7 @@ class SearchApiDialog extends StatelessWidget {
         return ElevatedButton(
           onPressed: () {
             c.setHasApi(false);
+            c.setReturnApi(null);
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
@@ -107,9 +127,13 @@ class SearchApiDialog extends StatelessWidget {
   _buttonAdd(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        //  final c = context.read<ProjectCubit>();
+        final c = context.read<ProjectCubit>();
         return ElevatedButton(
-          onPressed: () async {},
+          onPressed: () async {
+            await c.setHasApi(true);
+            await c.setReturnApi(receitaReturn);
+            Navigator.of(context).pop();
+          },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(20, 40),
             backgroundColor: ThemeUtils.primaryColor,
@@ -135,8 +159,9 @@ class SearchApiDialog extends StatelessWidget {
           onPressed: () async {
             final receita = await c.getDadosClient();
             if (receita != null) {
-              await c.setHasApi(true);
-              await c.setReturnApi(receita);
+              setState(() {
+                receitaReturn = receita;
+              });
             }
           },
           style: ElevatedButton.styleFrom(

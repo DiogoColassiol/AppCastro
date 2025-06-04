@@ -185,26 +185,6 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
-  // Widget _apiDados(BuildContext context) {
-  //   return BlocBuilder<ProjectCubit, ProjectState>(
-  //     builder: (context, state) {
-  //       final cubit = context.read<ProjectCubit>();
-  //       final has = state.hasApi ? true : false;
-  //       return Row(
-  //         children: [
-  //           !has
-  //               ? Expanded(
-  //                   child: Column(
-  //                     children: [],
-  //                   ),
-  //                 )
-  //               : Container(),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
   Widget _iconApiButton(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
@@ -212,20 +192,15 @@ class _MainScreenState extends State<MainScreen>
         return IconButton(
           icon: const Icon(Icons.search),
           onPressed: () async {
-            final dados = await c.getDadosClient();
-            if (dados == null) {
+            final cnpj = c.searchCliente();
+            if (cnpj.length == 14) {
               showDialog(
                 context: context,
-                builder: (context) => const AlertDialogApp(
-                  title: 'Cnpj nao encontrado!',
-                  content: 'Cala-te macaco!',
-                ),
+                builder: (context) => const SearchApiDialog(),
               );
             } else {
-              showDialog(
-                context: context,
-                builder: (context) => SearchApiDialog(receita: dados),
-              );
+              DialogApp.error(
+                  context, 'Erro!', 'Por favor, informe um cnpj válido');
             }
           },
         );

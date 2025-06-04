@@ -98,45 +98,26 @@ class ProjectCubit extends Cubit<ProjectState> {
   Future<bool> trataErros(BuildContext context, String? cliente, Segmento? seg,
       Documento? doc) async {
     if (cliente == null || cliente == '') {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialogApp(
-          title: 'Cliente não informado!',
-          content:
-              'Por favor, adicione o nome do cliente para iniciar a busca!',
-        ),
-      );
+      DialogApp.warning(context, 'Cliente não informado!',
+          'Por favor, adicione o nome do cliente para iniciar a busca!');
+
       return true;
     }
     if (seg == null) {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialogApp(
-          title: 'Erro na escolha',
-          content: 'Selecione um segmento para iniciar a busca!',
-        ),
-      );
+      DialogApp.warning(context, 'Erro na escolha!',
+          'Selecione um segmento para inciar a busca!');
+
       return true;
     }
     if (doc == null) {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialogApp(
-          title: 'Erro na escolha',
-          content: 'Selecione um documento para iniciar a busca!',
-        ),
-      );
+      DialogApp.warning(context, 'Erro na escolha!',
+          'Selecione um documento para iniciar a busca!');
+
       return true;
     }
     if (doc.id == '1' && seg.id == '1') {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialogApp(
-          title: 'Não contém Teses!',
-          content:
-              'Transportadoras com Simples Nacional não tem teses consolidadas!',
-        ),
-      );
+      DialogApp.warning(context, 'Não contém Teses!',
+          'Transportadoras com Simples Nacional não tem teses consolidadas!');
       return true;
     }
 

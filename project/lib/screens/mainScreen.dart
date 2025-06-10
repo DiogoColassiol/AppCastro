@@ -201,16 +201,13 @@ class _MainScreenState extends State<MainScreen>
   Widget _iconApiButton(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final c = context.read<ProjectCubit>();
+        //     final c = context.read<ProjectCubit>();
         return IconButton(
           icon: const Icon(Icons.search),
           onPressed: () async {
-            final cnpj = c.searchCliente();
-            if (cnpj.length == 14) {
-              showDialog(
-                context: context,
-                builder: (context) => const SearchApiDialog(),
-              );
+            final cnpj = state.cliente;
+            if (cnpj!.length == 14) {
+              await ApiDialog.show(context);
             } else {
               DialogApp.error(
                   context, 'Erro!', 'Por favor, informe um cnpj válido');

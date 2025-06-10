@@ -15,17 +15,13 @@ import 'package:project/widgets/input_widget.dart';
 
 // ignore: must_be_immutable
 class ResultScreen extends StatefulWidget {
-  final String nome;
-  final Segmento segmento;
-  final Documento documento;
+  final String? nome;
+  final Segmento? segmento;
+  final Documento? documento;
   final ReceitaModel? api;
 
   const ResultScreen(
-      {super.key,
-      required this.nome,
-      required this.segmento,
-      required this.documento,
-      this.api});
+      {super.key, this.nome, this.segmento, this.documento, this.api});
 
   @override
   State<ResultScreen> createState() => ResultScreenState();
@@ -107,7 +103,7 @@ class ResultScreenState extends State<ResultScreen> {
   Widget contentEdit(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        var outros = widget.segmento.id == '7';
+        var outros = widget.segmento!.id == '7';
         return Center(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -175,7 +171,7 @@ class ResultScreenState extends State<ResultScreen> {
   Widget content() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        var outros = widget.segmento.id == '7';
+        var outros = widget.segmento!.id == '7';
         return Column(
           children: [
             Expanded(
@@ -251,7 +247,7 @@ class ResultScreenState extends State<ResultScreen> {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final c = context.read<ProjectCubit>();
-        final teses = c.searchTeses(widget.segmento, widget.documento);
+        final teses = c.searchTeses(widget.segmento!, widget.documento!);
         final docsNeed = c.searchDocs(teses, false);
         return Center(
           child: SingleChildScrollView(
@@ -292,10 +288,10 @@ class ResultScreenState extends State<ResultScreen> {
                   const SizedBox(height: 10),
                   Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
                   if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
-                  Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
-                  if (widget.segmento.id != '7' && teses.isNotEmpty)
+                  Text('Segmento: ${widget.segmento!.nome ?? "N/A"}'),
+                  if (widget.segmento!.id != '7' && teses.isNotEmpty)
                     Text(
-                        'Regime Tributário: ${widget.documento.nome ?? "N/A"}'),
+                        'Regime Tributário: ${widget.documento!.nome ?? "N/A"}'),
                   if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
                   if (hasApi) Text('Situação: ${widget.api!.situacao}'),
                   const SizedBox(height: 20),
@@ -414,11 +410,11 @@ class ResultScreenState extends State<ResultScreen> {
     return [
       Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
       if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
-      Text('Segmento: ${widget.segmento.nome ?? "N/A"}'),
+      Text('Segmento: ${widget.segmento!.nome ?? "N/A"}'),
       if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
       if (hasApi) Text('Situação: ${widget.api!.situacao}'),
-      if (widget.segmento.id != '7')
-        Text('Regime Tributário: ${widget.documento.nome ?? "N/A"}')
+      if (widget.segmento!.id != '7')
+        Text('Regime Tributário: ${widget.documento!.nome ?? "N/A"}')
     ];
   }
 
@@ -474,7 +470,7 @@ class ResultScreenState extends State<ResultScreen> {
           textColor: ThemeUtils.primaryColor,
           onPressed: () async {
             await cubit.printResult(
-                widget.nome, widget.segmento, widget.documento);
+                widget.nome!, widget.segmento!, widget.documento);
           },
         );
       },

@@ -1,10 +1,12 @@
+import 'package:project/abstract/abstract_state.dart';
+import 'package:project/abstract/activity_state.dart';
 import 'package:project/api/models/receita_model.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentoss.dart';
 import 'package:project/entity/tesess.dart';
 
-class ProjectState {
+class ProjectState extends AbstractState {
   final String? cliente;
   final List<Segmento>? segmentos;
   final List<Documento>? documentos;
@@ -21,6 +23,7 @@ class ProjectState {
   //final String? errorMessage;
 
   const ProjectState({
+    super.state = const ActivityIdle(),
     this.cliente = '',
     this.segmentos,
     this.documentos,
@@ -36,8 +39,27 @@ class ProjectState {
     this.hasApi = false,
     // this.errorMessage = '',
   });
+  @override
+  List<Object?> get props => [
+        super.state,
+        cliente,
+        segmentos,
+        documentos,
+        teses,
+        segmentoSelect,
+        documentoSelect,
+        tesesSelect,
+        hasObs,
+        obs,
+        obsCount,
+        result,
+        apiResult,
+        hasApi
+      ];
 
+  @override
   ProjectState copyWith({
+    ActivityState? state,
     String? cliente,
     List<Segmento>? segmentos,
     List<Documento>? documentos,
@@ -54,6 +76,7 @@ class ProjectState {
     // String? errorMessage
   }) {
     return ProjectState(
+      state: state ?? super.state,
       cliente: cliente ?? this.cliente,
       segmentos: segmentos ?? this.segmentos,
       documentos: documentos ?? this.documentos,

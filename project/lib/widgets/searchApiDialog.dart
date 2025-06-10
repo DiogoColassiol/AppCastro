@@ -1,11 +1,22 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/api/models/receita_model.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/utils/theme_utils.dart';
+
+class ApiDialog {
+  static Future<void> show(BuildContext context) async {
+    final cubit = context.read<ProjectCubit>();
+    return await showDialog(
+      context: context,
+      builder: (context) {
+        return BlocProvider<ProjectCubit>.value(
+            value: cubit, child: const SearchApiDialog());
+      },
+    );
+  }
+}
 
 class SearchApiDialog extends StatefulWidget {
   const SearchApiDialog({super.key});
@@ -44,7 +55,7 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
           actions: [
             _buttonSair(context),
             if (receitaReturn == null) _buttonSearch(context),
-            if (receitaReturn != null) _buttonAdd(context)
+            if (receitaReturn != null) _buttonAdd(context),
           ],
         );
       },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
-import 'package:project/screens/mainScreen.dart';
+import 'package:project/routes/app_routes.dart';
 
 import 'package:window_size/window_size.dart';
 
@@ -28,9 +28,10 @@ class MyApp extends StatelessWidget {
 
     return BlocProvider(
       create: (context) => ProjectCubit(),
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: MainScreen(),
+        initialRoute: AppRoutes.home,
+        routes: AppRoutes.routes,
       ),
     );
   }

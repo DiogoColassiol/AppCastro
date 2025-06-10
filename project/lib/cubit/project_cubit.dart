@@ -1,9 +1,9 @@
 // lib/features/todo/cubit/todo_cubit.dart
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
+import 'package:project/abstract/abstract_cubit.dart';
 import 'package:project/api/http/http_client.dart';
 import 'package:project/api/models/receita_model.dart';
 import 'package:project/api/receita_store.dart';
@@ -16,13 +16,12 @@ import 'package:project/entity/tesess.dart';
 import 'package:project/print/resumo_pdf.dart';
 import 'package:project/widgets/alertDialogApp.dart';
 
-class ProjectCubit extends Cubit<ProjectState> {
-  final ReceitaStore store = ReceitaStore(
-    repository: ReceitaRepository(
-      client: HttpClient(),
-    ),
-  );
+class ProjectCubit extends AbstractCubit<ProjectState> {
+  late final ReceitaStore store;
+
   ProjectCubit() : super(const ProjectState()) {
+    store =
+        ReceitaStore(this, repository: ReceitaRepository(client: HttpClient()));
     init();
   }
   Future<void> init() async {

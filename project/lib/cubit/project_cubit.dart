@@ -35,33 +35,75 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return store.getReceitas(cnpj);
   }
 
-  Future<void> selectSeg(String? segId, bool? select) async {
+  Segmento? searchSeg() {
     final segmentos = state.segmentos;
-    final seg = state.segmentos!.firstWhere((e) => e.id == segId);
-    if (select == true) {
-      for (final seg in segmentos!) {
-        seg.selecionado = false;
-      }
+    final id = state.segmentoSelectId;
+    final seg = segmentos!.firstWhere((e) => e.id == id);
+    return seg;
+  }
+
+  Documento? searchDoc() {
+    final documentos = state.documentos;
+    final id = state.documentoSelectId;
+    final doc = documentos!.firstWhere((e) => e.id == id);
+    return doc;
+  }
+
+  Future<void> selectSeg(int? segId, bool isSelected) async {
+    final atual = state.segmentoSelectId;
+
+    // Se o mesmo segmento foi clicado, desmarcar todos
+    if (segId == atual) {
+      final segmentosAtualizados = state.segmentos?.map((s) {
+        return s.copyWith(selecionado: false);
+      }).toList();
+
+      emit(state.copyWith(
+        segmentoSelectId: null,
+        segmentos: segmentosAtualizados,
+      ));
+      return;
     }
-    seg.selecionado = select;
-    emit(state.copyWith(segmentos: [...state.segmentos!]));
-    emit(state.copyWith(segmentoSelect: seg));
-    if (seg.id == '7' && select == true) {
-      await selectDoc('4', true);
+
+    // Marca o segmento selecionado
+    final segmentosAtualizados = state.segmentos?.map((s) {
+      return s.copyWith(selecionado: s.id == segId);
+    }).toList();
+
+    emit(state.copyWith(
+      segmentoSelectId: segId,
+      segmentos: segmentosAtualizados,
+    ));
+
+    if (segId == 7) {
+      await selectDoc(4, true);
     }
   }
 
-  Future<void> selectDoc(String? docId, bool? select) async {
-    final documentos = state.documentos;
-    final doc = state.documentos!.firstWhere((e) => e.id == docId);
-    if (select == true) {
-      for (final doc in documentos!) {
-        doc.selecionado = false;
-      }
+  Future<void> selectDoc(int? docId, bool? select) async {
+    final atual = state.documentoSelectId;
+
+    // Se o mesmo documento foi clicado novamente, desmarcar todos
+    if (atual == docId && select == false) {
+      final documentosAtualizados = state.documentos?.map((d) {
+        return d.copyWith(selecionado: false);
+      }).toList();
+
+      emit(state.copyWith(
+        documentoSelectId: null,
+        documentos: documentosAtualizados,
+      ));
+      return;
     }
-    doc.selecionado = select;
-    emit(state.copyWith(documentos: [...state.documentos!]));
-    emit(state.copyWith(documentoSelect: doc));
+    // Marca o documento selecionado e desmarca os demais
+    final documentosAtualizados = state.documentos?.map((d) {
+      return d.copyWith(selecionado: d.id == docId);
+    }).toList();
+
+    emit(state.copyWith(
+      documentoSelectId: docId,
+      documentos: documentosAtualizados,
+    ));
   }
 
   Future<void> checkObs(bool value) async {
@@ -81,23 +123,30 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   }
 
   Future<void> delete() async {
-    final resetSeg = state.segmentos!
-        .map((seg) => seg.copyWith(selecionado: false))
-        .toList();
-    emit(state.copyWith(segmentos: resetSeg));
+    final segmentosLimpos =
+        state.segmentos?.map((s) => s.copyWith(selecionado: false)).toList();
+    final documentosLimpos =
+        state.documentos?.map((d) => d.copyWith(selecionado: false)).toList();
 
-    final resetDoc = state.documentos!
-        .map((doc) => doc.copyWith(selecionado: false))
-        .toList();
-
-    emit(state.copyWith(documentos: resetDoc));
-    emit(state.copyWith(cliente: '', obs: '', hasObs: false));
-    emit(state.copyWith(apiResult: null, hasApi: false));
+    emit(state.copyWith(
+      segmentoSelectId: null,
+      documentoSelectId: null,
+      segmentos: segmentosLimpos,
+      documentos: documentosLimpos,
+      cliente: '',
+      obs: '',
+      hasObs: false,
+      apiResult: null,
+      hasApi: false,
+    ));
   }
 
-  Future<bool> trataErros(BuildContext context, String? cliente, Segmento? seg,
-      Documento? doc) async {
-    if (cliente == null || cliente == '') {
+  Future<bool> trataErros(BuildContext context) async {
+    final cliente = searchCliente();
+    final seg = searchSeg();
+    final doc = searchDoc();
+
+    if (cliente == '') {
       DialogApp.warning(context, 'Cliente não informado!',
           'Por favor, adicione o nome do cliente para iniciar a busca!');
 
@@ -115,7 +164,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
       return true;
     }
-    if (doc.id == '1' && seg.id == '1') {
+    if (doc.id == 1 && seg.id == 1) {
       DialogApp.warning(context, 'Não contém Teses!',
           'Transportadoras com Simples Nacional não tem teses consolidadas!');
       return true;
@@ -144,26 +193,9 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return state.apiResult;
   }
 
-  Future<Segmento?> searchSeg() async {
-    final segmentos = state.segmentos;
-    if (segmentos == null) return null;
-    for (final segmento in segmentos) {
-      if (segmento.selecionado == true) {
-        return segmento;
-      }
-    }
-    return null;
-  }
-
-  Future<Documento?> searchDoc() async {
-    final documentos = state.documentos;
-    if (documentos == null) return null;
-    for (final documento in documentos) {
-      if (documento.selecionado == true) {
-        return documento;
-      }
-    }
-    return null;
+  ReceitaModel? searchApi() {
+    final api = state.apiResult;
+    return api;
   }
 
   List<String> searchDocs(List<Tese> teses, bool allDocs) {
@@ -205,11 +237,11 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   }
 
   Future<void> printResult(
-      String nome, Segmento segmento, Documento? documento) async {
+      String nome, Segmento segmento, Documento documento) async {
     String? obs;
     state.hasObs && state.obs!.isNotEmpty ? obs = state.obs : '';
 
-    if (segmento.id == '7' && documento!.id == '4') {
+    if (segmento.id == 7 && documento.id == 4) {
       final docs = searchDocs([], true);
       final receita = searchReceita();
       final result =
@@ -220,7 +252,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
       await resumoPdf.createResumoOutrosPDF();
       return;
     }
-    final teses = searchTeses(segmento, documento!);
+    final teses = searchTeses(segmento.id!, documento.id!);
     final needDocs = searchDocs(teses, false);
     final receita = searchReceita();
 
@@ -233,72 +265,72 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return;
   }
 
-  List<Tese> searchTeses(Segmento segmento, Documento documento) {
+  List<Tese> searchTeses(int segmentoId, int documentoId) {
     List<Tese> teses = [];
-    switch (segmento.id) {
-      case '1': //Transportadoras
-        if (documento.id == '1') {
+    switch (segmentoId) {
+      case 1: //Transportadoras
+        if (documentoId == 1) {
           teses = separaTeses('semtese');
         }
-        if (documento.id == '2') {
+        if (documentoId == 2) {
           teses = separaTeses('8,9');
         }
-        if (documento.id == '3') {
+        if (documentoId == 3) {
           teses = separaTeses('2,3,7,8,9');
         }
 
-      case '2': // Postos
-        if (documento.id == '1') {
+      case 2: // Postos
+        if (documentoId == 1) {
           teses = separaTeses('1');
         }
-        if (documento.id == '2') {
+        if (documentoId == 2) {
           teses = separaTeses('4,5,6,8,9');
         }
-        if (documento.id == '3') {
+        if (documentoId == 3) {
           teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
-      case '3': //Supermercados
-        if (documento.id == '1') {
+      case 3: //Supermercados
+        if (documentoId == 1) {
           teses = separaTeses('1');
         }
-        if (documento.id == '2') {
+        if (documentoId == 2) {
           teses = separaTeses('4,5,6,8,9');
         }
-        if (documento.id == '3') {
+        if (documentoId == 3) {
           teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
-      case '4': //Agro/Cerealistas
-        if (documento.id == '1') {
+      case 4: //Agro/Cerealistas
+        if (documentoId == 1) {
           teses = separaTeses('1');
         }
-        if (documento.id == '2') {
+        if (documentoId == 2) {
           teses = separaTeses('4,5,6,8,9');
         }
-        if (documento.id == '3') {
+        if (documentoId == 3) {
           teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
-      case '5': //Distribuidores de alimentos
-        if (documento.id == '1') {
+      case 5: //Distribuidores de alimentos
+        if (documentoId == 1) {
           teses = separaTeses('1');
         }
-        if (documento.id == '2') {
+        if (documentoId == 2) {
           teses = separaTeses('4,5,6,8,9');
         }
-        if (documento.id == '3') {
+        if (documentoId == 3) {
           teses = separaTeses('2,3,4,5,6,7,8,9');
         }
 
-      case '6': // Hortifrutigrangeiros
-        if (documento.id == '1') {
+      case 6: // Hortifrutigrangeiros
+        if (documentoId == 1) {
           teses = separaTeses('1');
         }
-        if (documento.id == '2') {
+        if (documentoId == 2) {
           teses = separaTeses('4,5,6,8,9');
         }
-        if (documento.id == '3') {
+        if (documentoId == 3) {
           teses = separaTeses('2,3,4,5,6,7,8,9');
         }
     }
@@ -453,13 +485,13 @@ Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das
 
   Future<void> loadSegmentos() async {
     final segmentos = [
-      Segmento(id: '1', nome: 'Transportadoras'),
-      Segmento(id: '2', nome: 'Postos de Combustível'),
-      Segmento(id: '3', nome: 'Supermercados'),
-      Segmento(id: '4', nome: 'Agro/Cerealistas'),
-      Segmento(id: '5', nome: 'Distribuidores de Alimentos'),
-      Segmento(id: '6', nome: 'Hortifrutigranjeiros'),
-      Segmento(id: '7', nome: 'Outros')
+      Segmento(id: 1, nome: 'Transportadoras'),
+      Segmento(id: 2, nome: 'Postos de Combustível'),
+      Segmento(id: 3, nome: 'Supermercados'),
+      Segmento(id: 4, nome: 'Agro/Cerealistas'),
+      Segmento(id: 5, nome: 'Distribuidores de Alimentos'),
+      Segmento(id: 6, nome: 'Hortifrutigranjeiros'),
+      Segmento(id: 7, nome: 'Outros')
     ];
     // await addSegmentoDB(segmentos);
     emit(state.copyWith(segmentos: segmentos));
@@ -467,10 +499,10 @@ Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das
 
   Future<void> loadDocumentos() async {
     final docs = [
-      Documento(id: '1', nome: 'Simples Nacional'),
-      Documento(id: '2', nome: 'Lucro Presumido'),
-      Documento(id: '3', nome: 'Lucro Real'),
-      Documento(id: '4', nome: 'Outros')
+      Documento(id: 1, nome: 'Simples Nacional'),
+      Documento(id: 2, nome: 'Lucro Presumido'),
+      Documento(id: 3, nome: 'Lucro Real'),
+      Documento(id: 4, nome: 'Outros')
     ];
     // await addRegimeDB(docs);
     emit(state.copyWith(documentos: docs));

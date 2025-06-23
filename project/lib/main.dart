@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/routes/app_routes.dart';
+import 'package:project/screens/mainScreen.dart';
+import 'package:project/screens/resultScreen.dart';
 
 import 'package:window_size/window_size.dart';
 
@@ -11,9 +13,7 @@ void main() async {
   setWindowMaxSize(const Size(1920, 1080));
   setWindowFrame(const Rect.fromLTWH(100, 100, 820, 820));
   WidgetsFlutterBinding.ensureInitialized();
-  // await TeseDataBase.initialize();
-  // await SegmentoDataBase.initialize();
-  // await RegimeDataBase.initialize();
+
   runApp(const MyApp());
 }
 
@@ -30,8 +30,11 @@ class MyApp extends StatelessWidget {
       create: (context) => ProjectCubit(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.home,
-        routes: AppRoutes.routes,
+        initialRoute: 'home',
+        routes: {
+          'home': (context) => const MainScreen(),
+          'result': (context) => const ResultScreen(),
+        },
       ),
     );
   }

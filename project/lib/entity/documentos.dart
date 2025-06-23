@@ -1,5 +1,5 @@
 class Documento {
-  final String? id;
+  final int? id;
   final String? nome;
   bool? selecionado;
 
@@ -10,7 +10,7 @@ class Documento {
   });
 
   Documento copyWith({
-    String? id,
+    int? id,
     String? nome,
     bool? selecionado,
   }) {

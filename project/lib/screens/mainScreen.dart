@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
-import 'package:project/screens/resultScreen.dart';
 import 'package:project/widgets/alertDialogApp.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_teses_widget.dart';
@@ -249,7 +248,7 @@ class _MainScreenState extends State<MainScreen>
                         key: Key(segmento.id.toString()),
                         activeColor: ThemeUtils.primaryColor,
                         onChanged: (value) {
-                          cubit.selectSeg(segmento.id, value);
+                          cubit.selectSeg(segmento.id, value!);
                         },
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
@@ -268,10 +267,10 @@ class _MainScreenState extends State<MainScreen>
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final outros =
-            !state.segmentos!.any((s) => s.id == '7' && s.selecionado!);
+            !state.segmentos!.any((s) => s.id == 7 && s.selecionado!);
         final cubit = context.read<ProjectCubit>();
         final documentos =
-            (state.documentos ?? []).where((doc) => doc.id != '4').toList();
+            (state.documentos ?? []).where((doc) => doc.id != 4).toList();
 
         return Expanded(
           child: Column(
@@ -309,7 +308,8 @@ class _MainScreenState extends State<MainScreen>
                   : const Padding(
                       padding: EdgeInsets.all(12.0),
                       child: Text(
-                          'Outros não é necessário informar o regime tributário!'),
+                        'Outros não é necessário informar o regime tributário!',
+                      ),
                     ),
             ],
           ),
@@ -351,23 +351,9 @@ class _MainScreenState extends State<MainScreen>
           textColor: Colors.white,
           color: ThemeUtils.primaryColor,
           onPressed: () async {
-            final nome = cubit.searchCliente();
-            final segmento = await cubit.searchSeg();
-            final documento = await cubit.searchDoc();
-            final hasErro =
-                await cubit.trataErros(context, nome, segmento, documento);
+            final hasErro = await cubit.trataErros(context);
             hasErro == false
-                ? Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ResultScreen(
-                        nome: nome,
-                        segmento: segmento!,
-                        documento: documento!,
-                        api: state.apiResult,
-                      ),
-                    ),
-                  )
+                ? Navigator.of(context).pushReplacementNamed('result')
                 : Container();
           },
         );

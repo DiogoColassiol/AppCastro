@@ -1,5 +1,5 @@
 class Segmento {
-  final String? id;
+  final int? id;
   final String? nome;
   bool? selecionado;
 
@@ -10,7 +10,7 @@ class Segmento {
   });
 
   Segmento copyWith({
-    String? id,
+    int? id,
     String? nome,
     bool? selecionado,
   }) {

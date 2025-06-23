@@ -3,6 +3,7 @@ import 'package:project/abstract/abstract_state.dart';
 import 'package:project/abstract/activity_state.dart';
 
 abstract class AbstractCubit<T extends AbstractState> extends Cubit<T> {
+  // ignore: use_super_parameters
   AbstractCubit(T initialState) : super(initialState);
 
   void setState(ActivityState value) {

@@ -8,6 +8,7 @@ import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/segmentoss.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/utils/theme_utils.dart';
@@ -15,13 +16,7 @@ import 'package:project/widgets/input_widget.dart';
 
 // ignore: must_be_immutable
 class ResultScreen extends StatefulWidget {
-  final String? nome;
-  final Segmento? segmento;
-  final Documento? documento;
-  final ReceitaModel? api;
-
-  const ResultScreen(
-      {super.key, this.nome, this.segmento, this.documento, this.api});
+  const ResultScreen({super.key});
 
   @override
   State<ResultScreen> createState() => ResultScreenState();
@@ -29,8 +24,27 @@ class ResultScreen extends StatefulWidget {
 
 class ResultScreenState extends State<ResultScreen> {
   late TextEditingController _inputControler;
+  late String? cliente;
+  late Segmento? segmentoSelect;
+  late Documento? documentoSelect;
+  late List<Tese>? listTeses;
+  late List<String>? docsNedded;
+  late ReceitaModel? apiResult;
+  late bool? outros;
+  late bool? hasObs;
+
   @override
   void initState() {
+    final c = context.read<ProjectCubit>();
+    cliente = c.searchCliente();
+    segmentoSelect = c.searchSeg();
+    documentoSelect = c.searchDoc();
+    listTeses = c.searchTeses(segmentoSelect!.id!, documentoSelect!.id!);
+    docsNedded = c.searchDocs(listTeses!, false);
+    apiResult = c.searchApi();
+    outros = segmentoSelect!.id == 7 ? true : false;
+    hasObs = false;
+
     _inputControler = TextEditingController();
     super.initState();
   }
@@ -103,7 +117,6 @@ class ResultScreenState extends State<ResultScreen> {
   Widget contentEdit(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        var outros = widget.segmento!.id == '7';
         return Center(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -112,7 +125,7 @@ class ResultScreenState extends State<ResultScreen> {
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      outros ? pdfOutros() : pdf(),
+                      outros! ? pdfOutros() : pdf(),
                     ],
                   ),
                 ),
@@ -171,7 +184,6 @@ class ResultScreenState extends State<ResultScreen> {
   Widget content() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        var outros = widget.segmento!.id == '7';
         return Column(
           children: [
             Expanded(
@@ -180,7 +192,7 @@ class ResultScreenState extends State<ResultScreen> {
                 color: ThemeUtils.backgroundColor,
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [outros ? pdfOutros() : pdf()],
+                    children: [outros! ? pdfOutros() : pdf()],
                   ),
                 ),
               ),
@@ -239,16 +251,14 @@ class ResultScreenState extends State<ResultScreen> {
   }
 
   Widget pdf() {
-    final data = DateTime.now();
-    final formatedData = DateFormat('dd/MM/yyyy').format(data);
-    final formatedHora = DateFormat('HH:mm').format(data);
-    final hasApi = widget.api != null ? true : false;
-
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final c = context.read<ProjectCubit>();
-        final teses = c.searchTeses(widget.segmento!, widget.documento!);
-        final docsNeed = c.searchDocs(teses, false);
+        final data = DateTime.now();
+        final formatedData = DateFormat('dd/MM/yyyy').format(data);
+        final formatedHora = DateFormat('HH:mm').format(data);
+        final hasApi = apiResult != null ? true : false;
+        final teses = listTeses;
+
         return Center(
           child: SingleChildScrollView(
             child: Container(
@@ -286,14 +296,14 @@ class ResultScreenState extends State<ResultScreen> {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
-                  if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
-                  Text('Segmento: ${widget.segmento!.nome ?? "N/A"}'),
-                  if (widget.segmento!.id != '7' && teses.isNotEmpty)
+                  Text('Cliente: ${hasApi ? apiResult!.nome : cliente}'),
+                  if (hasApi) Text('Nome fantasia: ${apiResult!.fantasia}'),
+                  Text('Segmento: ${segmentoSelect!.nome ?? "N/A"}'),
+                  if (segmentoSelect!.id != 7 && teses!.isNotEmpty)
                     Text(
-                        'Regime Tributário: ${widget.documento!.nome ?? "N/A"}'),
-                  if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
-                  if (hasApi) Text('Situação: ${widget.api!.situacao}'),
+                        'Regime Tributário: ${documentoSelect!.nome ?? "N/A"}'),
+                  if (hasApi) Text('Data de abertura: ${apiResult!.abertura}'),
+                  if (hasApi) Text('Situação: ${apiResult!.situacao}'),
                   const SizedBox(height: 20),
                   const Text(
                     'Documentos requeridos:',
@@ -304,7 +314,7 @@ class ResultScreenState extends State<ResultScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ...docsNeed.map((doc) => Row(
+                  ...docsNedded!.map((doc) => Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
@@ -329,7 +339,7 @@ class ResultScreenState extends State<ResultScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ...teses.map(
+                  ...teses!.map(
                     (tese) => Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -398,23 +408,20 @@ class ResultScreenState extends State<ResultScreen> {
 
   _buildInfoText(String text) {
     return [
-      Text(
-        text,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-      )
+      Text(text,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold))
     ];
   }
 
   _buildClientAndSeg() {
-    final hasApi = widget.api != null ? true : false;
+    bool hasApi = apiResult == null ? false : true;
     return [
-      Text('Cliente: ${hasApi ? widget.api!.nome : widget.nome}'),
-      if (hasApi) Text('Nome fantasia: ${widget.api!.fantasia}'),
-      Text('Segmento: ${widget.segmento!.nome ?? "N/A"}'),
-      if (hasApi) Text('Data de abertura: ${widget.api!.abertura}'),
-      if (hasApi) Text('Situação: ${widget.api!.situacao}'),
-      if (widget.segmento!.id != '7')
-        Text('Regime Tributário: ${widget.documento!.nome ?? "N/A"}')
+      Text('Cliente: ${hasApi ? apiResult!.nome : cliente}'),
+      if (hasApi) Text('Nome fantasia: ${apiResult!.fantasia}'),
+      Text('Segmento: ${segmentoSelect!.nome ?? "N/A"}'),
+      if (hasApi) Text('Data de abertura: ${apiResult!.abertura}'),
+      if (hasApi) Text('Situação: ${apiResult!.situacao}'),
+      if (!outros!) Text('Regime Tributário: ${documentoSelect!.nome ?? "N/A"}')
     ];
   }
 
@@ -470,7 +477,7 @@ class ResultScreenState extends State<ResultScreen> {
           textColor: ThemeUtils.primaryColor,
           onPressed: () async {
             await cubit.printResult(
-                widget.nome!, widget.segmento!, widget.documento);
+                cliente!, segmentoSelect!, documentoSelect!);
           },
         );
       },
@@ -512,7 +519,7 @@ class ResultScreenState extends State<ResultScreen> {
           textColor: Colors.red,
           onPressed: () async {
             await cubit.delete();
-            Navigator.push(context,
+            Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const MainScreen()));
           },
         );

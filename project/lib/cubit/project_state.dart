@@ -11,8 +11,8 @@ class ProjectState extends AbstractState {
   final List<Segmento>? segmentos;
   final List<Documento>? documentos;
   final List<Tese>? teses;
-  final Segmento? segmentoSelect;
-  final Documento? documentoSelect;
+  final int? segmentoSelectId;
+  final int? documentoSelectId;
   final List<Tese>? tesesSelect;
   final bool hasObs;
   final String? obs;
@@ -28,8 +28,8 @@ class ProjectState extends AbstractState {
     this.segmentos,
     this.documentos,
     this.teses,
-    this.segmentoSelect,
-    this.documentoSelect,
+    this.segmentoSelectId,
+    this.documentoSelectId,
     this.tesesSelect,
     this.hasObs = false,
     this.obs = '',
@@ -46,8 +46,8 @@ class ProjectState extends AbstractState {
         segmentos,
         documentos,
         teses,
-        segmentoSelect,
-        documentoSelect,
+        segmentoSelectId,
+        documentoSelectId,
         tesesSelect,
         hasObs,
         obs,
@@ -63,8 +63,8 @@ class ProjectState extends AbstractState {
     String? cliente,
     List<Segmento>? segmentos,
     List<Documento>? documentos,
-    Segmento? segmentoSelect,
-    Documento? documentoSelect,
+    int? segmentoSelectId,
+    int? documentoSelectId,
     List<Tese>? tesesSelect,
     List<Tese>? teses,
     bool? hasObs,
@@ -81,8 +81,8 @@ class ProjectState extends AbstractState {
       segmentos: segmentos ?? this.segmentos,
       documentos: documentos ?? this.documentos,
       teses: teses ?? this.teses,
-      segmentoSelect: segmentoSelect ?? segmentoSelect,
-      documentoSelect: documentoSelect ?? documentoSelect,
+      segmentoSelectId: segmentoSelectId ?? this.segmentoSelectId,
+      documentoSelectId: documentoSelectId ?? this.documentoSelectId,
       tesesSelect: tesesSelect ?? this.tesesSelect,
       hasObs: hasObs ?? this.hasObs,
       obs: obs ?? this.obs,

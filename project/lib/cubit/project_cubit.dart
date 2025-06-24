@@ -10,7 +10,7 @@ import 'package:project/api/receita_store.dart';
 import 'package:project/api/repositories/receita_repo.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
-import 'package:project/entity/segmentoss.dart';
+import 'package:project/entity/segmentos.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/print/resumo_pdf.dart';
@@ -50,58 +50,35 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   }
 
   Future<void> selectSeg(int? segId, bool isSelected) async {
-    final atual = state.segmentoSelectId;
-
-    // Se o mesmo segmento foi clicado, desmarcar todos
-    if (segId == atual) {
-      final segmentosAtualizados = state.segmentos?.map((s) {
-        return s.copyWith(selecionado: false);
-      }).toList();
-
-      emit(state.copyWith(
-        segmentoSelectId: null,
-        segmentos: segmentosAtualizados,
-      ));
-      return;
-    }
-
-    // Marca o segmento selecionado
     final segmentosAtualizados = state.segmentos?.map((s) {
-      return s.copyWith(selecionado: s.id == segId);
+      if (s.id == segId) {
+        return s.copyWith(selecionado: isSelected);
+      } else {
+        return s.copyWith(selecionado: false);
+      }
     }).toList();
 
     emit(state.copyWith(
-      segmentoSelectId: segId,
+      segmentoSelectId: isSelected ? segId : null,
       segmentos: segmentosAtualizados,
     ));
 
-    if (segId == 7) {
+    if (isSelected && segId == 7) {
       await selectDoc(4, true);
     }
   }
 
   Future<void> selectDoc(int? docId, bool? select) async {
-    final atual = state.documentoSelectId;
-
-    // Se o mesmo documento foi clicado novamente, desmarcar todos
-    if (atual == docId && select == false) {
-      final documentosAtualizados = state.documentos?.map((d) {
-        return d.copyWith(selecionado: false);
-      }).toList();
-
-      emit(state.copyWith(
-        documentoSelectId: null,
-        documentos: documentosAtualizados,
-      ));
-      return;
-    }
-    // Marca o documento selecionado e desmarca os demais
     final documentosAtualizados = state.documentos?.map((d) {
-      return d.copyWith(selecionado: d.id == docId);
+      if (d.id == docId) {
+        return d.copyWith(selecionado: select);
+      } else {
+        return d.copyWith(selecionado: false);
+      }
     }).toList();
 
     emit(state.copyWith(
-      documentoSelectId: docId,
+      documentoSelectId: select == true ? docId : null,
       documentos: documentosAtualizados,
     ));
   }

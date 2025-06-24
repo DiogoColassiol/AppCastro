@@ -3,7 +3,7 @@ import 'package:project/abstract/activity_state.dart';
 import 'package:project/api/models/receita_model.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
-import 'package:project/entity/segmentoss.dart';
+import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
 
 class ProjectState extends AbstractState {

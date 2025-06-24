@@ -111,11 +111,9 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
   _buttonSair(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final c = context.read<ProjectCubit>();
+        //  final c = context.read<ProjectCubit>();
         return ElevatedButton(
-          onPressed: () {
-            c.setHasApi(false);
-            c.setReturnApi(null);
+          onPressed: () async {
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
@@ -141,7 +139,6 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
         final c = context.read<ProjectCubit>();
         return ElevatedButton(
           onPressed: () async {
-            await c.setHasApi(true);
             await c.setReturnApi(receitaReturn);
             Navigator.of(context).pop();
           },

@@ -106,8 +106,7 @@ class _MainScreenState extends State<MainScreen>
                       child: Column(
                         children: [
                           _cliente(),
-                          if (state.hasApi == true && state.apiResult != null)
-                            _buttonDeleteApi(),
+                          if (state.apiResult != null) _buttonDeleteApi(),
                         ],
                       ),
                     ),
@@ -173,7 +172,7 @@ class _MainScreenState extends State<MainScreen>
   Widget _buttonDeleteApi() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
+        //   final cubit = context.read<ProjectCubit>();
         return Row(
           children: [
             Expanded(
@@ -184,8 +183,7 @@ class _MainScreenState extends State<MainScreen>
                     icon: Icons.delete,
                     color: Colors.red[400],
                     onPressed: () async {
-                      await cubit.setHasApi(false);
-                      await cubit.setReturnApi(null);
+                      //   await cubit.deleteApi();
                     },
                   )
                 ],
@@ -297,7 +295,7 @@ class _MainScreenState extends State<MainScreen>
                               key: Key(documento.id.toString()),
                               activeColor: ThemeUtils.primaryColor,
                               onChanged: (value) {
-                                cubit.selectDoc(documento.id, value);
+                                cubit.selectDoc(documento.id, value!);
                               },
                               controlAffinity: ListTileControlAffinity.leading,
                             ),

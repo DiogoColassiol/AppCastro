@@ -7,7 +7,7 @@ import 'package:project/api/models/receita_model.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/documentos.dart';
-import 'package:project/entity/segmentoss.dart';
+import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/widgets/button_widget.dart';

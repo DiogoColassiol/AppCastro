@@ -53,7 +53,7 @@ class _MainScreenState extends State<MainScreen>
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 90,
-        backgroundColor: ThemeUtils.backgroundColor,
+        backgroundColor: ThemeUtils.surfaceColor,
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -90,7 +90,7 @@ class _MainScreenState extends State<MainScreen>
           children: [
             Expanded(
               child: Container(
-                color: ThemeUtils.backgroundColor,
+                color: ThemeUtils.surfaceColor,
                 child: Column(
                   children: [
                     const Padding(
@@ -106,7 +106,11 @@ class _MainScreenState extends State<MainScreen>
                       child: Column(
                         children: [
                           _cliente(),
-                          if (state.apiResult != null) _buttonDeleteApi(),
+                          if (state.apiResult!.nome != null &&
+                              state.apiResult!.fantasia != null &&
+                              state.apiResult!.situacao != null &&
+                              state.apiResult!.situacao != null)
+                            _buttonDeleteApi(),
                         ],
                       ),
                     ),
@@ -124,7 +128,7 @@ class _MainScreenState extends State<MainScreen>
               ),
             ),
             Container(
-              color: ThemeUtils.backgroundColor,
+              color: ThemeUtils.surfaceColor,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
@@ -172,7 +176,7 @@ class _MainScreenState extends State<MainScreen>
   Widget _buttonDeleteApi() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        //   final cubit = context.read<ProjectCubit>();
+        final cubit = context.read<ProjectCubit>();
         return Row(
           children: [
             Expanded(
@@ -183,7 +187,7 @@ class _MainScreenState extends State<MainScreen>
                     icon: Icons.delete,
                     color: Colors.red[400],
                     onPressed: () async {
-                      //   await cubit.deleteApi();
+                      await cubit.clearApiResult();
                     },
                   )
                 ],
@@ -198,7 +202,6 @@ class _MainScreenState extends State<MainScreen>
   Widget _iconApiButton(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        //     final c = context.read<ProjectCubit>();
         return IconButton(
           icon: const Icon(Icons.search),
           onPressed: () async {
@@ -240,7 +243,8 @@ class _MainScreenState extends State<MainScreen>
                       child: CheckboxListTile(
                         title: Text(
                           segmento.nome.toString(),
-                          style: const TextStyle(fontSize: 12),
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                         value: segmento.selecionado,
                         key: Key(segmento.id.toString()),
@@ -289,7 +293,8 @@ class _MainScreenState extends State<MainScreen>
                             child: CheckboxListTile(
                               title: Text(
                                 documento.nome.toString(),
-                                style: const TextStyle(fontSize: 12),
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                               value: documento.selecionado,
                               key: Key(documento.id.toString()),
@@ -369,7 +374,7 @@ class _MainScreenState extends State<MainScreen>
             textColor: Colors.red,
             color: Colors.white,
             onPressed: () async {
-              await cubit.delete();
+              await cubit.initialState();
             });
       },
     );

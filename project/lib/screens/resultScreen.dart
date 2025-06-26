@@ -35,6 +35,7 @@ class ResultScreenState extends State<ResultScreen> {
 
   @override
   void initState() {
+    super.initState();
     final c = context.read<ProjectCubit>();
     cliente = c.searchCliente();
     segmentoSelect = c.searchSeg();
@@ -44,9 +45,7 @@ class ResultScreenState extends State<ResultScreen> {
     apiResult = c.searchApi();
     outros = segmentoSelect!.id == 7 ? true : false;
     hasObs = false;
-
     _inputControler = TextEditingController();
-    super.initState();
   }
 
   @override
@@ -62,7 +61,7 @@ class ResultScreenState extends State<ResultScreen> {
         return Scaffold(
           appBar: AppBar(
             toolbarHeight: 90,
-            backgroundColor: ThemeUtils.backgroundColor,
+            backgroundColor: ThemeUtils.surfaceColor,
             automaticallyImplyLeading: false,
             surfaceTintColor: Colors.transparent,
             title: Column(
@@ -77,7 +76,7 @@ class ResultScreenState extends State<ResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                color: ThemeUtils.backgroundColor,
+                color: ThemeUtils.surfaceColor,
                 width: double.maxFinite,
                 padding: const EdgeInsets.all(12.0),
                 child: const Center(
@@ -89,14 +88,14 @@ class ResultScreenState extends State<ResultScreen> {
               ),
               Expanded(
                 child: Container(
-                  color: ThemeUtils.backgroundColor,
+                  color: ThemeUtils.surfaceColor,
                   child: state.hasObs ? contentEdit(context) : content(),
                 ),
               ),
             ],
           ),
           bottomNavigationBar: Container(
-            color: ThemeUtils.backgroundColor,
+            color: ThemeUtils.surfaceColor,
             height: 60,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -189,7 +188,7 @@ class ResultScreenState extends State<ResultScreen> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                color: ThemeUtils.backgroundColor,
+                color: ThemeUtils.surfaceColor,
                 child: SingleChildScrollView(
                   child: Column(
                     children: [outros! ? pdfOutros() : pdf()],
@@ -256,7 +255,7 @@ class ResultScreenState extends State<ResultScreen> {
         final data = DateTime.now();
         final formatedData = DateFormat('dd/MM/yyyy').format(data);
         final formatedHora = DateFormat('HH:mm').format(data);
-        final hasApi = apiResult != null ? true : false;
+        //      final hasApi = apiResult != null ? true : false;
         final teses = listTeses;
 
         return Center(
@@ -296,14 +295,17 @@ class ResultScreenState extends State<ResultScreen> {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Text('Cliente: ${hasApi ? apiResult!.nome : cliente}'),
-                  if (hasApi) Text('Nome fantasia: ${apiResult!.fantasia}'),
+                  Text('Cliente: ${apiResult!.nome ?? cliente}'),
+                  if (apiResult!.fantasia != null)
+                    Text('Nome fantasia: ${apiResult!.fantasia}'),
                   Text('Segmento: ${segmentoSelect!.nome ?? "N/A"}'),
                   if (segmentoSelect!.id != 7 && teses!.isNotEmpty)
                     Text(
                         'Regime Tributário: ${documentoSelect!.nome ?? "N/A"}'),
-                  if (hasApi) Text('Data de abertura: ${apiResult!.abertura}'),
-                  if (hasApi) Text('Situação: ${apiResult!.situacao}'),
+                  if (apiResult!.abertura != null)
+                    Text('Data de abertura: ${apiResult!.abertura}'),
+                  if (apiResult!.situacao != null)
+                    Text('Situação: ${apiResult!.situacao}'),
                   const SizedBox(height: 20),
                   const Text(
                     'Documentos requeridos:',
@@ -414,13 +416,14 @@ class ResultScreenState extends State<ResultScreen> {
   }
 
   _buildClientAndSeg() {
-    bool hasApi = apiResult == null ? false : true;
     return [
-      Text('Cliente: ${hasApi ? apiResult!.nome : cliente}'),
-      if (hasApi) Text('Nome fantasia: ${apiResult!.fantasia}'),
+      Text('Cliente: ${apiResult!.nome ?? cliente}'),
+      if (apiResult!.fantasia != null)
+        Text('Nome fantasia: ${apiResult!.fantasia}'),
       Text('Segmento: ${segmentoSelect!.nome ?? "N/A"}'),
-      if (hasApi) Text('Data de abertura: ${apiResult!.abertura}'),
-      if (hasApi) Text('Situação: ${apiResult!.situacao}'),
+      if (apiResult!.abertura != null)
+        Text('Data de abertura: ${apiResult!.abertura}'),
+      if (apiResult!.situacao != null) Text('Situação: ${apiResult!.situacao}'),
       if (!outros!) Text('Regime Tributário: ${documentoSelect!.nome ?? "N/A"}')
     ];
   }
@@ -518,7 +521,7 @@ class ResultScreenState extends State<ResultScreen> {
           icon: Icons.replay_circle_filled_sharp,
           textColor: Colors.red,
           onPressed: () async {
-            await cubit.delete();
+            await cubit.initialState();
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const MainScreen()));
           },

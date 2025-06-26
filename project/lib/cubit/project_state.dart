@@ -86,10 +86,6 @@ class ProjectState extends AbstractState {
     );
   }
 
-  static ProjectState deleteApi() {
-    return const ProjectState(apiResult: null);
-  }
-
   static ProjectState initialState() {
     return ProjectState(
       state: const ActivityIdle(),
@@ -104,7 +100,8 @@ class ProjectState extends AbstractState {
       obs: '',
       obsCount: null,
       result: null,
-      apiResult: null,
+      apiResult: ReceitaModel(
+          nome: null, abertura: null, fantasia: null, situacao: null),
     );
   }
 

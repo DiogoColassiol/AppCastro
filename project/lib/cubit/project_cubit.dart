@@ -53,7 +53,6 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return doc;
   }
 
-//PROBLEMA NA HORA QUE DESELECIONA, NAO ESTA DEIXANDO NULL A VARIAVEL
   Future<void> selectSeg(int? segId, bool isSelected) async {
     final segmentosAtualizados = state.segmentos?.map((s) {
       if (s.id == segId) {
@@ -100,7 +99,14 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     emit(state.copyWith(apiResult: model));
   }
 
-  Future<void> delete() async {
+  Future<void> clearApiResult() async {
+    emit(state.copyWith(
+      apiResult: ReceitaModel(
+          nome: null, fantasia: null, abertura: null, situacao: null),
+    ));
+  }
+
+  Future<void> initialState() async {
     emit(ProjectState.initialState());
   }
 
@@ -158,6 +164,10 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
   ReceitaModel? searchApi() {
     final api = state.apiResult;
+    if (api == null) {
+      return ReceitaModel(
+          nome: null, abertura: null, fantasia: null, situacao: null);
+    }
     return api;
   }
 

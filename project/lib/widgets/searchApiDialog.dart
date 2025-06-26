@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/api/models/receita_model.dart';
@@ -111,14 +113,15 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
   _buttonSair(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        //  final c = context.read<ProjectCubit>();
+        final c = context.read<ProjectCubit>();
         return ElevatedButton(
           onPressed: () async {
+            c.clearApiResult();
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(20, 40),
-            backgroundColor: Colors.red[400],
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -127,7 +130,7 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: Colors.white)),
+                  color: Colors.red)),
         );
       },
     );

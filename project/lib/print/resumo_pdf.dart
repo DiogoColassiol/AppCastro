@@ -139,15 +139,17 @@ class ResumoPdfUtil {
   }
 
   List<Widget> _buildClientAndSeg() {
-    final hasApi = result.receita != null ? true : false;
     return [
-      Text('Cliente: ${hasApi ? result.receita!.nome : result.cliente}'),
-      if (hasApi) Text('Nome fantasia: ${result.receita!.fantasia}'),
+      Text('Cliente: ${result.receita!.nome ?? result.cliente}'),
+      if (result.receita!.nome != null)
+        Text('Nome fantasia: ${result.receita!.fantasia}'),
       Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
       if (result.segmento!.id != 7 && result.teses!.isNotEmpty)
         Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
-      if (hasApi) Text('Data de abertura: ${result.receita!.abertura}'),
-      if (hasApi) Text('Situação: ${result.receita!.situacao}'),
+      if (result.receita!.abertura != null)
+        Text('Data de abertura: ${result.receita!.abertura}'),
+      if (result.receita!.situacao != null)
+        Text('Situação: ${result.receita!.situacao}'),
     ];
   }
 

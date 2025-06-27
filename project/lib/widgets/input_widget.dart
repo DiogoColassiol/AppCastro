@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/utils/theme_utils.dart';
 
 class Input extends StatefulWidget {
   final void Function(String)? onChanged;
@@ -22,7 +23,6 @@ class Input extends StatefulWidget {
   final TextAlign? textAlign;
   final Widget? preffixIcon;
   final bool haveBorder;
-  final Color? labelTextColor;
 
   const Input({
     super.key,
@@ -47,7 +47,6 @@ class Input extends StatefulWidget {
     this.textAlign,
     this.preffixIcon,
     this.haveBorder = true,
-    this.labelTextColor,
   });
 
   @override
@@ -86,13 +85,11 @@ class _InputState extends State<Input> {
 
   void verifyValueChanges() {
     String? txt = widget.value ?? controller.text;
-    if (controller.text == txt) {
-      return;
-    }
+    if (controller.text == txt) return;
+
     controller.text = txt;
-    controller.selection = TextSelection(
-        baseOffset: controller.text.length,
-        extentOffset: controller.text.length);
+    controller.selection =
+        TextSelection.collapsed(offset: controller.text.length);
   }
 
   @override
@@ -104,20 +101,10 @@ class _InputState extends State<Input> {
         child: Tooltip(
           message: widget.tooltip ?? '',
           child: TextFormField(
-            style: TextStyle(
-                color: widget.readonly
-                    ? tema!.brightness == Brightness.dark
-                        ? Colors.grey[700]
-                        : Colors.grey[800]
-                    : tema!.brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black),
+            style:
+                const TextStyle(color: Colors.black), // Cor do texto digitado
             textDirection: TextDirection.ltr,
-            onChanged: (value) {
-              if (widget.onChanged != null) {
-                widget.onChanged!(value);
-              }
-            },
+            onChanged: (value) => widget.onChanged?.call(value),
             onSaved: widget.onSaved,
             controller: controller,
             focusNode: focusNode,
@@ -125,41 +112,46 @@ class _InputState extends State<Input> {
             maxLines: null,
             textInputAction: widget.action,
             decoration: InputDecoration(
-              contentPadding: widget.contentPadding,
-              suffixIcon: widget.suffixIcon,
-              suffixText: widget.suffixText,
-              prefixIcon: widget.preffixIcon,
-              fillColor: tema?.brightness == Brightness.dark
-                  ? Colors.black12
-                  : Colors.grey[100],
-              filled: widget.readonly,
-              hintMaxLines: 1,
-              label: widget.label == null
-                  ? null
-                  : Text(
-                      widget.label!,
-                      style: TextStyle(color: widget.labelTextColor),
-                    ),
-              labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
-              hintText: widget.hint,
-              border: widget.haveBorder
-                  ? widget.border ??
-                      OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      )
-                  : null,
-              enabledBorder: widget.haveBorder
-                  ? widget.border ??
-                      OutlineInputBorder(
+                contentPadding: widget.contentPadding,
+                suffixIcon: widget.suffixIcon,
+                suffixText: widget.suffixText,
+                prefixIcon: widget.preffixIcon,
+                fillColor: ThemeUtils.backgroundColor, // cor de dentro
+                filled: true,
+                hintMaxLines: 1,
+                label: widget.label == null
+                    ? null
+                    : Text(
+                        widget.label!,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold), // Cor do label
+                      ),
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+                hintText: widget.hint,
+                border: widget.haveBorder
+                    ? widget.border ??
+                        OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                              color: tema?.brightness == Brightness.dark
-                                  ? Colors.grey
-                                  : Colors.black))
-                  : null,
-            ),
+                          borderSide: const BorderSide(
+                              color: Colors.black), // Cor da borda
+                        )
+                    : null,
+                enabledBorder: widget.haveBorder
+                    ? widget.enableBorder ??
+                        OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                              color: Colors
+                                  .black), // Cor da borda quando habilitado
+                        )
+                    : null,
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.black))),
+
             obscureText: widget.obscureText,
             textAlign: widget.textAlign ?? TextAlign.start,
           ),
@@ -170,12 +162,8 @@ class _InputState extends State<Input> {
 
   @override
   void dispose() {
-    if (widget.controller == null) {
-      controller.dispose();
-    }
-    if (widget.focusNode == null) {
-      focusNode?.dispose();
-    }
+    if (widget.controller == null) controller.dispose();
+    if (widget.focusNode == null) focusNode?.dispose();
     super.dispose();
   }
 }

@@ -12,6 +12,8 @@ class DialogApp {
       animType: AnimType.scale,
       width: 500,
       title: title,
+      titleTextStyle:
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
       desc: desc,
       body: body,
       dialogBackgroundColor: ThemeUtils.backgroundColor,
@@ -31,6 +33,8 @@ class DialogApp {
       animType: AnimType.scale,
       width: 500,
       title: title,
+      titleTextStyle:
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
       desc: desc,
       dialogBackgroundColor: ThemeUtils.backgroundColor,
       btnOkColor: ThemeUtils.primaryColor,
@@ -47,6 +51,8 @@ class DialogApp {
       animType: AnimType.scale,
       width: 500,
       title: title,
+      titleTextStyle:
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
       desc: desc,
       dialogBackgroundColor: ThemeUtils.backgroundColor,
       btnOkColor: ThemeUtils.primaryColor,
@@ -63,6 +69,8 @@ class DialogApp {
       animType: AnimType.scale,
       width: 500,
       title: title,
+      titleTextStyle:
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
       desc: desc,
       dialogBackgroundColor: ThemeUtils.backgroundColor,
       btnOkColor: ThemeUtils.primaryColor,
@@ -79,12 +87,28 @@ class DialogApp {
       animType: AnimType.scale,
       width: 500,
       title: title,
+      titleTextStyle:
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
       desc: desc,
       dialogBackgroundColor: ThemeUtils.backgroundColor,
       btnOkColor: ThemeUtils.primaryColor,
       buttonsTextStyle:
           const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       btnOkOnPress: () => Navigator.of(context),
+      btnOk: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 90),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: ThemeUtils.primaryColor,
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text(
+            "OK",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
     ).show();
   }
 }

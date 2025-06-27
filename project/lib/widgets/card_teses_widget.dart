@@ -20,6 +20,7 @@ class _CardTesesState extends State<CardTeses> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 5,
       color: ThemeUtils.backgroundColor,
       // elevation: 4,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

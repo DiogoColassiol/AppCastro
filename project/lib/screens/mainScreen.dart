@@ -6,6 +6,7 @@ import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/widgets/alertDialogApp.dart';
 import 'package:project/widgets/button_widget.dart';
+import 'package:project/widgets/card_segAndRegime.dart';
 import 'package:project/widgets/card_teses_widget.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/input_widget.dart';
@@ -69,6 +70,7 @@ class _MainScreenState extends State<MainScreen>
         bottom: TabBar(
           indicatorColor: ThemeUtils.primaryColor,
           labelColor: ThemeUtils.primaryColor,
+          unselectedLabelColor: Colors.black,
           controller: _tabController,
           tabs: const [
             Tab(text: "Buscar Teses", icon: Icon(Icons.search)),
@@ -77,6 +79,7 @@ class _MainScreenState extends State<MainScreen>
         ),
       ),
       body: TabBarView(
+        physics: const BouncingScrollPhysics(),
         controller: _tabController,
         children: [_buildHome(), _listTeses()],
       ),
@@ -238,23 +241,13 @@ class _MainScreenState extends State<MainScreen>
                   childAspectRatio: getScreenWidth(context),
                   padding: const EdgeInsets.all(8.0),
                   children: segmentos.map((segmento) {
-                    return Card(
-                      color: ThemeUtils.backgroundColor,
-                      child: CheckboxListTile(
-                        title: Text(
-                          segmento.nome.toString(),
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                        value: segmento.selecionado,
-                        key: Key(segmento.id.toString()),
-                        activeColor: ThemeUtils.primaryColor,
+                    return CardSegDoc(
+                        nome: segmento.nome.toString(),
+                        selecionado: segmento.selecionado ?? false,
                         onChanged: (value) {
                           cubit.selectSeg(segmento.id, value!);
                         },
-                        controlAffinity: ListTileControlAffinity.leading,
-                      ),
-                    );
+                        keyTile: Key(segmento.id.toString()));
                   }).toList(),
                 ),
               ),
@@ -288,22 +281,13 @@ class _MainScreenState extends State<MainScreen>
                         childAspectRatio: getScreenWidth(context),
                         padding: const EdgeInsets.all(8.0),
                         children: documentos.map((documento) {
-                          return Card(
-                            color: ThemeUtils.backgroundColor,
-                            child: CheckboxListTile(
-                              title: Text(
-                                documento.nome.toString(),
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              value: documento.selecionado,
-                              key: Key(documento.id.toString()),
-                              activeColor: ThemeUtils.primaryColor,
-                              onChanged: (value) {
-                                cubit.selectDoc(documento.id, value!);
-                              },
-                              controlAffinity: ListTileControlAffinity.leading,
-                            ),
+                          return CardSegDoc(
+                            nome: documento.nome.toString(),
+                            selecionado: documento.selecionado ?? false,
+                            onChanged: (value) {
+                              cubit.selectDoc(documento.id, value!);
+                            },
+                            keyTile: Key(documento.id.toString()),
                           );
                         }).toList(),
                       ),
@@ -324,21 +308,24 @@ class _MainScreenState extends State<MainScreen>
   Widget _listTeses() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            Expanded(
-                child: ListView.builder(
-              itemCount: state.teses!.length,
-              itemBuilder: (context, index) {
-                final teses = state.teses![index];
-                return CardTeses(
-                  id: teses.id,
-                  desc: teses.descricao,
-                  legenda: teses.legenda,
-                );
-              },
-            )),
-          ],
+        return Container(
+          color: ThemeUtils.surfaceColor,
+          child: Column(
+            children: [
+              Expanded(
+                  child: ListView.builder(
+                itemCount: state.teses!.length,
+                itemBuilder: (context, index) {
+                  final teses = state.teses![index];
+                  return CardTeses(
+                    id: teses.id,
+                    desc: teses.descricao,
+                    legenda: teses.legenda,
+                  );
+                },
+              )),
+            ],
+          ),
         );
       },
     );

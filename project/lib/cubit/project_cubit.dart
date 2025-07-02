@@ -1,6 +1,7 @@
 // lib/features/todo/cubit/todo_cubit.dart
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:project/abstract/abstract_cubit.dart';
@@ -14,6 +15,7 @@ import 'package:project/entity/segmentos.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/print/resumo_pdf.dart';
+import 'package:project/widgets/alertBar.dart';
 import 'package:project/widgets/alertDialogApp.dart';
 
 class ProjectCubit extends AbstractCubit<ProjectState> {
@@ -28,9 +30,19 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     emit(ProjectState.initialState());
   }
 
-  Future<ReceitaModel?> getDadosClient() async {
-    String cnpj = searchCliente();
-    return store.getReceitas(cnpj);
+  Future<ReceitaModel?> getDadosClient(BuildContext context) async {
+    String cnpj = searchClienteCnpj();
+    final json = await store.getReceitas(context, cnpj);
+    final Map<String, dynamic> body = jsonDecode(json);
+    if (body.values.first == 'ERROR') {
+      Alertbar.showError(context,
+          'CNPJ inválido ou não encontrado, verifique e tente novamente!');
+      return null;
+    } else {
+      Alertbar.showSuccess(context, 'Consulta realizada com sucesso!');
+      final ReceitaModel receita = ReceitaModel.fromMap(body);
+      return receita;
+    }
   }
 
   Segmento? searchSeg() {
@@ -101,6 +113,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
   Future<void> clearApiResult() async {
     emit(state.copyWith(
+      clienteCnpj: '',
       apiResult: ReceitaModel(
           nome: null, fantasia: null, abertura: null, situacao: null),
     ));
@@ -121,13 +134,13 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
       return true;
     }
-    if (seg == null) {
+    if (seg!.selecionado == false) {
       DialogApp.warning(context, 'Erro na escolha!',
           'Selecione um segmento para inciar a busca!');
 
       return true;
     }
-    if (doc == null) {
+    if (doc!.selecionado == false) {
       DialogApp.warning(context, 'Erro na escolha!',
           'Selecione um documento para iniciar a busca!');
 
@@ -152,6 +165,14 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
   Future<void> setCliente(String text) async {
     emit(state.copyWith(cliente: text));
+  }
+
+  Future<void> setClienteCnpj(String? text) async {
+    emit(state.copyWith(clienteCnpj: text));
+  }
+
+  String searchClienteCnpj() {
+    return state.clienteCnpj!;
   }
 
   String searchCliente() {

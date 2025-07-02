@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:project/abstract/abstract_cubit.dart';
 import 'package:project/api/http/exceptions.dart';
-import 'package:project/api/models/receita_model.dart';
 import 'package:project/api/repositories/receita_repo.dart';
 
 class ReceitaStore {
@@ -9,11 +9,11 @@ class ReceitaStore {
 
   ReceitaStore(this.abstractCubit, {required this.repository});
 
-  Future<ReceitaModel> getReceitas(String cnpj) async {
+  Future<dynamic> getReceitas(BuildContext context, String cnpj) async {
     abstractCubit.setStateLoading();
 
     try {
-      final result = await repository.getReceita(cnpj);
+      final result = await repository.getReceita(context, cnpj);
       abstractCubit.setStateSuccess('Busca Realizada com sucesso!');
       return result;
     } on NotFundException catch (e) {

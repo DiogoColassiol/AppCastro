@@ -8,6 +8,7 @@ import 'package:project/entity/tesess.dart';
 
 class ProjectState extends AbstractState {
   final String? cliente;
+  final String? clienteCnpj;
   final List<Segmento>? segmentos;
   final List<Documento>? documentos;
   final List<Tese>? teses;
@@ -23,6 +24,7 @@ class ProjectState extends AbstractState {
   const ProjectState({
     super.state = const ActivityIdle(),
     this.cliente = '',
+    this.clienteCnpj = '',
     this.segmentos,
     this.documentos,
     this.teses,
@@ -40,6 +42,7 @@ class ProjectState extends AbstractState {
   List<Object?> get props => [
         super.state,
         cliente,
+        clienteCnpj,
         segmentos,
         documentos,
         teses,
@@ -57,6 +60,7 @@ class ProjectState extends AbstractState {
   ProjectState copyWith({
     ActivityState? state,
     String? cliente,
+    String? clienteCnpj,
     List<Segmento>? segmentos,
     List<Documento>? documentos,
     int? segmentoSelectId,
@@ -72,6 +76,7 @@ class ProjectState extends AbstractState {
     return ProjectState(
       state: state ?? super.state,
       cliente: cliente ?? this.cliente,
+      clienteCnpj: clienteCnpj ?? this.clienteCnpj,
       segmentos: segmentos ?? this.segmentos,
       documentos: documentos ?? this.documentos,
       teses: teses ?? this.teses,
@@ -90,6 +95,7 @@ class ProjectState extends AbstractState {
     return ProjectState(
       state: const ActivityIdle(),
       cliente: '',
+      clienteCnpj: '',
       segmentos: loadSegmentos(),
       documentos: loadDocumentos(),
       teses: loadTeses(),

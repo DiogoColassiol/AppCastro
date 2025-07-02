@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
-import 'package:project/widgets/alertDialogApp.dart';
 import 'package:project/widgets/button_widget.dart';
+import 'package:project/widgets/card_InfosApi.dart';
 import 'package:project/widgets/card_segAndRegime.dart';
 import 'package:project/widgets/card_teses_widget.dart';
 import 'package:project/utils/theme_utils.dart';
@@ -113,7 +113,8 @@ class _MainScreenState extends State<MainScreen>
                               state.apiResult!.fantasia != null &&
                               state.apiResult!.situacao != null &&
                               state.apiResult!.situacao != null)
-                            _buttonDeleteApi(),
+                            _apiInfos(),
+                          // _buttonDeleteApi(),
                         ],
                       ),
                     ),
@@ -176,27 +177,33 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
+  Widget _apiInfos() {
+    return BlocBuilder<ProjectCubit, ProjectState>(
+      builder: (context, state) {
+        final cubit = context.read<ProjectCubit>();
+        final receita = cubit.searchApi();
+        return CardApiInfos(receita: receita);
+      },
+    );
+  }
+
   Widget _buttonDeleteApi() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
-        return Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  ButtonApp(
-                    text: 'Remover Dados',
-                    icon: Icons.delete,
-                    color: Colors.red[400],
-                    onPressed: () async {
-                      await cubit.clearApiResult();
-                    },
-                  )
-                ],
-              ),
-            )
-          ],
+        return Expanded(
+          child: Column(
+            children: [
+              ButtonApp(
+                text: 'Remover Dados',
+                icon: Icons.delete,
+                color: Colors.red[400],
+                onPressed: () async {
+                  await cubit.clearApiResult();
+                },
+              )
+            ],
+          ),
         );
       },
     );
@@ -205,16 +212,11 @@ class _MainScreenState extends State<MainScreen>
   Widget _iconApiButton(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        //    final c = context.read<ProjectCubit>();
         return IconButton(
           icon: const Icon(Icons.search),
           onPressed: () async {
-            final cnpj = state.cliente;
-            if (cnpj!.length == 14) {
-              await ApiDialog.show(context);
-            } else {
-              DialogApp.error(
-                  context, 'Erro!', 'Por favor, informe um cnpj válido');
-            }
+            await ApiDialog.show(context);
           },
         );
       },

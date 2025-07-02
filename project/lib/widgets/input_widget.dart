@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:project/enum/inputType_enum.dart';
 import 'package:project/utils/theme_utils.dart';
 
 class Input extends StatefulWidget {
   final void Function(String)? onChanged;
   final void Function(String?)? onSaved;
   final TextEditingController? controller;
+  final InputTypeEnum? inputFormat;
+  final int? maxDigitsLength;
   final FocusNode? focusNode;
   final String? label;
   final String? hint;
@@ -33,6 +37,8 @@ class Input extends StatefulWidget {
     this.hint,
     this.obscureText = false,
     this.controller,
+    this.inputFormat = InputTypeEnum.none,
+    this.maxDigitsLength,
     this.focusNode,
     this.suffixIcon,
     this.readonly = false,
@@ -92,6 +98,22 @@ class _InputState extends State<Input> {
         TextSelection.collapsed(offset: controller.text.length);
   }
 
+  List<TextInputFormatter>? _getInputFormatters() {
+    switch (widget.inputFormat) {
+      case InputTypeEnum.lettersOnly:
+        return [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZÀ-ÿ\s]')),
+        ];
+      case InputTypeEnum.numbersOnly:
+        return [
+          FilteringTextInputFormatter.digitsOnly,
+        ];
+      case InputTypeEnum.none:
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     verifyValueChanges();
@@ -106,9 +128,11 @@ class _InputState extends State<Input> {
             textDirection: TextDirection.ltr,
             onChanged: (value) => widget.onChanged?.call(value),
             onSaved: widget.onSaved,
+            inputFormatters: _getInputFormatters(),
             controller: controller,
             focusNode: focusNode,
             readOnly: widget.readonly,
+            maxLength: widget.maxDigitsLength,
             maxLines: null,
             textInputAction: widget.action,
             decoration: InputDecoration(

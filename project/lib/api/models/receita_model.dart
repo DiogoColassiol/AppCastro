@@ -18,4 +18,12 @@ class ReceitaModel {
       situacao: map['situacao'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'nome': nome,
+      'fantasia': fantasia,
+      'abertura': abertura,
+      'situacao': situacao,
+    };
+  }
 }

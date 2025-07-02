@@ -1,11 +1,15 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/api/models/receita_model.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
+import 'package:project/enum/inputType_enum.dart';
+import 'package:project/utils/string_utils.dart';
 import 'package:project/utils/theme_utils.dart';
+import 'package:project/widgets/input_widget.dart';
 
 class ApiDialog {
   static Future<void> show(BuildContext context) async {
@@ -29,15 +33,19 @@ class SearchApiDialog extends StatefulWidget {
 
 class _SearchApiDialogState extends State<SearchApiDialog> {
   late ReceitaModel? receitaReturn;
+  late TextEditingController _inputControler;
 
   @override
   void initState() {
     receitaReturn = null;
+    _inputControler = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
+    _inputControler.dispose();
+    _inputControler.clear();
     super.dispose();
   }
 
@@ -50,7 +58,7 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
               borderRadius: BorderRadius.all(Radius.circular(15))),
           backgroundColor: ThemeUtils.backgroundColor,
           title: const Text(
-            'Consulta de dados API',
+            'Busca de dados via API',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: _buildContent(context),
@@ -103,8 +111,31 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
   _selectDadosContent(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        return Text(
-          'CNPJ: ${state.cliente}',
+        final cubit = context.read<ProjectCubit>();
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'O CNPJ do cliente não deve conter caracteres especiais, apenas números para realizar a busca.',
+            ),
+            // Text(
+            //   'CNPJ: ${state.cliente}',
+            // ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 60),
+              child: Input(
+                label: 'Informe o CNPJ',
+                inputFormat: InputTypeEnum.numbersOnly,
+                maxDigitsLength: 14,
+                value: state.clienteCnpj,
+                controller: _inputControler,
+                onChanged: (value) {
+                  cubit.setClienteCnpj(value);
+                },
+              ),
+            ),
+          ],
         );
       },
     );
@@ -116,7 +147,7 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
         final c = context.read<ProjectCubit>();
         return ElevatedButton(
           onPressed: () async {
-            c.clearApiResult();
+            await c.clearApiResult();
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
@@ -168,7 +199,7 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
         final c = context.read<ProjectCubit>();
         return ElevatedButton(
           onPressed: () async {
-            final receita = await c.getDadosClient();
+            final receita = await c.getDadosClient(context);
             if (receita != null) {
               setState(() {
                 receitaReturn = receita;

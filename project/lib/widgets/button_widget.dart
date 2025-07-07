@@ -37,6 +37,7 @@ class ButtonApp extends StatelessWidget {
         ),
       ),
       style: ElevatedButton.styleFrom(
+        elevation: 5,
         minimumSize: Size(widthButton, heightButton),
         backgroundColor: color ?? Colors.white,
         shape: RoundedRectangleBorder(

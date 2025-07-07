@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen>
 
   double getScreenWidth(BuildContext context) {
     final size = (MediaQuery.of(context).size.width);
-    return size >= 800 && size <= 1260 ? 3 : 7;
+    return size >= 800 && size <= 1260 ? 4 : 7;
   }
 
   @override
@@ -89,51 +89,41 @@ class _MainScreenState extends State<MainScreen>
   Widget _buildHome() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            Expanded(
-              child: Container(
-                color: ThemeUtils.surfaceColor,
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Text(
+        return Container(
+          color: ThemeUtils.surfaceColor,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 20),
+                      const Text(
                         'Informe os dados abaixo para realizar a busca!',
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          _cliente(),
-                          if (state.apiResult!.nome != null &&
-                              state.apiResult!.fantasia != null &&
-                              state.apiResult!.situacao != null &&
-                              state.apiResult!.situacao != null)
-                            _apiInfos(),
-                          // _buttonDeleteApi(),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(children: [
-                          _segmentos(),
-                          _documentos(),
-                        ]),
-                      ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      _cliente(),
+                      const SizedBox(height: 20),
+                      if (state.apiResult?.nome != null &&
+                          state.apiResult?.fantasia != null &&
+                          state.apiResult?.situacao != null)
+                        _apiInfos(),
+                      _segmentos(),
+                      _documentos(),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Container(
-              color: ThemeUtils.surfaceColor,
-              child: Padding(
+              Container(
+                color: ThemeUtils.surfaceColor,
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -145,8 +135,8 @@ class _MainScreenState extends State<MainScreen>
                   ],
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         );
       },
     );
@@ -155,15 +145,20 @@ class _MainScreenState extends State<MainScreen>
   Widget _cliente() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        final size = MediaQuery.of(context).size.width;
         final cubit = context.read<ProjectCubit>();
+
+        final bool isSmallScreen = size < 1600;
+        final int inputFlex = isSmallScreen ? 10 : 10;
+        final int buttonFlex = isSmallScreen ? 3 : 1;
+
         return Row(
           children: [
             Expanded(
-              flex: 3,
+              flex: inputFlex,
               child: Input(
                 label: 'Informe o nome do cliente',
                 value: state.cliente,
-                preffixIcon: _iconApiButton(context),
                 focusNode: _node,
                 controller: _inputControler,
                 onChanged: (value) {
@@ -171,6 +166,11 @@ class _MainScreenState extends State<MainScreen>
                 },
               ),
             ),
+            const SizedBox(width: 20),
+            Expanded(
+              flex: buttonFlex,
+              child: _iconApiButton(context),
+            )
           ],
         );
       },
@@ -187,23 +187,18 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
-  Widget _buttonDeleteApi() {
+  Widget _buttonDeleteApi(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        return Expanded(
-          child: Column(
-            children: [
-              ButtonApp(
-                text: 'Remover Dados',
-                icon: Icons.delete,
-                color: Colors.red[400],
-                onPressed: () async {
-                  await cubit.clearApiResult();
-                },
-              )
-            ],
-          ),
+        final c = context.read<ProjectCubit>();
+        return ButtonApp(
+          onPressed: () async {
+            await c.clearApiResult();
+          },
+          text: 'Remover API',
+          textColor: Colors.red,
+          color: Colors.white,
+          icon: Icons.delete,
         );
       },
     );
@@ -212,13 +207,20 @@ class _MainScreenState extends State<MainScreen>
   Widget _iconApiButton(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        //    final c = context.read<ProjectCubit>();
-        return IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () async {
-            await ApiDialog.show(context);
-          },
-        );
+        final hasApi = state.apiResult?.nome != null &&
+            state.apiResult?.fantasia != null &&
+            state.apiResult?.situacao != null;
+
+        return !hasApi
+            ? ButtonApp(
+                onPressed: () async {
+                  await ApiDialog.show(context);
+                },
+                text: 'Busca API',
+                color: ThemeUtils.primaryColor,
+                icon: Icons.add,
+              )
+            : _buttonDeleteApi(context);
       },
     );
   }
@@ -229,32 +231,36 @@ class _MainScreenState extends State<MainScreen>
         final cubit = context.read<ProjectCubit>();
         final segmentos = state.segmentos ?? [];
 
-        return Expanded(
-          flex: 2,
-          child: Column(
-            children: [
-              const Text('Segmentos',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
-                  childAspectRatio: getScreenWidth(context),
-                  padding: const EdgeInsets.all(8.0),
-                  children: segmentos.map((segmento) {
-                    return CardSegDoc(
-                        nome: segmento.nome.toString(),
-                        selecionado: segmento.selecionado ?? false,
-                        onChanged: (value) {
-                          cubit.selectSeg(segmento.id, value!);
-                        },
-                        keyTile: Key(segmento.id.toString()));
-                  }).toList(),
-                ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Center(
+              child: Text(
+                'Segmentos',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 12),
+            GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
+              childAspectRatio: getScreenWidth(context),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(8.0),
+              children: segmentos.map((segmento) {
+                return CardSegDoc(
+                  nome: segmento.nome.toString(),
+                  selecionado: segmento.selecionado ?? false,
+                  onChanged: (value) {
+                    cubit.selectSeg(segmento.id, value!);
+                  },
+                  keyTile: Key(segmento.id.toString()),
+                );
+              }).toList(),
+            ),
+          ],
         );
       },
     );
@@ -269,39 +275,43 @@ class _MainScreenState extends State<MainScreen>
         final documentos =
             (state.documentos ?? []).where((doc) => doc.id != 4).toList();
 
-        return Expanded(
-          child: Column(
-            children: [
-              const Text('Regimes Tributários',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              outros
-                  ? Expanded(
-                      child: GridView.count(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 8.0,
-                        crossAxisSpacing: 8.0,
-                        childAspectRatio: getScreenWidth(context),
-                        padding: const EdgeInsets.all(8.0),
-                        children: documentos.map((documento) {
-                          return CardSegDoc(
-                            nome: documento.nome.toString(),
-                            selecionado: documento.selecionado ?? false,
-                            onChanged: (value) {
-                              cubit.selectDoc(documento.id, value!);
-                            },
-                            keyTile: Key(documento.id.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  : const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text(
-                        'Outros não é necessário informar o regime tributário!',
-                      ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Center(
+              child: Text(
+                'Regimes Tributários',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 12),
+            outros
+                ? GridView.count(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    childAspectRatio: getScreenWidth(context),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(8.0),
+                    children: documentos.map((documento) {
+                      return CardSegDoc(
+                        nome: documento.nome.toString(),
+                        selecionado: documento.selecionado ?? false,
+                        onChanged: (value) {
+                          cubit.selectDoc(documento.id, value!);
+                        },
+                        keyTile: Key(documento.id.toString()),
+                      );
+                    }).toList(),
+                  )
+                : const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Text(
+                      'Outros não é necessário informar o regime tributário!',
                     ),
-            ],
-          ),
+                  ),
+          ],
         );
       },
     );

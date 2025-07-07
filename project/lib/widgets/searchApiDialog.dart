@@ -1,13 +1,11 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/api/models/receita_model.dart';
 import 'package:project/cubit/project_cubit.dart';
 import 'package:project/cubit/project_state.dart';
 import 'package:project/enum/inputType_enum.dart';
-import 'package:project/utils/string_utils.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/input_widget.dart';
 
@@ -44,8 +42,8 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
 
   @override
   void dispose() {
-    _inputControler.dispose();
     _inputControler.clear();
+    _inputControler.dispose();
     super.dispose();
   }
 
@@ -147,6 +145,10 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
         final c = context.read<ProjectCubit>();
         return ElevatedButton(
           onPressed: () async {
+            setState(() {
+              receitaReturn = null;
+              _inputControler.clear();
+            });
             await c.clearApiResult();
             Navigator.of(context).pop();
           },
@@ -174,6 +176,10 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
         return ElevatedButton(
           onPressed: () async {
             await c.setReturnApi(receitaReturn);
+            setState(() {
+              receitaReturn = null;
+              _inputControler.clear();
+            });
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(

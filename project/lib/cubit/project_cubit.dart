@@ -127,20 +127,21 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     final cliente = searchCliente();
     final seg = searchSeg();
     final doc = searchDoc();
+    final api = searchApi();
 
-    if (cliente == '') {
+    if (cliente == '' && api!.nome == null) {
       DialogApp.warning(context, 'Cliente não informado!',
           'Por favor, adicione o nome do cliente para iniciar a busca!');
 
       return true;
     }
-    if (seg!.selecionado == false) {
+    if (seg == null || seg.selecionado == false) {
       DialogApp.warning(context, 'Erro na escolha!',
           'Selecione um segmento para inciar a busca!');
 
       return true;
     }
-    if (doc!.selecionado == false) {
+    if (doc == null || doc.selecionado == false) {
       DialogApp.warning(context, 'Erro na escolha!',
           'Selecione um documento para iniciar a busca!');
 

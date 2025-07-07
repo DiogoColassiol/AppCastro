@@ -73,25 +73,9 @@ class ResultScreenState extends State<ResultScreen> {
             ),
           ),
           body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                color: ThemeUtils.surfaceColor,
-                width: double.maxFinite,
-                padding: const EdgeInsets.all(12.0),
-                child: const Center(
-                  child: Text(
-                    'Exemplo Visualização do PDF',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  color: ThemeUtils.surfaceColor,
-                  child: state.hasObs ? contentEdit(context) : content(),
-                ),
-              ),
+              Expanded(child: state.hasObs ? contentEdit(context) : content()),
             ],
           ),
           bottomNavigationBar: Container(
@@ -116,30 +100,58 @@ class ResultScreenState extends State<ResultScreen> {
   Widget contentEdit(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        return Center(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      outros! ? pdfOutros() : pdf(),
-                    ],
+        return Column(
+          children: [
+            Container(
+              color: ThemeUtils.surfaceColor,
+              width: double.maxFinite,
+              padding: const EdgeInsets.all(12.0),
+              child: const Center(
+                child: Text(
+                  'Exemplo Visualização do PDF',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                color: ThemeUtils.surfaceColor,
+                width: double.infinity,
+                child: Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 600,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                outros! ? pdfOutros() : pdf(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 35),
+
+                        // Observações
+                        SizedBox(
+                          width: 500,
+                          child: Card(
+                            elevation: 20,
+                            color: ThemeUtils.backgroundColor,
+                            child: SizedBox(
+                              child: addObsContainer(context),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(width: 30),
-                SizedBox(
-                  height: double.infinity,
-                  width: 500,
-                  child: Card(
-                      elevation: 20,
-                      color: ThemeUtils.backgroundColor,
-                      child: addObsContainer(context)),
-                )
-              ],
+              ),
             ),
-          ),
+          ],
         );
       },
     );
@@ -155,21 +167,22 @@ class ResultScreenState extends State<ResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                'Informe as Observações do Relatório',
+                'Observações do Relatório',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              SingleChildScrollView(
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 500,
-                  child: Input(
-                    border: const UnderlineInputBorder(),
-                    value: state.obs,
-                    controller: _inputControler,
-                    onChanged: (value) async {
-                      await cubit.setObs(value);
-                    },
+              Expanded(
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Input(
+                      border: const UnderlineInputBorder(),
+                      value: state.obs,
+                      controller: _inputControler,
+                      onChanged: (value) async {
+                        await cubit.setObs(value);
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -185,6 +198,17 @@ class ResultScreenState extends State<ResultScreen> {
       builder: (context, state) {
         return Column(
           children: [
+            Container(
+              color: ThemeUtils.surfaceColor,
+              width: double.maxFinite,
+              padding: const EdgeInsets.all(12.0),
+              child: const Center(
+                child: Text(
+                  'Exemplo Visualização do PDF',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
             Expanded(
               child: Container(
                 width: double.infinity,

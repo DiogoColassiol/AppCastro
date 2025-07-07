@@ -89,6 +89,12 @@ class _MainScreenState extends State<MainScreen>
   Widget _buildHome() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        // final size = MediaQuery.of(context).size;
+        // final width = size.width;
+        // final height = size.height;
+
+        // print('Largura: $width px');
+        // print('Altura: $height px');
         return Container(
           color: ThemeUtils.surfaceColor,
           child: Column(

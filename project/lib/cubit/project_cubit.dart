@@ -65,6 +65,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return doc;
   }
 
+//
   Future<void> selectSeg(int? segId, bool isSelected) async {
     final segmentosAtualizados = state.segmentos?.map((s) {
       if (s.id == segId) {
@@ -81,6 +82,16 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
     if (isSelected && segId == 7) {
       await selectDoc(4, true);
+    }
+    if (isSelected && segId != 7 && state.documentoSelectId == 4) {
+      final documentosAtualizados = state.documentos?.map((d) {
+        return d.copyWith(selecionado: false);
+      }).toList();
+
+      emit(state.copyWith(
+        documentos: documentosAtualizados,
+        documentoSelectId: null,
+      ));
     }
   }
 
@@ -141,6 +152,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
       return true;
     }
+
     if (doc == null || doc.selecionado == false) {
       DialogApp.warning(context, 'Erro na escolha!',
           'Selecione um documento para iniciar a busca!');

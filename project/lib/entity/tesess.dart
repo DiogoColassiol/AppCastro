@@ -3,7 +3,6 @@ class Tese {
   final String? legenda;
   final String? descricao;
   final String? docs;
-  //add docs necessarios
 
   Tese({
     this.id,

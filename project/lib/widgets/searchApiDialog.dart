@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/api/models/receita_model.dart';
-import 'package:project/cubit/project_cubit.dart';
-import 'package:project/cubit/project_state.dart';
+import 'package:project/cubit/project/project_cubit.dart';
+import 'package:project/cubit/project/project_state.dart';
 import 'package:project/enum/inputType_enum.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/utils/theme_utils.dart';

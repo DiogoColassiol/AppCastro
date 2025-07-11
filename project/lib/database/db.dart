@@ -79,6 +79,7 @@ class DB {
   }
 
   static List<Segmento> loadSegmentosDefault() => [
+        Segmento(id: 0, nome: 'Outros'),
         Segmento(id: 1, nome: 'Transportadoras'),
         Segmento(id: 2, nome: 'Postos de Combustível'),
         Segmento(id: 3, nome: 'Supermercados'),
@@ -88,10 +89,10 @@ class DB {
         Segmento(id: 7, nome: 'Outros'),
       ];
   static List<Documento> loadDocumentosDefault() => [
+        Documento(id: 0, nome: 'Outros'),
         Documento(id: 1, nome: 'Simples Nacional'),
         Documento(id: 2, nome: 'Lucro Presumido'),
         Documento(id: 3, nome: 'Lucro Real'),
-        Documento(id: 4, nome: 'Outros'),
       ];
 
   static List<Tese> loadTesesDefault() => [

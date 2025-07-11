@@ -4,13 +4,13 @@ import 'package:project/entity/segmentos.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SegmentoRepository extends ChangeNotifier {
+class SegmentoDAO extends ChangeNotifier {
   late Database db;
   List<Segmentos> _segmentosList = [];
 
   List<Segmentos> get segmentosList => _segmentosList;
 
-  SegmentoRepository() {
+  SegmentoDAO() {
     _initRepository();
   }
   _initRepository() async {

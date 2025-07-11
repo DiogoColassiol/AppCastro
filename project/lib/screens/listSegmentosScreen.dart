@@ -8,7 +8,7 @@ class SegmentosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final segmentoRepo = context.watch<SegmentoRepository>();
+    final segmentoRepo = context.watch<SegmentoDAO>();
     return Container(
       color: ThemeUtils.surfaceColor,
       child: segmentoRepo.segmentosList.isEmpty

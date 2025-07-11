@@ -12,4 +12,10 @@ class Razoes {
       ),
     );
   }
+  Map<String, dynamic> toMap() {
+    return {
+      'codigo': documento.id,
+      'nome': documento.nome,
+    };
+  }
 }

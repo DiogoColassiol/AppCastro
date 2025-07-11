@@ -12,7 +12,7 @@ import 'package:project/api/repositories/receita_repo.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
-import 'package:project/cubit/project_state.dart';
+import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/print/resumo_pdf.dart';
 import 'package:project/widgets/alertBar.dart';

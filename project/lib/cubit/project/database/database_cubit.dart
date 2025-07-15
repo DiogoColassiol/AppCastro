@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:project/abstract/abstract_cubit.dart';
 import 'package:project/cubit/project/database/database_state.dart';
 import 'package:project/entity/segmentos.dart';
-import 'package:project/entity/tesess.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/utils/string_utils.dart';
@@ -19,14 +18,10 @@ class DbCubit extends AbstractCubit<DbState> {
   //   final a= regimeDAO.getRegimes();
   //   emit(state.listRazao = regimeDAO.getRegimes())
   // }
-  Future<void> addSegmentoComTeses(
-    BuildContext context, {
-    required String nome,
-    required String numTesesJson,
-  }) async {
+  Future<void> addSegmentoComTeses(BuildContext context,
+      {required String nome, required String numTesesJson}) async {
     final segmento = SegmentoDB(nome: nome, numTeses: numTesesJson);
-    await segmentoDAO
-        .insertSegmento(segmento); // ou como for o método do seu DAO
+    await segmentoDAO.insertSegmento(segmento);
   }
 
   Future<void> setSegmentoID(String value) async {

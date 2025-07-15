@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:project/abstract/abstract_cubit.dart';
 import 'package:project/cubit/project/database/database_state.dart';
-import 'package:project/entity/documentos.dart';
-import 'package:project/models/razoes_model.dart';
-import 'package:project/repositories/regimeRepo.dart';
+import 'package:project/entity/segmentos.dart';
+import 'package:project/entity/tesess.dart';
+import 'package:project/models/segmentos_model.dart';
+import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/utils/string_utils.dart';
 
 class DbCubit extends AbstractCubit<DbState> {
-  final RegimeDAO regimeDAO;
+  final SegmentoDAO segmentoDAO;
 
   DbCubit({
-    required this.regimeDAO,
+    required this.segmentoDAO,
   }) : super(const DbState()) {
     //  init();
   }
@@ -18,34 +19,43 @@ class DbCubit extends AbstractCubit<DbState> {
   //   final a= regimeDAO.getRegimes();
   //   emit(state.listRazao = regimeDAO.getRegimes())
   // }
-
-  Future<void> setRegimeID(String value) async {
-    emit(state.copyWith(regimeId: value));
+  Future<void> addSegmentoComTeses(
+    BuildContext context, {
+    required String nome,
+    required String numTesesJson,
+  }) async {
+    final segmento = SegmentoDB(nome: nome, numTeses: numTesesJson);
+    await segmentoDAO
+        .insertSegmento(segmento); // ou como for o método do seu DAO
   }
 
-  Future<void> setRegimeNome(String value) async {
-    emit(state.copyWith(regimeNome: value));
+  Future<void> setSegmentoID(String value) async {
+    emit(state.copyWith(segmentoId: value));
   }
 
-  Future<void> addRegime(BuildContext context) async {
-    var id = state.regimeId;
-    var nome = state.regimeNome;
-    final newDocumento = buildDocumento(id, nome);
-    final razao = buildRazao(newDocumento);
-    await regimeDAO.insertRegime(razao);
+  Future<void> setSegmentoNome(String value) async {
+    emit(state.copyWith(segmentoNome: value));
   }
 
-  Future<void> removeRegime(BuildContext context) async {
-    var id = StringUtils.stringToInt(state.regimeId);
-    await regimeDAO.deleteRegime(id!);
+  Future<void> addSegmento(BuildContext context) async {
+    var id = state.segmentoId;
+    var nome = state.segmentoNome;
+    final newSegmento = buildSegmento(id, nome);
+    final segmentoDB = buildSegmentoDB(newSegmento);
+    await segmentoDAO.insertSegmento(segmentoDB);
   }
 
-  Razoes buildRazao(Documento doc) {
-    return Razoes(documento: doc);
+  Future<void> removeSegmento(BuildContext context) async {
+    var id = StringUtils.stringToInt(state.segmentoId);
+    await segmentoDAO.deleteSegmento(id!);
   }
 
-  Documento buildDocumento(String? id, String? nome) {
-    return Documento(
+  SegmentoDB buildSegmentoDB(Segmento doc) {
+    return SegmentoDB(id: doc.id, nome: doc.nome);
+  }
+
+  Segmento buildSegmento(String? id, String? nome) {
+    return Segmento(
       id: StringUtils.stringToInt(id),
       nome: nome,
       selecionado: null,

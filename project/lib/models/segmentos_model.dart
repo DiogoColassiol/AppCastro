@@ -1,15 +1,54 @@
+import 'dart:convert';
+
 import 'package:project/entity/segmentos.dart';
 
-class Segmentos {
-  Segmento segmento;
-  Segmentos({required this.segmento});
+class SegmentoDB {
+  final int? id;
+  final String? nome;
+  final String? numTeses;
 
-  factory Segmentos.fromMap(Map<String, dynamic> map) {
-    return Segmentos(
-      segmento: Segmento(
-        id: map['codigo'],
-        nome: map['nome'],
-      ),
+  SegmentoDB({this.id, this.nome, this.numTeses});
+
+  factory SegmentoDB.fromSegmento(SegmentoDB segmento) {
+    return SegmentoDB(
+      id: segmento.id,
+      nome: segmento.nome,
+      numTeses: segmento.numTeses,
     );
+  }
+  Map<int, String> getTesesPorDocumento() {
+    if (numTeses == null) return {};
+    final Map<String, dynamic> decoded = jsonDecode(numTeses!);
+    return decoded
+        .map((key, value) => MapEntry(int.parse(key), value as String));
+  }
+
+  String getTesesParaDocumento(int documentoId) {
+    final map = getTesesPorDocumento();
+    return map[documentoId] ?? '';
+  }
+
+  Segmento toSegmento() {
+    return Segmento(
+      id: id,
+      nome: nome,
+      numTeses: numTeses,
+    );
+  }
+
+  factory SegmentoDB.fromMap(Map<String, dynamic> map) {
+    return SegmentoDB(
+      id: map['id'],
+      nome: map['nome'],
+      numTeses: map['numTeses'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nome': nome,
+      'numTeses': numTeses,
+    };
   }
 }

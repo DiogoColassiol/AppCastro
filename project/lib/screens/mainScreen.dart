@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:project/screens/listRegimesScreen.dart';
 import 'package:project/screens/listSegmentosScreen.dart';
 import 'package:project/screens/listTesesScreen.dart';
 import 'package:project/screens/searchScreen.dart';
@@ -24,7 +23,7 @@ class _MainScreenState extends State<MainScreen>
   void initState() {
     super.initState();
     _node = FocusNode();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _inputControler = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_node);
@@ -71,7 +70,7 @@ class _MainScreenState extends State<MainScreen>
             Tab(text: "Buscar Teses", icon: Icon(Icons.search)),
             Tab(text: "Lista de Teses", icon: Icon(Icons.list_alt_sharp)),
             Tab(text: "Segmentos", icon: Icon(Icons.edit_document)),
-            Tab(text: 'Regimes', icon: Icon(Icons.edit_document))
+            //     Tab(text: 'Regimes', icon: Icon(Icons.edit_document))
           ],
         ),
       ),
@@ -82,7 +81,6 @@ class _MainScreenState extends State<MainScreen>
           SearchScreen(),
           ListTesesScreen(),
           SegmentosScreen(),
-          RegimesScreen(),
         ],
       ),
     );

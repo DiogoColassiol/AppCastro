@@ -77,10 +77,10 @@ class _RegimeBuildDialogState extends State<RegimeBuildDialog> {
               Expanded(
                 child: Input(
                   label: 'ID',
-                  value: state.regimeId,
+                  //   value: state.regimeId,
                   controller: _newId,
                   onChanged: (value) {
-                    cubit.setRegimeID(value);
+                    //        cubit.setRegimeID(value);
                   },
                 ),
               )
@@ -91,10 +91,10 @@ class _RegimeBuildDialogState extends State<RegimeBuildDialog> {
               Expanded(
                 child: Input(
                   label: 'Nome',
-                  value: state.regimeNome,
+                  //       value: state.regimeNome,
                   controller: _newNome,
                   onChanged: (value) {
-                    cubit.setRegimeNome(value);
+                    //        cubit.setRegimeNome(value);
                   },
                 ),
               )
@@ -108,7 +108,7 @@ class _RegimeBuildDialogState extends State<RegimeBuildDialog> {
                   text: 'Adicionar',
                   color: ThemeUtils.primaryColor,
                   onPressed: () async {
-                    await cubit.addRegime(context);
+                    //      await cubit.addRegime(context);
                     Navigator.pop(context);
                   },
                 ),
@@ -122,7 +122,7 @@ class _RegimeBuildDialogState extends State<RegimeBuildDialog> {
                   text: 'Remover',
                   color: ThemeUtils.accentError,
                   onPressed: () async {
-                    await cubit.removeRegime(context);
+                    //   await cubit.removeRegime(context);
                     Navigator.pop(context);
                   },
                 ),

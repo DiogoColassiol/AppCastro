@@ -14,6 +14,7 @@ import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/tesess.dart';
+import 'package:project/models/segmentos_model.dart';
 import 'package:project/print/resumo_pdf.dart';
 import 'package:project/widgets/alertBar.dart';
 import 'package:project/widgets/alertDialogApp.dart';
@@ -342,6 +343,12 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
         }
     }
     emit(state.copyWith(tesesSelect: teses));
+    return teses;
+  }
+
+  List<Tese> searchTesess(SegmentoDB segmento, int documentoId) {
+    final teseStr = segmento.getTesesParaDocumento(documentoId);
+    final teses = separaTeses(teseStr);
     return teses;
   }
 }

@@ -1,145 +1,206 @@
 import 'dart:convert';
-import 'package:project/entity/segmentos.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project/cubit/project/database/database_cubit.dart';
+import 'package:project/cubit/project/database/database_state.dart';
+import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/entity/tesess.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:project/utils/theme_utils.dart';
+import 'package:project/widgets/button_widget.dart';
+import 'package:project/widgets/input_widget.dart';
 
-class DB {
-  DB._();
+class SegmentoDialog {
+  static Future<void> show(BuildContext context) async {
+    final cubit = context.read<ProjectCubit>();
+    return await showDialog(
+      context: context,
+      builder: (context) {
+        return BlocProvider<ProjectCubit>.value(
+            value: cubit, child: const SegmentosBuildDialog());
+      },
+    );
+  }
+}
 
-  static final DB instance = DB._();
+class SegmentosBuildDialog extends StatefulWidget {
+  const SegmentosBuildDialog({super.key});
 
-  static Database? _database;
+  @override
+  State<SegmentosBuildDialog> createState() => _SegmentosBuildDialogState();
+}
 
-  get database async {
-    if (_database != null) return _database;
-    return await _initDatabase();
+class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
+    with SingleTickerProviderStateMixin {
+  late TextEditingController _newNome;
+  late TabController _tabController;
+
+  final List<Tese> teses = loadTesesDefault();
+  final Map<int, Set<int>> _selectedTesesPorDocumento = {
+    1: {},
+    2: {},
+    3: {},
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _newNome = TextEditingController();
+    _tabController = TabController(length: 3, vsync: this);
   }
 
-  _initDatabase() async {
-    return await openDatabase(
-      join(await getDatabasesPath(), 'castro.db'),
-      version: 1,
-      onCreate: _onCreate,
+  @override
+  void dispose() {
+    _newNome.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15))),
+      backgroundColor: ThemeUtils.backgroundColor,
+      title: const Text('Add Segmento',
+          style: TextStyle(fontWeight: FontWeight.bold)),
+      content: SingleChildScrollView(child: _content(context)),
+      actions: [_buttonSair(context), _buttonAdd(context)],
     );
   }
 
-  _onCreate(db, versao) async {
-    await db.execute(_segmento);
-    // await db.execute(_razao);
-    await db.execute(_teses);
-    await addDefault(db);
+  Widget _content(BuildContext context) {
+    final cubit = context.read<DbCubit>();
+
+    return BlocBuilder<DbCubit, DbState>(
+      builder: (context, state) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Input(
+              label: 'Nome',
+              value: state.segmentoNome,
+              controller: _newNome,
+              onChanged: cubit.setSegmentoNome,
+            ),
+            const SizedBox(height: 10),
+            const Text(
+                'Escolha as teses que se enquadra ao novo segmento nos 3 regimes tributarios:'),
+            const SizedBox(height: 10),
+            TabBar(
+              controller: _tabController,
+              labelColor: ThemeUtils.primaryColor,
+              unselectedLabelColor: Colors.grey,
+              tabs: const [
+                Tab(text: 'Simples Nacional'),
+                Tab(text: 'Lucro Presumido'),
+                Tab(text: 'Lucro Real'),
+              ],
+            ),
+            SizedBox(
+              height: 250,
+              width: 530,
+              child: TabBarView(
+                controller: _tabController,
+                children:
+                    [1, 2, 3].map((docId) => _buildTeseList(docId)).toList(),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        );
+      },
+    );
   }
 
-  String get _segmento => '''
-    CREATE TABLE segmento (
-     id INTEGER PRIMARY KEY AUTOINCREMENT,
-     codigo INTEGER,
-     nome TEXT,
-     numero_teses TEXT
- );
-''';
+  Widget _buildTeseList(int documentoId) {
+    return ListView.builder(
+      itemCount: teses.length,
+      itemBuilder: (context, index) {
+        final tese = teses[index];
+        final isSelected =
+            _selectedTesesPorDocumento[documentoId]!.contains(tese.id);
 
-//   String get _razao => '''
-//     CREATE TABLE regime (
-//      id INTEGER PRIMARY KEY AUTOINCREMENT,
-//      codigo INTEGER,
-//      nome TEXT
-//  );
-// ''';
-
-  String get _teses => '''
-    CREATE TABLE teses (
-     id INTEGER PRIMARY KEY AUTOINCREMENT,
-     codigo INTEGER,
-     descricao TEXT,
-     documentos TEXT,
-     legenda TEXT
-);
-''';
-
-  Future<void> addDefault(dynamic db) async {
-    for (final segmento in loadSegmentosDefault()) {
-      await db.insert('segmento', {
-        'codigo': segmento.id,
-        'nome': segmento.nome,
-        'numero_teses': segmento.numTeses ?? {},
-      });
-    }
-    // for (final documento in loadDocumentosDefault()) {
-    //   await db.insert('regime', {
-    //     'codigo': documento.id,
-    //     'nome': documento.nome,
-    //   });
-    // }
-    for (final tese in loadTesesDefault()) {
-      await db.insert('teses', {
-        'codigo': tese.id,
-        'documentos': tese.docs,
-        'descricao': tese.descricao,
-        'legenda': tese.legenda,
-      });
-    }
+        return Card(
+          child: CheckboxListTile(
+            title: Row(
+              children: [
+                _buildCircleId(tese),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    tese.descricao!,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            subtitle: Text('Requirição: ${tese.docs!}'),
+            value: isSelected,
+            onChanged: (value) {
+              setState(() {
+                if (value == true) {
+                  _selectedTesesPorDocumento[documentoId]!
+                      .add(int.parse(tese.id!));
+                } else {
+                  _selectedTesesPorDocumento[documentoId]!.remove(tese.id);
+                }
+              });
+            },
+          ),
+        );
+      },
+    );
   }
 
-  static List<Segmento> loadSegmentosDefault() => [
-        Segmento(
-            id: 1,
-            nome: 'Transportadoras',
-            numTeses: jsonEncode({
-              '1': '',
-              '2': '8,9',
-              '3': '2,3,7,8,9',
-            })),
-        Segmento(
-            id: 2,
-            nome: 'Postos de Combustível',
-            numTeses: jsonEncode({
-              '1': '1',
-              '2': '4,5,6,8,9',
-              '3': '2,3,4,5,6,7,8,9',
-            })),
-        Segmento(
-            id: 3,
-            nome: 'Supermercados',
-            numTeses: jsonEncode({
-              '1': '1',
-              '2': '4,5,6,8,9',
-              '3': '2,3,4,5,6,7,8,9',
-            })),
-        Segmento(
-            id: 4,
-            nome: 'Agro/Cerealistas',
-            numTeses: jsonEncode({
-              '1': '1',
-              '2': '4,5,6,8,9',
-              '3': '2,3,4,5,6,7,8,9',
-            })),
-        Segmento(
-            id: 5,
-            nome: 'Distribuidores de Alimentos',
-            numTeses: jsonEncode({
-              '1': '1',
-              '2': '4,5,6,8,9',
-              '3': '2,3,4,5,6,7,8,9',
-            })),
-        Segmento(
-            id: 6,
-            nome: 'Hortifrutigranjeiros',
-            numTeses: jsonEncode({
-              '1': '1',
-              '2': '4,5,6,8,9',
-              '3': '2,3,4,5,6,7,8,9',
-            })),
-        Segmento(
-            id: 0,
-            nome: 'Outros',
-            numTeses: jsonEncode({
-              '1': '',
-              '2': '',
-              '3': '',
-            })),
-      ];
+  Widget _buildCircleId(Tese tese) {
+    return Container(
+      width: 25,
+      height: 25,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: ThemeUtils.primaryColor,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        tese.id ?? '',
+        style: const TextStyle(
+            fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buttonSair(BuildContext context) {
+    return ButtonApp(
+      onPressed: () => Navigator.pop(context),
+      text: 'Sair',
+      textColor: Colors.red,
+    );
+  }
+
+  Widget _buttonAdd(BuildContext context) {
+    final cubit = context.read<DbCubit>();
+    return ButtonApp(
+      text: 'Adicionar',
+      color: ThemeUtils.primaryColor,
+      onPressed: () async {
+        // Montar o JSON para salvar no SegmentoDB
+        final Map<String, String> map = {};
+        _selectedTesesPorDocumento.forEach((docId, teseSet) {
+          map[docId.toString()] = teseSet.join(',');
+        });
+
+        await cubit.addSegmentoComTeses(
+          context,
+          nome: _newNome.text,
+          numTesesJson: jsonEncode(map),
+        );
+        Navigator.pop(context);
+      },
+    );
+  }
 
   static List<Tese> loadTesesDefault() => [
         Tese(

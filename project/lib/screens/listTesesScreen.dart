@@ -25,6 +25,7 @@ class ListTesesScreen extends StatelessWidget {
                     id: teses.id,
                     desc: teses.descricao,
                     legenda: teses.legenda,
+                    isLarge: true,
                   );
                 },
               )),

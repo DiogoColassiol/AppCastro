@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/database/database_cubit.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/database/db.dart';
-import 'package:project/repositories/regimeRepo.dart';
-
-import 'package:project/repositories/segmentoRepo.dart';
+import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/screens/resultScreen.dart';
 import 'package:provider/provider.dart';
@@ -48,9 +46,9 @@ class MyApp extends StatelessWidget {
   List<SingleChildWidget> buildAppProviders() {
     return [
       ChangeNotifierProvider(create: (context) => SegmentoDAO()),
-      ChangeNotifierProvider(create: (context) => RegimeDAO()),
       BlocProvider(
-          create: (context) => DbCubit(regimeDAO: context.read<RegimeDAO>())),
+          create: (context) =>
+              DbCubit(segmentoDAO: context.read<SegmentoDAO>())),
       BlocProvider(
         create: (context) => ProjectCubit(),
       ),

@@ -15,6 +15,8 @@ class SegmentosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final segmentoRepo = context.watch<SegmentoDAO>();
     return BlocBuilder<DbCubit, DbState>(builder: (context, state) {
+      final segmentos =
+          segmentoRepo.segmentosList.where((s) => s.nome != 'Outros').toList();
       return Container(
         color: ThemeUtils.surfaceColor,
         child: Column(
@@ -25,11 +27,18 @@ class SegmentosScreen extends StatelessWidget {
                     child: Center(child: CircularProgressIndicator()))
                 : Expanded(
                     child: ListView.builder(
-                      itemCount: segmentoRepo.segmentosList.length,
+                      itemCount: segmentos.length,
                       itemBuilder: (context, index) {
-                        final seg = segmentoRepo.segmentosList[index];
-                        return ListTile(
-                          title: Text(seg.nome ?? 'Sem nome'),
+                        final seg = segmentos[index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(seg.nome ?? 'Sem nome'),
+                            subtitle: Text(seg.numTeses ?? ''),
+                            leading: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {},
+                            ),
+                          ),
                         );
                       },
                     ),

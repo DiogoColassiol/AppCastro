@@ -63,7 +63,7 @@ class DB {
       await db.insert('segmento', {
         'codigo': segmento.id,
         'nome': segmento.nome,
-        'numero_teses': segmento.numTeses ?? {},
+        'numero_teses': segmento.numTeses?.toString() ?? '{}',
       });
     }
     // for (final documento in loadDocumentosDefault()) {
@@ -83,6 +83,14 @@ class DB {
   }
 
   static List<Segmento> loadSegmentosDefault() => [
+        Segmento(
+            id: 0,
+            nome: 'Outros',
+            numTeses: jsonEncode({
+              '1': '',
+              '2': '',
+              '3': '',
+            })),
         Segmento(
             id: 1,
             nome: 'Transportadoras',
@@ -130,14 +138,6 @@ class DB {
               '1': '1',
               '2': '4,5,6,8,9',
               '3': '2,3,4,5,6,7,8,9',
-            })),
-        Segmento(
-            id: 0,
-            nome: 'Outros',
-            numTeses: jsonEncode({
-              '1': '',
-              '2': '',
-              '3': '',
             })),
       ];
 

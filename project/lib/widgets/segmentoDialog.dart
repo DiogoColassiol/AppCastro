@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/database/database_cubit.dart';
 import 'package:project/cubit/project/database/database_state.dart';
-import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_widget.dart';
@@ -12,11 +9,11 @@ import 'package:project/widgets/input_widget.dart';
 
 class SegmentoDialog {
   static Future<void> show(BuildContext context) async {
-    final cubit = context.read<ProjectCubit>();
+    final cubit = context.read<DbCubit>();
     return await showDialog(
       context: context,
       builder: (context) {
-        return BlocProvider<ProjectCubit>.value(
+        return BlocProvider<DbCubit>.value(
             value: cubit, child: const SegmentosBuildDialog());
       },
     );
@@ -115,12 +112,13 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
   }
 
   Widget _buildTeseList(int documentoId) {
+    final cubit = context.read<DbCubit>();
     return ListView.builder(
       itemCount: teses.length,
       itemBuilder: (context, index) {
         final tese = teses[index];
-        final isSelected =
-            _selectedTesesPorDocumento[documentoId]!.contains(tese.id);
+        final isSelected = _selectedTesesPorDocumento[documentoId]!
+            .contains(int.parse(tese.id!));
 
         return Card(
           child: CheckboxListTile(
@@ -141,11 +139,21 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
             value: isSelected,
             onChanged: (value) {
               setState(() {
+                final list = _selectedTesesPorDocumento[documentoId]!;
+
                 if (value == true) {
-                  _selectedTesesPorDocumento[documentoId]!
-                      .add(int.parse(tese.id!));
+                  list.add(int.parse(tese.id!));
                 } else {
-                  _selectedTesesPorDocumento[documentoId]!.remove(tese.id);
+                  list.remove(int.parse(tese.id!));
+                }
+
+                final stringList = list.join(',');
+                if (documentoId == 1) {
+                  cubit.setTesesNacional(stringList);
+                } else if (documentoId == 2) {
+                  cubit.setTesesPresumido(stringList);
+                } else if (documentoId == 3) {
+                  cubit.setTesesReal(stringList);
                 }
               });
             },
@@ -182,24 +190,16 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
 
   Widget _buttonAdd(BuildContext context) {
     final cubit = context.read<DbCubit>();
-    return ButtonApp(
-      text: 'Adicionar',
-      color: ThemeUtils.primaryColor,
-      onPressed: () async {
-        // Montar o JSON para salvar no SegmentoDB
-        final Map<String, String> map = {};
-        _selectedTesesPorDocumento.forEach((docId, teseSet) {
-          map[docId.toString()] = teseSet.join(',');
-        });
-
-        await cubit.addSegmentoComTeses(
-          context,
-          nome: _newNome.text,
-          numTesesJson: jsonEncode(map),
-        );
-        Navigator.pop(context);
-      },
-    );
+    return BlocBuilder<DbCubit, DbState>(builder: (context, state) {
+      return ButtonApp(
+        text: 'Adicionar',
+        color: ThemeUtils.primaryColor,
+        onPressed: () async {
+          await cubit.trataErros(context);
+          Navigator.pop(context);
+        },
+      );
+    });
   }
 
   static List<Tese> loadTesesDefault() => [

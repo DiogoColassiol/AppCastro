@@ -40,7 +40,7 @@ class SegmentoDB {
     return SegmentoDB(
       id: map['id'],
       nome: map['nome'],
-      numTeses: map['numTeses'],
+      numTeses: map['numero_teses'], // corrigido aqui
     );
   }
 
@@ -48,7 +48,7 @@ class SegmentoDB {
     return {
       'id': id,
       'nome': nome,
-      'numTeses': numTeses,
+      'numero_teses': numTeses,
     };
   }
 }

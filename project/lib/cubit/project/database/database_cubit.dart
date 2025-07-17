@@ -7,24 +7,24 @@ import 'package:project/entity/segmentos.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/utils/string_utils.dart';
-import 'package:project/widgets/alertDialogApp.dart';
 
 class DbCubit extends AbstractCubit<DbState> {
   final SegmentoDAO segmentoDAO;
 
   DbCubit({
     required this.segmentoDAO,
-  }) : super(const DbState()) {
-    //  init();
-  }
-  // Future<void> init() async {
-  //   final a= regimeDAO.getRegimes();
-  //   emit(state.listRazao = regimeDAO.getRegimes())
-  // }
+  }) : super(const DbState());
+
   Future<void> addSegmentoComTeses(
-      {required String? nome, required String numTesesJson}) async {
-    final segmento = SegmentoDB(nome: nome, numTeses: numTesesJson);
-    await segmentoDAO.insertSegmento(segmento);
+      {required Map<int, Set<int>> numTesesJson}) async {
+    final nome = searchNome();
+    final jsonMap = await montarJsonTeses(numTesesJson);
+    final jsonString = jsonEncode(jsonMap);
+
+    final segmento = SegmentoDB(nome: nome, numTeses: jsonString);
+
+    //  await segmentoDAO.insertSegmento(segmento);
+    await setSegmentoNome('');
     DbState.initState();
   }
 
@@ -32,75 +32,54 @@ class DbCubit extends AbstractCubit<DbState> {
     emit(state.copyWith(segmentoNome: value));
   }
 
-  Future<void> setTesesNacional(String? value) async {
-    emit(state.copyWith(tesesNacional: value));
-  }
-
-  Future<void> setTesesPresumido(String? value) async {
-    emit(state.copyWith(tesesPresumido: value));
-  }
-
-  Future<void> setTesesReal(String? value) async {
-    emit(state.copyWith(tesesReal: value));
-  }
-
-  String montarJsonTeses() {
-    final map = {
-      '1': state.tesesNacional,
-      '2': state.tesesPresumido,
-      '3': state.tesesReal,
-    };
-    return jsonEncode(map);
-  }
-
   String? searchNome() {
     return state.segmentoNome;
   }
 
-  String? searchNacional() {
-    return state.tesesNacional;
+  Future<Map<String, String>> montarJsonTeses(
+      Map<int, Set<int>> escolhas) async {
+    final Map<String, String> map = {};
+    escolhas.forEach((docId, teses) {
+      map[docId.toString()] = teses.join(',');
+    });
+
+    return map;
   }
 
-  String? searchPresumido() {
-    return state.tesesPresumido;
-  }
+  Future<({bool hasError, String? message})> trataErros(
+      Map<int, Set<int>> escolhas) async {
+    final nome = searchNome();
+    final nacional = escolhas[1]?.join(',') ?? '';
+    final presumido = escolhas[2]?.join(',') ?? '';
+    final real = escolhas[3]?.join(',') ?? '';
 
-  String? searchReal() {
-    return state.tesesReal;
-  }
-
-  Future<bool> trataErros(BuildContext context) async {
-    var nome = searchNome();
-    var nacional = searchNacional();
-    var presumido = searchPresumido();
-    var real = searchReal();
-
-    if (nome == null || nome == '') {
-      DialogApp.warning(
-          context, 'Nome não informado!', 'Informe um nome para o segmento!');
-
-      return true;
+    if (nome == null || nome.isEmpty) {
+      return (
+        hasError: true,
+        message: 'O nome do segmento não pode estar vazio.'
+      );
     }
-    if (nacional == null || nacional == '') {
-      DialogApp.warning(context, 'Teses nao informadas!',
-          'Informe uma as teses para o regime Simples Nacional!');
-
-      return true;
+    if (nacional.isEmpty) {
+      return (
+        hasError: true,
+        message:
+            'Você deve selecionar pelo menos uma tese para o Simples Nacional.'
+      );
     }
-    if (presumido == null || presumido == '') {
-      DialogApp.warning(context, 'Teses nao informadas!',
-          'Informe uma as teses para o regime Lucro Presumido!');
-
-      return true;
+    if (presumido.isEmpty) {
+      return (
+        hasError: true,
+        message:
+            'Você deve selecionar pelo menos uma tese para o Lucro Presumido.'
+      );
     }
-    if (real == null || real == '') {
-      DialogApp.warning(context, 'Teses nao informadas!',
-          'Informe uma as teses para o regime Lucro Real!');
-
-      return true;
+    if (real.isEmpty) {
+      return (
+        hasError: true,
+        message: 'Você deve selecionar pelo menos uma tese para o Lucro Real.'
+      );
     }
-    addSegmentoComTeses(nome: nome, numTesesJson: montarJsonTeses());
-    return false;
+    return (hasError: false, message: null);
   }
 
   Future<void> removeSegmento(BuildContext context) async {

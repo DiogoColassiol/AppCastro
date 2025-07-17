@@ -6,17 +6,12 @@ class DbState extends AbstractState {
   final List<SegmentoDB>? listSegmentos;
   final String? segmentoId;
   final String? segmentoNome;
-  final String tesesNacional;
-  final String tesesPresumido;
-  final String tesesReal;
+
   const DbState({
     super.state = const ActivityIdle(),
     this.listSegmentos,
     this.segmentoId,
     this.segmentoNome,
-    this.tesesNacional = '',
-    this.tesesPresumido = '',
-    this.tesesReal = '',
   });
 
   @override
@@ -34,9 +29,6 @@ class DbState extends AbstractState {
       listSegmentos: listSegmentos ?? this.listSegmentos,
       segmentoId: segmentoId ?? this.segmentoId,
       segmentoNome: segmentoNome ?? this.segmentoNome,
-      tesesNacional: tesesNacional ?? this.tesesNacional,
-      tesesPresumido: tesesPresumido ?? this.tesesPresumido,
-      tesesReal: tesesReal ?? this.tesesReal,
     );
   }
 
@@ -45,9 +37,6 @@ class DbState extends AbstractState {
       listSegmentos: [],
       segmentoId: '',
       segmentoNome: '',
-      tesesNacional: '',
-      tesesPresumido: '',
-      tesesReal: '',
       state: ActivityIdle(),
     );
   }
@@ -58,8 +47,5 @@ class DbState extends AbstractState {
         listSegmentos,
         segmentoId,
         segmentoNome,
-        tesesNacional,
-        tesesPresumido,
-        tesesReal,
       ];
 }

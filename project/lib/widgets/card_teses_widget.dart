@@ -5,14 +5,18 @@ class CardTeses extends StatefulWidget {
   final String? id;
   final String? desc;
   final String? legenda;
-  final bool isLarge;
+  final bool? isLarge;
+  final bool? value;
+  final void Function(bool?)? onChanged;
 
   const CardTeses({
     super.key,
-    required this.id,
-    required this.desc,
-    required this.legenda,
-    required this.isLarge,
+    this.id,
+    this.desc,
+    this.legenda,
+    this.isLarge = false,
+    this.value,
+    this.onChanged,
   });
 
   @override
@@ -25,11 +29,11 @@ class _CardTesesState extends State<CardTeses> {
     return Card(
       elevation: 5,
       color: ThemeUtils.backgroundColor,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: widget.isLarge ? _largeCard(context) : _reducedCard(context),
+      child: widget.isLarge! ? _largeCard(context) : _reducedCard(context),
     );
   }
 
@@ -61,35 +65,23 @@ class _CardTesesState extends State<CardTeses> {
   }
 
   Widget _reducedCard(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
+    return CheckboxListTile(
+      value: widget.value ?? false,
+      onChanged: widget.onChanged,
+      activeColor: ThemeUtils.primaryColor,
+      title: Row(
         children: [
-          Container(
-            width: 30,
-            height: 30,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: ThemeUtils.primaryColor,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              widget.id ?? '',
-              style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
-          ),
-          const SizedBox(width: 12),
+          _buildCircleIdReduced(),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
-              widget.legenda ?? '',
+              widget.desc ?? '',
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
-          ),
+          )
         ],
       ),
+      subtitle: Text('Requisição: ${widget.legenda ?? ''}'),
     );
   }
 
@@ -106,6 +98,23 @@ class _CardTesesState extends State<CardTeses> {
         widget.id ?? '',
         style: const TextStyle(
             fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildCircleIdReduced() {
+    return Container(
+      width: 25,
+      height: 25,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: ThemeUtils.primaryColor,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        widget.id ?? '',
+        style: const TextStyle(
+            fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
   }

@@ -143,7 +143,7 @@ class DB {
 
   static List<Tese> loadTesesDefault() => [
         Tese(
-          id: '1',
+          id: 1,
           docs: 'Certificado Digital',
           descricao:
               'PRODUTOS SOB O REGIME MONOFÁSICO OU CONCENTRADO DE PIS E COFINS E O ICMS ST NO SIMPLES NACIONAL',
@@ -158,7 +158,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '2',
+          id: 2,
           docs: 'Certificado Digital, Balanço, DRE',
           descricao:
               'COMPENSAÇÃO DE PREJUÍZOS FISCAIS E BASE DE CÁLCULO NEGATIVA DA CONTRIBUIÇÃO SOCIAL',
@@ -169,7 +169,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '3',
+          id: 3,
           docs: 'Certificado Digital, DRE',
           descricao: 'RECUPERAÇÃO DE CRÉDITOS DE PIS E COFINS NÃO UTILIZADOS',
           legenda: '''
@@ -183,7 +183,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '4',
+          id: 4,
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO ICMS DA BASE DE CÁLCULO',
@@ -194,7 +194,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '5',
+          id: 5,
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO ICMS SUBSTITUIÇÃO TRIBUTÁRIA DA BASE DE CÁLCULO',
@@ -209,7 +209,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '6',
+          id: 6,
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO DIFERENCIAL DE ALÍQUOTAS DO ICMS DEVIDO NAS VENDAS INTERESTADUAIS DA BASE DE CÁLCULO DE PIS E COFINS',
@@ -222,7 +222,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '7',
+          id: 7,
           docs: 'Certificado Digital, Balanço, DRE',
           descricao:
               'SUBVENÇÕES PARA INVESTIMENTOS E DOAÇÕES RECEBIDAS DO PODER PÚBLICO – EXCLUSÃO NO IRPJ E CSLL',
@@ -231,7 +231,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '8',
+          id: 8,
           docs: 'Certificado Digital, DRE',
           descricao:
               'RECUPERAÇÃO DE CONTRIBUIÇÕES PREVIDENCIÁRIAS PAGAS SOBRE VERBAS INDENIZATÓRIAS',
@@ -247,7 +247,7 @@ class DB {
   ''',
         ),
         Tese(
-          id: '9',
+          id: 9,
           docs: 'Certificado Digital, DRE',
           descricao:
               'RECUPERAÇÃO DA CONTRIBUIÇÃO PREVIDENCIÁRIA RELATIVA AOS 11% DE INSS RETIDO NA FONTE NOS SERVIÇOS PRESTADOS POR TERCEIRIZADOS',

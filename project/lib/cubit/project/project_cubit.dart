@@ -17,7 +17,7 @@ import 'package:project/entity/tesess.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/print/resumo_pdf.dart';
 import 'package:project/widgets/alertBar.dart';
-import 'package:project/widgets/alertDialogApp.dart';
+import 'package:project/widgets/dialogs/alertDialogApp.dart';
 
 class ProjectCubit extends AbstractCubit<ProjectState> {
   late final ReceitaStore store;

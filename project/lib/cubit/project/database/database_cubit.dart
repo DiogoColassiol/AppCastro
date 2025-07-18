@@ -6,13 +6,16 @@ import 'package:project/cubit/project/database/database_state.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/repositories/segmentoDAO.dart';
+import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/utils/string_utils.dart';
 
 class DbCubit extends AbstractCubit<DbState> {
   final SegmentoDAO segmentoDAO;
+  final TesesDAO tesesDAO;
 
   DbCubit({
     required this.segmentoDAO,
+    required this.tesesDAO,
   }) : super(const DbState());
 
   Future<void> addSegmentoComTeses(
@@ -103,5 +106,39 @@ class DbCubit extends AbstractCubit<DbState> {
   //   final teseStr = segmento.getTesesParaDocumento(documentoId);
   //   final teses = separaTeses(teseStr);
   //   return teses;
+  // }
+
+  // String? documentosDasTeses(SegmentoDB seg, TesesDAO dao) {
+  //   if (dao.tesesList.isEmpty ||
+  //       seg.numTeses == null ||
+  //       seg.numTeses!.isEmpty) {
+  //     return 'Sem documentos';
+  //   }
+
+  //   // Parse do JSON do campo numero_teses
+  //   final Map<String, dynamic> mapTeses = jsonDecode(seg.numTeses!);
+
+  //   // Coleta todos os números de tese (como int), separados por vírgula
+  //   final Set<int> idsTeses = {};
+
+  //   for (final value in mapTeses.values) {
+  //     if (value is String && value.isNotEmpty) {
+  //       final ids = value
+  //           .split(',')
+  //           .map((e) => int.tryParse(e.trim()))
+  //           .whereType<int>();
+  //       idsTeses.addAll(ids);
+  //     }
+  //   }
+
+  //   // Filtra as teses cujos IDs estão no campo numero_teses
+  //   final documentos = dao.tesesList
+  //       .where((tese) => idsTeses.contains(tese.id))
+  //       .map((tese) => tese.documentos)
+  //       .where((doc) => doc != null && doc.isNotEmpty)
+  //       .map((doc) => doc!)
+  //       .toSet(); // remove duplicados
+
+  //   return documentos.isEmpty ? 'Sem documentos' : documentos.join(', ');
   // }
 }

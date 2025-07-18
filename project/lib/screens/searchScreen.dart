@@ -7,7 +7,7 @@ import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_InfosApi.dart';
 import 'package:project/widgets/card_segAndRegime.dart';
 import 'package:project/widgets/input_widget.dart';
-import 'package:project/widgets/searchApiDialog.dart';
+import 'package:project/widgets/dialogs/searchApiDialog.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

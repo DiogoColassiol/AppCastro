@@ -4,7 +4,7 @@ import 'package:project/utils/theme_utils.dart';
 class CardTeses extends StatefulWidget {
   final String? id;
   final String? desc;
-  final String? legenda;
+  final String? docsRequeridos;
   final bool? isLarge;
   final bool? value;
   final void Function(bool?)? onChanged;
@@ -13,7 +13,7 @@ class CardTeses extends StatefulWidget {
     super.key,
     this.id,
     this.desc,
-    this.legenda,
+    this.docsRequeridos,
     this.isLarge = false,
     this.value,
     this.onChanged,
@@ -56,7 +56,7 @@ class _CardTesesState extends State<CardTeses> {
           ]),
           const SizedBox(height: 15),
           Text(
-            widget.legenda ?? '',
+            widget.docsRequeridos ?? '',
             style: const TextStyle(fontSize: 14, color: Colors.black54),
           ),
         ],
@@ -81,7 +81,7 @@ class _CardTesesState extends State<CardTeses> {
           )
         ],
       ),
-      subtitle: Text('Requisição: ${widget.legenda ?? ''}'),
+      subtitle: Text('Requisição: ${widget.docsRequeridos ?? ''}'),
     );
   }
 

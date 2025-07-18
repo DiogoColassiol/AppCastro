@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/cubit/project/project_state.dart';
+import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/card_teses_widget.dart';
 
@@ -10,6 +11,8 @@ class ListTesesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tesesRepo = context.watch<TesesDAO>();
+
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         return Container(
@@ -18,13 +21,13 @@ class ListTesesScreen extends StatelessWidget {
             children: [
               Expanded(
                   child: ListView.builder(
-                itemCount: state.teses!.length,
+                itemCount: tesesRepo.tesesList.length,
                 itemBuilder: (context, index) {
-                  final teses = state.teses![index];
+                  final teses = tesesRepo.tesesList[index];
                   return CardTeses(
-                    id: teses.id,
+                    id: teses.id.toString(),
                     desc: teses.descricao,
-                    legenda: teses.legenda,
+                    docsRequeridos: teses.legenda,
                     isLarge: true,
                   );
                 },

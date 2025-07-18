@@ -4,14 +4,16 @@ import 'package:project/entity/segmentos.dart';
 
 class SegmentoDB {
   final int? id;
+  final int? codigo;
   final String? nome;
   final String? numTeses;
 
-  SegmentoDB({this.id, this.nome, this.numTeses});
+  SegmentoDB({this.id, this.codigo, this.nome, this.numTeses});
 
   factory SegmentoDB.fromSegmento(SegmentoDB segmento) {
     return SegmentoDB(
       id: segmento.id,
+      codigo: segmento.codigo,
       nome: segmento.nome,
       numTeses: segmento.numTeses,
     );
@@ -40,7 +42,7 @@ class SegmentoDB {
     return SegmentoDB(
       id: map['id'],
       nome: map['nome'],
-      numTeses: map['numero_teses'], // corrigido aqui
+      numTeses: map['numero_teses'],
     );
   }
 

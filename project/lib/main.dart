@@ -4,6 +4,7 @@ import 'package:project/cubit/project/database/database_cubit.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/database/db.dart';
 import 'package:project/repositories/segmentoDAO.dart';
+import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/screens/resultScreen.dart';
 import 'package:provider/provider.dart';
@@ -46,9 +47,12 @@ class MyApp extends StatelessWidget {
   List<SingleChildWidget> buildAppProviders() {
     return [
       ChangeNotifierProvider(create: (context) => SegmentoDAO()),
+      ChangeNotifierProvider(create: (context) => TesesDAO()),
       BlocProvider(
-          create: (context) =>
-              DbCubit(segmentoDAO: context.read<SegmentoDAO>())),
+          create: (context) => DbCubit(
+                segmentoDAO: context.read<SegmentoDAO>(),
+                tesesDAO: context.read<TesesDAO>(),
+              )),
       BlocProvider(
         create: (context) => ProjectCubit(),
       ),

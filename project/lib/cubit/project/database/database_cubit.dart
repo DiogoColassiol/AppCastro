@@ -24,9 +24,13 @@ class DbCubit extends AbstractCubit<DbState> {
     final jsonMap = await montarJsonTeses(numTesesJson);
     final jsonString = jsonEncode(jsonMap);
 
-    final segmento = SegmentoDB(nome: nome, numTeses: jsonString);
+    final segmento = SegmentoDB(
+      nome: nome,
+      codigo: await segmentoDAO.getMaiorCod() + 1,
+      numTeses: jsonString,
+    );
 
-    //  await segmentoDAO.insertSegmento(segmento);
+    await segmentoDAO.insertSegmento(segmento);
     await setSegmentoNome('');
     DbState.initState();
   }
@@ -43,7 +47,8 @@ class DbCubit extends AbstractCubit<DbState> {
       Map<int, Set<int>> escolhas) async {
     final Map<String, String> map = {};
     escolhas.forEach((docId, teses) {
-      map[docId.toString()] = teses.join(',');
+      final ordenadas = teses.toList()..sort();
+      map[docId.toString()] = ordenadas.join(',');
     });
 
     return map;
@@ -85,60 +90,18 @@ class DbCubit extends AbstractCubit<DbState> {
     return (hasError: false, message: null);
   }
 
-  Future<void> removeSegmento(BuildContext context) async {
-    var id = StringUtils.stringToInt(state.segmentoId);
-    await segmentoDAO.deleteSegmento(id!);
+  Future<void> removeSegmento(SegmentoDB seg, BuildContext context) async {
+    await segmentoDAO.deleteSegmento(seg.codigo!);
   }
 
   SegmentoDB buildSegmentoDB(Segmento doc) {
     return SegmentoDB(id: doc.id, nome: doc.nome);
   }
 
-  Segmento buildSegmento(String? id, String? nome) {
-    return Segmento(
-      id: StringUtils.stringToInt(id),
-      nome: nome,
-      selecionado: null,
-    );
-  }
-
-  // List<Tese> searchTesess(SegmentoDB segmento, int documentoId) {
-  //   final teseStr = segmento.getTesesParaDocumento(documentoId);
-  //   final teses = separaTeses(teseStr);
-  //   return teses;
-  // }
-
-  // String? documentosDasTeses(SegmentoDB seg, TesesDAO dao) {
-  //   if (dao.tesesList.isEmpty ||
-  //       seg.numTeses == null ||
-  //       seg.numTeses!.isEmpty) {
-  //     return 'Sem documentos';
-  //   }
-
-  //   // Parse do JSON do campo numero_teses
-  //   final Map<String, dynamic> mapTeses = jsonDecode(seg.numTeses!);
-
-  //   // Coleta todos os números de tese (como int), separados por vírgula
-  //   final Set<int> idsTeses = {};
-
-  //   for (final value in mapTeses.values) {
-  //     if (value is String && value.isNotEmpty) {
-  //       final ids = value
-  //           .split(',')
-  //           .map((e) => int.tryParse(e.trim()))
-  //           .whereType<int>();
-  //       idsTeses.addAll(ids);
-  //     }
-  //   }
-
-  //   // Filtra as teses cujos IDs estão no campo numero_teses
-  //   final documentos = dao.tesesList
-  //       .where((tese) => idsTeses.contains(tese.id))
-  //       .map((tese) => tese.documentos)
-  //       .where((doc) => doc != null && doc.isNotEmpty)
-  //       .map((doc) => doc!)
-  //       .toSet(); // remove duplicados
-
-  //   return documentos.isEmpty ? 'Sem documentos' : documentos.join(', ');
+  // Segmento buildSegmento(String? id, String? nome) {
+  //   return Segmento(
+  //     id: StringUtils.stringToInt(id),
+  //     nome: nome,
+  //   );
   // }
 }

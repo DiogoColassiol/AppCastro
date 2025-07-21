@@ -21,7 +21,7 @@ class CardSegDoc extends StatelessWidget {
       elevation: 5,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(15))),
-      color: ThemeUtils.backgroundColor,
+      color: Colors.white,
       child: CheckboxListTile(
         key: keyTile,
         title: Text(

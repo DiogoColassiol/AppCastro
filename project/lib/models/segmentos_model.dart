@@ -41,6 +41,7 @@ class SegmentoDB {
   factory SegmentoDB.fromMap(Map<String, dynamic> map) {
     return SegmentoDB(
       id: map['id'],
+      codigo: map['codigo'],
       nome: map['nome'],
       numTeses: map['numero_teses'],
     );
@@ -49,6 +50,7 @@ class SegmentoDB {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'codigo': codigo,
       'nome': nome,
       'numero_teses': numTeses,
     };

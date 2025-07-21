@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/cubit/project/project_state.dart';
+import 'package:project/models/segmentos_model.dart';
+import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_InfosApi.dart';
@@ -72,7 +74,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           state.apiResult?.fantasia != null &&
                           state.apiResult?.situacao != null)
                         _apiInfos(),
-                      _segmentos(),
+                      _segmentosdb(),
                       _documentos(),
                       const SizedBox(height: 20),
                     ],
@@ -144,7 +146,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _segmentos() {
+  Widget _segmentosdb() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
@@ -169,11 +171,13 @@ class _SearchScreenState extends State<SearchScreen> {
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.all(8.0),
               children: segmentos.map((segmento) {
+                final isSelected = '${segmento.id}' == state.segmentoSelectId;
+
                 return CardSegDoc(
-                  nome: segmento.nome.toString(),
-                  selecionado: segmento.selecionado ?? false,
-                  onChanged: (value) {
-                    cubit.selectSeg(segmento.id, value!);
+                  nome: segmento.nome ?? '',
+                  selecionado: isSelected,
+                  onChanged: (value) async {
+                    await cubit.selectSeg(segmento.id, value!);
                   },
                   keyTile: Key(segmento.id.toString()),
                 );
@@ -185,11 +189,51 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  // Widget _segmentos() {
+  //   return BlocBuilder<ProjectCubit, ProjectState>(
+  //     builder: (context, state) {
+  //       final cubit = context.read<ProjectCubit>();
+  //       final segmentos = state.segmentos ?? [];
+
+  //       return Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           const Center(
+  //             child: Text(
+  //               'Segmentos',
+  //               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 12),
+  //           GridView.count(
+  //             crossAxisCount: 3,
+  //             mainAxisSpacing: 8.0,
+  //             crossAxisSpacing: 8.0,
+  //             childAspectRatio: getScreenWidth(context),
+  //             shrinkWrap: true,
+  //             physics: const NeverScrollableScrollPhysics(),
+  //             padding: const EdgeInsets.all(8.0),
+  //             children: segmentos.map((segmento) {
+  //               return CardSegDoc(
+  //                 nome: segmento.nome.toString(),
+  //                 selecionado: segmento.selecionado ?? false,
+  //                 onChanged: (value) {
+  //                   cubit.selectSeg(segmento.id, value!);
+  //                 },
+  //                 keyTile: Key(segmento.id.toString()),
+  //               );
+  //             }).toList(),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
   Widget _documentos() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final outros =
-            !state.segmentos!.any((s) => s.id == 7 && s.selecionado!);
+        final outros = state.segmentoSelectId == '0' ? false : true;
         final cubit = context.read<ProjectCubit>();
         final documentos =
             (state.documentos ?? []).where((doc) => doc.id != 4).toList();
@@ -214,9 +258,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(8.0),
                     children: documentos.map((documento) {
+                      final isSelected =
+                          '${documento.id}' == state.documentoSelectId;
                       return CardSegDoc(
                         nome: documento.nome.toString(),
-                        selecionado: documento.selecionado ?? false,
+                        selecionado: isSelected,
                         onChanged: (value) {
                           cubit.selectDoc(documento.id, value!);
                         },
@@ -284,7 +330,7 @@ class _SearchScreenState extends State<SearchScreen> {
             textColor: Colors.red,
             color: Colors.white,
             onPressed: () async {
-              await cubit.initialState();
+              //    await cubit.initialState();
             });
       },
     );

@@ -16,19 +16,31 @@ import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/print/resumo_pdf.dart';
+import 'package:project/repositories/segmentoDAO.dart';
+import 'package:project/utils/string_utils.dart';
 import 'package:project/widgets/alertBar.dart';
 import 'package:project/widgets/dialogs/alertDialogApp.dart';
 
 class ProjectCubit extends AbstractCubit<ProjectState> {
   late final ReceitaStore store;
+  final SegmentoDAO segmentoDAO;
 
-  ProjectCubit() : super(const ProjectState()) {
-    store =
-        ReceitaStore(this, repository: ReceitaRepository(client: HttpClient()));
+  ProjectCubit(this.segmentoDAO) : super(const ProjectState()) {
+    store = ReceitaStore(
+      this,
+      repository: ReceitaRepository(client: HttpClient()),
+    );
     init();
   }
   Future<void> init() async {
-    emit(ProjectState.initialState());
+    await segmentoDAO.getSegmentos();
+    final segmentos = segmentoDAO.segmentosList;
+    final state = await ProjectState.fromSegmentos(segmentos);
+    emit(state);
+  }
+
+  List<SegmentoDB> getListSegDB() {
+    return segmentoDAO.segmentosList.toList();
   }
 
   Future<ReceitaModel?> getDadosClient(BuildContext context) async {
@@ -67,48 +79,16 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   }
 
 //
-  Future<void> selectSeg(int? segId, bool isSelected) async {
-    final segmentosAtualizados = state.segmentos?.map((s) {
-      if (s.id == segId) {
-        return s.copyWith(selecionado: isSelected);
-      } else {
-        return s.copyWith(selecionado: false);
-      }
-    }).toList();
-
+  Future<void> selectSeg(int? ide, bool isSelected) async {
+    final id = StringUtils.intToString(ide);
     emit(state.copyWith(
-      segmentoSelectId: isSelected ? segId : null,
-      segmentos: segmentosAtualizados,
+      segmentoSelectId: isSelected ? id : '',
     ));
-
-    if (isSelected && segId == 7) {
-      await selectDoc(4, true);
-    }
-    if (isSelected && segId != 7 && state.documentoSelectId == 4) {
-      final documentosAtualizados = state.documentos?.map((d) {
-        return d.copyWith(selecionado: false);
-      }).toList();
-
-      emit(state.copyWith(
-        documentos: documentosAtualizados,
-        documentoSelectId: null,
-      ));
-    }
   }
 
   Future<void> selectDoc(int? docId, bool select) async {
-    final documentosAtualizados = state.documentos?.map((d) {
-      if (d.id == docId) {
-        return d.copyWith(selecionado: select);
-      } else {
-        return d.copyWith(selecionado: false);
-      }
-    }).toList();
-
-    emit(state.copyWith(
-      documentoSelectId: select ? docId : null,
-      documentos: documentosAtualizados,
-    ));
+    final id = StringUtils.intToString(docId);
+    emit(state.copyWith(documentoSelectId: select ? id : ''));
   }
 
   Future<void> checkObs(bool value) async {
@@ -131,9 +111,9 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     ));
   }
 
-  Future<void> initialState() async {
-    emit(ProjectState.initialState());
-  }
+  // Future<void> initialState() async {
+  //   emit(ProjectState.initialState());
+  // }
 
   Future<bool> trataErros(BuildContext context) async {
     final cliente = searchCliente();
@@ -147,14 +127,14 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
 
       return true;
     }
-    if (seg == null || seg.selecionado == false) {
+    if (seg == null) {
       DialogApp.warning(context, 'Erro na escolha!',
           'Selecione um segmento para inciar a busca!');
 
       return true;
     }
 
-    if (doc == null || doc.selecionado == false) {
+    if (doc == null) {
       DialogApp.warning(context, 'Erro na escolha!',
           'Selecione um documento para iniciar a busca!');
 

@@ -28,7 +28,7 @@ class _CardTesesState extends State<CardTeses> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
-      color: ThemeUtils.backgroundColor,
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),

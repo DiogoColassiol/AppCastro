@@ -5,6 +5,7 @@ import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
+import 'package:project/models/segmentos_model.dart';
 
 class ProjectState extends AbstractState {
   final String? cliente;
@@ -12,8 +13,8 @@ class ProjectState extends AbstractState {
   final List<Segmento>? segmentos;
   final List<Documento>? documentos;
   final List<Tese>? teses;
-  final int? segmentoSelectId;
-  final int? documentoSelectId;
+  final String? segmentoSelectId;
+  final String? documentoSelectId;
   final List<Tese>? tesesSelect;
   final bool hasObs;
   final String? obs;
@@ -28,7 +29,7 @@ class ProjectState extends AbstractState {
     this.segmentos,
     this.documentos,
     this.teses,
-    this.segmentoSelectId,
+    this.segmentoSelectId = '',
     this.documentoSelectId,
     this.tesesSelect,
     this.hasObs = false,
@@ -63,8 +64,8 @@ class ProjectState extends AbstractState {
     String? clienteCnpj,
     List<Segmento>? segmentos,
     List<Documento>? documentos,
-    int? segmentoSelectId,
-    int? documentoSelectId,
+    String? segmentoSelectId,
+    String? documentoSelectId,
     List<Tese>? tesesSelect,
     List<Tese>? teses,
     bool? hasObs,
@@ -91,12 +92,15 @@ class ProjectState extends AbstractState {
     );
   }
 
-  static ProjectState initialState() {
+  static Future<ProjectState> fromSegmentos(List<SegmentoDB> dbList) async {
+    final segmentos =
+        dbList.map((s) => Segmento(id: s.codigo, nome: s.nome ?? '')).toList();
+
     return ProjectState(
       state: const ActivityIdle(),
       cliente: '',
       clienteCnpj: '',
-      segmentos: loadSegmentos(),
+      segmentos: segmentos,
       documentos: loadDocumentos(),
       teses: loadTeses(),
       segmentoSelectId: null,
@@ -110,6 +114,26 @@ class ProjectState extends AbstractState {
           nome: null, abertura: null, fantasia: null, situacao: null),
     );
   }
+
+  // static ProjectState initialState() {
+  //   return ProjectState(
+  //     state: const ActivityIdle(),
+  //     cliente: '',
+  //     clienteCnpj: '',
+  //     segmentos: loadSegmentos(),
+  //     documentos: loadDocumentos(),
+  //     teses: loadTeses(),
+  //     segmentoSelectId: null,
+  //     documentoSelectId: null,
+  //     tesesSelect: null,
+  //     hasObs: false,
+  //     obs: '',
+  //     obsCount: null,
+  //     result: null,
+  //     apiResult: ReceitaModel(
+  //         nome: null, abertura: null, fantasia: null, situacao: null),
+  //   );
+  // }
 
   static List<Tese> loadTeses() => [
         Tese(
@@ -229,16 +253,6 @@ class ProjectState extends AbstractState {
   Trabalho: efetuar o levantamento e proceder a recuperação ou compensação das quantias pagas indevidamente ou a maior de Contribuição, nos últimos 60 meses pela empresa (período de prescrição).
   ''',
         ),
-      ];
-
-  static List<Segmento> loadSegmentos() => [
-        Segmento(id: 1, nome: 'Transportadoras'),
-        Segmento(id: 2, nome: 'Postos de Combustível'),
-        Segmento(id: 3, nome: 'Supermercados'),
-        Segmento(id: 4, nome: 'Agro/Cerealistas'),
-        Segmento(id: 5, nome: 'Distribuidores de Alimentos'),
-        Segmento(id: 6, nome: 'Hortifrutigranjeiros'),
-        Segmento(id: 7, nome: 'Outros'),
       ];
 
   static List<Documento> loadDocumentos() => [

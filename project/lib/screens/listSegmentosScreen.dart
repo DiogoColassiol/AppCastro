@@ -45,9 +45,7 @@ class SegmentosScreen extends StatelessWidget {
   }
 
   _cardSegs(BuildContext context) {
-    //   final cubit = context.read<DbCubit>();
     final segDAO = context.watch<SegmentoDAO>();
-//    final tesesDAO = context.watch<TesesDAO>();
     final segmentos =
         segDAO.segmentosList.where((s) => s.nome != 'Outros').toList();
     return ListView.builder(
@@ -63,7 +61,7 @@ class SegmentosScreen extends StatelessWidget {
                   Column(children: [
                     IconButton(
                       onPressed: () async {
-                        await SegmentoDeleteDialog.show(context);
+                        await SegmentoDeleteDialog.show(seg, context);
                       },
                       icon: const Icon(Icons.delete),
                     )
@@ -82,14 +80,6 @@ class SegmentosScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(width: 40),
-                        const Row(
-                          children: [
-                            // Expanded(
-                            //   child: Text(
-                            //       'Documentos Requeridos: ${cubit.documentosDasTeses(seg, tesesDAO)!}'),
-                            // )
-                          ],
-                        ),
                       ],
                     ),
                   ),

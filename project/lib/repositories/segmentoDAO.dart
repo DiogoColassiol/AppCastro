@@ -43,12 +43,20 @@ class SegmentoDAO extends ChangeNotifier {
   }
 
 //delete
-  Future<void> deleteSegmento(int id) async {
+  Future<void> deleteSegmento(int cod) async {
     await db.delete(
       'segmento',
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'codigo = ?',
+      whereArgs: [cod],
     );
     await getSegmentos();
+  }
+
+  Future<int> getMaiorCod() async {
+    db = await DB.instance.database;
+    final result =
+        await db.rawQuery('SELECT MAX(codigo) as max_codigo FROM segmento');
+    final maxCod = result.first['max_codigo'] as int?;
+    return maxCod ?? 0;
   }
 }

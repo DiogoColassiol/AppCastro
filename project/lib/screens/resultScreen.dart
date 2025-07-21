@@ -545,7 +545,7 @@ class ResultScreenState extends State<ResultScreen> {
           icon: Icons.replay_circle_filled_sharp,
           textColor: Colors.red,
           onPressed: () async {
-            await cubit.initialState();
+            //    await cubit.initialState();
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const MainScreen()));
           },

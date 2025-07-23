@@ -3,28 +3,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/database/database_cubit.dart';
-import 'package:project/models/segmentos_model.dart';
+import 'package:project/entity/segmentos.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_sec_widget.dart';
 
 class SegmentoDeleteDialog {
-  static Future<void> show(SegmentoDB seg, BuildContext context) async {
+  static Future<void> show(Segmento seg, BuildContext context) async {
     final cubit = context.read<DbCubit>();
     return await showDialog(
       context: context,
       builder: (context) {
         return BlocProvider<DbCubit>.value(
-            value: cubit,
-            child: SegDeleteBuildDialog(
-              segmento: seg,
-            ));
+            value: cubit, child: SegDeleteBuildDialog(segmento: seg));
       },
     );
   }
 }
 
 class SegDeleteBuildDialog extends StatefulWidget {
-  SegmentoDB segmento;
+  Segmento segmento;
   SegDeleteBuildDialog({super.key, required this.segmento});
 
   @override
@@ -32,6 +29,16 @@ class SegDeleteBuildDialog extends StatefulWidget {
 }
 
 class _SegDeleteBuildDialogState extends State<SegDeleteBuildDialog> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -68,6 +75,7 @@ class _SegDeleteBuildDialogState extends State<SegDeleteBuildDialog> {
       buttonColor: ThemeUtils.accentError,
       onPressed: () async {
         await cubit.removeSegmento(widget.segmento, context);
+        Navigator.pop(context);
       },
     );
   }

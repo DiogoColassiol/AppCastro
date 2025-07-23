@@ -17,17 +17,12 @@ class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
   late final FocusNode _node;
   late TabController _tabController;
-  late TextEditingController _inputControler;
 
   @override
   void initState() {
     super.initState();
     _node = FocusNode();
     _tabController = TabController(length: 3, vsync: this);
-    _inputControler = TextEditingController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(_node);
-    });
   }
 
   double getScreenWidth(BuildContext context) {
@@ -39,7 +34,7 @@ class _MainScreenState extends State<MainScreen>
   void dispose() {
     _node.dispose();
     _tabController.dispose();
-    _inputControler.dispose();
+
     super.dispose();
   }
 

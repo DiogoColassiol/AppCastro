@@ -6,6 +6,7 @@ import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/models/segmentos_model.dart';
+import 'package:project/models/teses_model.dart';
 
 class ProjectState extends AbstractState {
   final String? cliente;
@@ -92,9 +93,22 @@ class ProjectState extends AbstractState {
     );
   }
 
-  static Future<ProjectState> fromSegmentos(List<SegmentoDB> dbList) async {
-    final segmentos =
-        dbList.map((s) => Segmento(id: s.codigo, nome: s.nome ?? '')).toList();
+  static Future<ProjectState> fromDB(
+      List<SegmentoDB> dbList, List<TesesDB> listTeses) async {
+    final segmentos = dbList
+        .map((s) => Segmento(
+              id: s.codigo,
+              nome: s.nome ?? '',
+              numTeses: s.numTeses,
+            ))
+        .toList();
+    final teses = listTeses
+        .map((t) => Tese(
+            id: t.codigo,
+            descricao: t.descricao,
+            legenda: t.legenda,
+            docs: t.documentos))
+        .toList();
 
     return ProjectState(
       state: const ActivityIdle(),
@@ -102,7 +116,7 @@ class ProjectState extends AbstractState {
       clienteCnpj: '',
       segmentos: segmentos,
       documentos: loadDocumentos(),
-      teses: loadTeses(),
+      teses: teses,
       segmentoSelectId: null,
       documentoSelectId: null,
       tesesSelect: null,
@@ -256,9 +270,9 @@ class ProjectState extends AbstractState {
       ];
 
   static List<Documento> loadDocumentos() => [
+        Documento(id: 0, nome: 'Outros'),
         Documento(id: 1, nome: 'Simples Nacional'),
         Documento(id: 2, nome: 'Lucro Presumido'),
         Documento(id: 3, nome: 'Lucro Real'),
-        Documento(id: 4, nome: 'Outros'),
       ];
 }

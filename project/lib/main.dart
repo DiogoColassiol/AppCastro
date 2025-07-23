@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
       BlocProvider(
         create: (context) => ProjectCubit(
           context.read<SegmentoDAO>(),
+          context.read<TesesDAO>(),
         ),
       ),
     ];

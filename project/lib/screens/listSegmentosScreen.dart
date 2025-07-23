@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/database/database_cubit.dart';
 import 'package:project/cubit/project/database/database_state.dart';
-import 'package:project/repositories/segmentoDAO.dart';
-import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/dialogs/deleteSegDialog.dart';
 import 'package:project/widgets/dialogs/segmentoDialog.dart';
@@ -14,14 +12,13 @@ class SegmentosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final segmentoRepo = context.watch<SegmentoDAO>();
     return BlocBuilder<DbCubit, DbState>(builder: (context, state) {
       return Container(
         color: ThemeUtils.surfaceColor,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            segmentoRepo.segmentosList.isEmpty
+            state.listSegmentos == null
                 ? const Expanded(
                     child: Center(
                       child: CircularProgressIndicator(),
@@ -45,9 +42,11 @@ class SegmentosScreen extends StatelessWidget {
   }
 
   _cardSegs(BuildContext context) {
-    final segDAO = context.watch<SegmentoDAO>();
-    final segmentos =
-        segDAO.segmentosList.where((s) => s.nome != 'Outros').toList();
+    final cubit = context.read<DbCubit>();
+    final segmentos = cubit.state.listSegmentos!
+        .where((seg) => seg.nome != 'Outros')
+        .toList();
+
     return ListView.builder(
       itemCount: segmentos.length,
       itemBuilder: (context, index) {

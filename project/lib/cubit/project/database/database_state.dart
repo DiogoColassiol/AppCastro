@@ -1,9 +1,10 @@
 import 'package:project/abstract/abstract_state.dart';
 import 'package:project/abstract/activity_state.dart';
+import 'package:project/entity/segmentos.dart';
 import 'package:project/models/segmentos_model.dart';
 
 class DbState extends AbstractState {
-  final List<SegmentoDB>? listSegmentos;
+  final List<Segmento>? listSegmentos;
   final String? segmentoId;
   final String? segmentoNome;
 
@@ -17,7 +18,7 @@ class DbState extends AbstractState {
   @override
   DbState copyWith({
     ActivityState? state,
-    List<SegmentoDB>? listSegmentos,
+    List<Segmento>? listSegmentos,
     String? segmentoId,
     String? segmentoNome,
     String? tesesNacional,
@@ -32,12 +33,20 @@ class DbState extends AbstractState {
     );
   }
 
-  static DbState initState() {
-    return const DbState(
-      listSegmentos: [],
+  static Future<DbState> fromDB(List<SegmentoDB> listSegmento) async {
+    final segmentos = listSegmento
+        .map((s) => Segmento(
+              id: s.codigo,
+              nome: s.nome ?? '',
+              numTeses: s.numTeses,
+            ))
+        .toList();
+
+    return DbState(
+      listSegmentos: segmentos,
       segmentoId: '',
       segmentoNome: '',
-      state: ActivityIdle(),
+      state: const ActivityIdle(),
     );
   }
 

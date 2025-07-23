@@ -40,7 +40,7 @@ class ResultScreenState extends State<ResultScreen> {
     cliente = c.searchCliente();
     segmentoSelect = c.searchSeg();
     documentoSelect = c.searchDoc();
-    listTeses = c.searchTeses(segmentoSelect!.id!, documentoSelect!.id!);
+    listTeses = c.separaTesesNew(segmentoSelect!, documentoSelect!);
     docsNedded = c.searchDocs(listTeses!, false);
     apiResult = c.searchApi();
     outros = segmentoSelect!.id == 7 ? true : false;
@@ -545,7 +545,7 @@ class ResultScreenState extends State<ResultScreen> {
           icon: Icons.replay_circle_filled_sharp,
           textColor: Colors.red,
           onPressed: () async {
-            //    await cubit.initialState();
+            await cubit.sincDbAndInit();
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const MainScreen()));
           },

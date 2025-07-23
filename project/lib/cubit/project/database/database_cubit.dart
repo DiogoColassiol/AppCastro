@@ -7,7 +7,6 @@ import 'package:project/entity/segmentos.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/repositories/tesesDAO.dart';
-import 'package:project/utils/string_utils.dart';
 
 class DbCubit extends AbstractCubit<DbState> {
   final SegmentoDAO segmentoDAO;
@@ -16,7 +15,25 @@ class DbCubit extends AbstractCubit<DbState> {
   DbCubit({
     required this.segmentoDAO,
     required this.tesesDAO,
-  }) : super(const DbState());
+  }) : super(const DbState()) {
+    segmentoDAO.segmentosNotifier.addListener(_onSegmentosChanged);
+    init();
+  }
+  void _onSegmentosChanged() {
+    final segmentosDb = segmentoDAO.segmentosNotifier.value;
+    final segmentos = segmentosDb.map((s) => Segmento.fromDB(s)).toList();
+    emit(state.copyWith(listSegmentos: segmentos));
+  }
+
+  Future<void> init() async {
+    await sinc();
+  }
+
+  Future<void> sinc() async {
+    final segmentos = segmentoDAO.segmentosNotifier.value;
+    final state = await DbState.fromDB(segmentos);
+    emit(state);
+  }
 
   Future<void> addSegmentoComTeses(
       {required Map<int, Set<int>> numTesesJson}) async {
@@ -32,7 +49,6 @@ class DbCubit extends AbstractCubit<DbState> {
 
     await segmentoDAO.insertSegmento(segmento);
     await setSegmentoNome('');
-    DbState.initState();
   }
 
   Future<void> setSegmentoNome(String? value) async {
@@ -90,8 +106,8 @@ class DbCubit extends AbstractCubit<DbState> {
     return (hasError: false, message: null);
   }
 
-  Future<void> removeSegmento(SegmentoDB seg, BuildContext context) async {
-    await segmentoDAO.deleteSegmento(seg.codigo!);
+  Future<void> removeSegmento(Segmento seg, BuildContext context) async {
+    await segmentoDAO.deleteSegmento(seg.id!);
   }
 
   SegmentoDB buildSegmentoDB(Segmento doc) {

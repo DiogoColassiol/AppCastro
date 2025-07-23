@@ -12,7 +12,6 @@ class ListTesesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tesesRepo = context.watch<TesesDAO>();
-
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         return Container(

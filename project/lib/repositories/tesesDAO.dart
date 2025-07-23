@@ -5,8 +5,8 @@ import 'package:sqflite/sqflite.dart';
 
 class TesesDAO extends ChangeNotifier {
   late Database db;
-  List<TesesDB> _tesesList = [];
-  List<TesesDB> get tesesList => _tesesList;
+  final ValueNotifier<List<TesesDB>> tesesNotifier = ValueNotifier([]);
+  List<TesesDB> get tesesList => tesesNotifier.value;
 
   TesesDAO() {
     _initRepository();
@@ -26,8 +26,7 @@ class TesesDAO extends ChangeNotifier {
   Future<void> getTeses() async {
     db = await DB.instance.database;
     final teses = await db.query('teses');
-    _tesesList = teses.map((map) => TesesDB.fromMap(map)).toList();
-    notifyListeners();
+    tesesNotifier.value = teses.map((map) => TesesDB.fromMap(map)).toList();
   }
 
   //update

@@ -6,12 +6,13 @@ import 'package:sqflite/sqflite.dart';
 
 class SegmentoDAO extends ChangeNotifier {
   late Database db;
-  List<SegmentoDB> _segmentosList = [];
-  List<SegmentoDB> get segmentosList => _segmentosList;
+  final ValueNotifier<List<SegmentoDB>> segmentosNotifier = ValueNotifier([]);
+  List<SegmentoDB> get segmentosList => segmentosNotifier.value;
 
   SegmentoDAO() {
     _initRepository();
   }
+
   _initRepository() async {
     db = await DB.instance.database;
     await getSegmentos();
@@ -27,8 +28,8 @@ class SegmentoDAO extends ChangeNotifier {
   Future<void> getSegmentos() async {
     db = await DB.instance.database;
     final segs = await db.query('segmento');
-    _segmentosList = segs.map((map) => SegmentoDB.fromMap(map)).toList();
-    notifyListeners();
+    segmentosNotifier.value =
+        segs.map((map) => SegmentoDB.fromMap(map)).toList();
   }
 
 //update

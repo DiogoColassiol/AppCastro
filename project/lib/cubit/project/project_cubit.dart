@@ -17,6 +17,7 @@ import 'package:project/entity/tesess.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/print/resumo_pdf.dart';
 import 'package:project/repositories/segmentoDAO.dart';
+import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/utils/string_utils.dart';
 import 'package:project/widgets/alertBar.dart';
 import 'package:project/widgets/dialogs/alertDialogApp.dart';
@@ -24,23 +25,36 @@ import 'package:project/widgets/dialogs/alertDialogApp.dart';
 class ProjectCubit extends AbstractCubit<ProjectState> {
   late final ReceitaStore store;
   final SegmentoDAO segmentoDAO;
+  final TesesDAO tesesDAO;
 
-  ProjectCubit(this.segmentoDAO) : super(const ProjectState()) {
+  ProjectCubit(this.segmentoDAO, this.tesesDAO) : super(const ProjectState()) {
     store = ReceitaStore(
       this,
       repository: ReceitaRepository(client: HttpClient()),
     );
+    segmentoDAO.segmentosNotifier.addListener(_onSegmentosChanged);
     init();
   }
-  Future<void> init() async {
-    await segmentoDAO.getSegmentos();
-    final segmentos = segmentoDAO.segmentosList;
-    final state = await ProjectState.fromSegmentos(segmentos);
-    emit(state);
+
+  void _onSegmentosChanged() {
+    final segmentosDb = segmentoDAO.segmentosNotifier.value;
+    final segmentos = segmentosDb.map((s) => Segmento.fromDB(s)).toList();
+    emit(state.copyWith(segmentos: segmentos));
   }
 
-  List<SegmentoDB> getListSegDB() {
-    return segmentoDAO.segmentosList.toList();
+  Future<void> init() async {
+    await sincDbAndInit();
+  }
+
+  // Future<void> initialState() async {
+  //   emit(ProjectState.initialState());
+  // }
+
+  Future<void> sincDbAndInit() async {
+    final teses = tesesDAO.tesesList;
+    final segmentos = segmentoDAO.segmentosNotifier.value;
+    final state = await ProjectState.fromDB(segmentos, teses);
+    emit(state);
   }
 
   Future<ReceitaModel?> getDadosClient(BuildContext context) async {
@@ -64,7 +78,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     if (id == null) {
       return null;
     }
-    final seg = segmentos!.firstWhere((e) => e.id == id);
+    final seg = segmentos!.firstWhere((e) => "${e.id}" == id);
     return seg;
   }
 
@@ -74,7 +88,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     if (id == null) {
       return null;
     }
-    final doc = documentos!.firstWhere((e) => e.id == id);
+    final doc = documentos!.firstWhere((e) => '${e.id}' == id);
     return doc;
   }
 
@@ -84,6 +98,9 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     emit(state.copyWith(
       segmentoSelectId: isSelected ? id : '',
     ));
+    if (ide == 0) {
+      await selectDoc(0, true);
+    }
   }
 
   Future<void> selectDoc(int? docId, bool select) async {
@@ -110,10 +127,6 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
           nome: null, fantasia: null, abertura: null, situacao: null),
     ));
   }
-
-  // Future<void> initialState() async {
-  //   emit(ProjectState.initialState());
-  // }
 
   Future<bool> trataErros(BuildContext context) async {
     final cliente = searchCliente();
@@ -147,6 +160,33 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     }
 
     return false;
+  }
+
+  List<Tese> separaTesesNew(Segmento seg, Documento doc) {
+    final numTeses = obterTesesPorDocumento(seg.numTeses!, doc.id!);
+
+    final listTesesEscolha = state.teses!.where((tese) {
+      return tese.id != null && numTeses.contains(tese.id);
+    }).toList();
+
+    return listTesesEscolha;
+  }
+
+  List<int> obterTesesPorDocumento(String numTesesJson, int docId) {
+    final id = StringUtils.intToString(docId);
+    final Map<String, dynamic> decoded = Map<String, dynamic>.from(
+      jsonDecode(numTesesJson),
+    );
+    final String? numerosTeses = decoded[id];
+    if (numerosTeses == null || numerosTeses.trim().isEmpty) {
+      return [];
+    }
+    return numerosTeses
+        .split(',')
+        .map((t) => int.tryParse(t.trim()))
+        .where((t) => t != null)
+        .cast<int>()
+        .toList();
   }
 
   List<Tese> separaTeses(String? tesesId) {

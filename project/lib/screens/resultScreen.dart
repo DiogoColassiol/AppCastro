@@ -41,9 +41,9 @@ class ResultScreenState extends State<ResultScreen> {
     segmentoSelect = c.searchSeg();
     documentoSelect = c.searchDoc();
     listTeses = c.separaTesesNew(segmentoSelect!, documentoSelect!);
-    docsNedded = c.searchDocs(listTeses!, false);
+    docsNedded = c.searchDocs(listTeses!);
     apiResult = c.searchApi();
-    outros = segmentoSelect!.id == 7 ? true : false;
+    outros = segmentoSelect!.id == 0 ? true : false;
     hasObs = false;
     _inputControler = TextEditingController();
   }
@@ -226,6 +226,7 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
+//
   Widget pdfOutros() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
@@ -453,9 +454,6 @@ class ResultScreenState extends State<ResultScreen> {
   }
 
   List<Widget> _buildDocsNedded() {
-    final c = context.read<ProjectCubit>();
-
-    final docsNeed = c.searchDocs([], true);
     List<Widget> widgets = [
       const Text(
         'Documentos requeridos:',
@@ -466,7 +464,7 @@ class ResultScreenState extends State<ResultScreen> {
         ),
       ),
       const SizedBox(height: 10),
-      ...docsNeed.map((doc) => Row(
+      ...docsNedded!.map((doc) => Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
@@ -503,8 +501,8 @@ class ResultScreenState extends State<ResultScreen> {
           icon: Icons.print,
           textColor: ThemeUtils.primaryColor,
           onPressed: () async {
-            await cubit.printResult(
-                cliente!, segmentoSelect!, documentoSelect!);
+            await cubit.printResult(cliente!, segmentoSelect!, documentoSelect!,
+                listTeses!, docsNedded!, apiResult!);
           },
         );
       },

@@ -73,9 +73,6 @@ class DbCubit extends AbstractCubit<DbState> {
   Future<({bool hasError, String? message})> trataErros(
       Map<int, Set<int>> escolhas) async {
     final nome = searchNome();
-    final nacional = escolhas[1]?.join(',') ?? '';
-    final presumido = escolhas[2]?.join(',') ?? '';
-    final real = escolhas[3]?.join(',') ?? '';
 
     if (nome == null || nome.isEmpty) {
       return (
@@ -83,26 +80,7 @@ class DbCubit extends AbstractCubit<DbState> {
         message: 'O nome do segmento não pode estar vazio.'
       );
     }
-    if (nacional.isEmpty) {
-      return (
-        hasError: true,
-        message:
-            'Você deve selecionar pelo menos uma tese para o Simples Nacional.'
-      );
-    }
-    if (presumido.isEmpty) {
-      return (
-        hasError: true,
-        message:
-            'Você deve selecionar pelo menos uma tese para o Lucro Presumido.'
-      );
-    }
-    if (real.isEmpty) {
-      return (
-        hasError: true,
-        message: 'Você deve selecionar pelo menos uma tese para o Lucro Real.'
-      );
-    }
+
     return (hasError: false, message: null);
   }
 

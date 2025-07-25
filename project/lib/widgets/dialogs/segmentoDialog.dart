@@ -35,7 +35,6 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
   late TextEditingController _inputControler;
   late TabController _tabController;
 
-//  final List<Tese> teses = loadTesesDefault();
   final Map<int, Set<int>> _selectedTesesPorDocumento = {
     1: {},
     2: {},
@@ -95,10 +94,10 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
               labelColor: ThemeUtils.primaryColor,
               indicatorColor: ThemeUtils.primaryColor,
               unselectedLabelColor: Colors.black,
-              tabs: const [
-                Tab(text: 'Simples Nacional'),
-                Tab(text: 'Lucro Presumido'),
-                Tab(text: 'Lucro Real'),
+              tabs: [
+                Tab(text: _tabTitle(1, 'Simples Nacional')),
+                Tab(text: _tabTitle(2, 'Lucro Presumido')),
+                Tab(text: _tabTitle(3, 'Lucro Real')),
               ],
             ),
             SizedBox(
@@ -114,6 +113,11 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
         );
       },
     );
+  }
+
+  String _tabTitle(int docId, String label) {
+    final count = _selectedTesesPorDocumento[docId]?.length ?? 0;
+    return '$label ($count)';
   }
 
   Widget _buildTeseList(int documentoId) {

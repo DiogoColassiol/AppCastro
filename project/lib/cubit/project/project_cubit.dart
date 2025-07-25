@@ -14,7 +14,6 @@ import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/tesess.dart';
-import 'package:project/models/segmentos_model.dart';
 import 'package:project/print/resumo_pdf.dart';
 import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/repositories/tesesDAO.dart';
@@ -226,11 +225,10 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return api;
   }
 
-  List<String> searchDocs(List<Tese> teses, bool allDocs) {
+  List<String> searchDocs(List<Tese> teses) {
     List<String> docsNeed = [];
-
-    if (teses.isEmpty && allDocs) {
-      teses = separaTeses('1,2,3,4,5,6,7,8,9');
+    if (teses.isEmpty) {
+      return ["Certificado Digital", "Balanço", "DRE", "Balancete"];
     }
     for (final tese in teses) {
       final docs = tese.docs!
@@ -264,14 +262,12 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     );
   }
 
-  Future<void> printResult(
-      String nome, Segmento segmento, Documento documento) async {
+  Future<void> printResult(String nome, Segmento segmento, Documento documento,
+      List<Tese> teses, List<String> docs, ReceitaModel receita) async {
     String? obs;
     state.hasObs && state.obs!.isNotEmpty ? obs = state.obs : '';
 
-    if (segmento.id == 7 && documento.id == 4) {
-      final docs = searchDocs([], true);
-      final receita = searchReceita();
+    if (segmento.id == 0 && documento.id == 0) {
       final result =
           _buildResult(nome, segmento, documento, [], docs, receita, obs);
       emit(state.copyWith(result: await result));
@@ -280,95 +276,13 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
       await resumoPdf.createResumoOutrosPDF();
       return;
     }
-    final teses = searchTeses(segmento.id!, documento.id!);
-    final needDocs = searchDocs(teses, false);
-    final receita = searchReceita();
 
     final result =
-        _buildResult(nome, segmento, documento, teses, needDocs, receita, obs);
+        _buildResult(nome, segmento, documento, teses, docs, receita, obs);
     emit(state.copyWith(result: await result));
     final resumoPdf = ResumoPdfUtil(result: await result);
     resumoPdf.format = PdfPageFormat.a4;
     await resumoPdf.createResumoPDF();
     return;
-  }
-
-  List<Tese> searchTeses(int segmentoId, int documentoId) {
-    List<Tese> teses = [];
-    switch (segmentoId) {
-      case 1: //Transportadoras
-        if (documentoId == 1) {
-          teses = separaTeses('semtese');
-        }
-        if (documentoId == 2) {
-          teses = separaTeses('8,9');
-        }
-        if (documentoId == 3) {
-          teses = separaTeses('2,3,7,8,9');
-        }
-
-      case 2: // Postos
-        if (documentoId == 1) {
-          teses = separaTeses('1');
-        }
-        if (documentoId == 2) {
-          teses = separaTeses('4,5,6,8,9');
-        }
-        if (documentoId == 3) {
-          teses = separaTeses('2,3,4,5,6,7,8,9');
-        }
-
-      case 3: //Supermercados
-        if (documentoId == 1) {
-          teses = separaTeses('1');
-        }
-        if (documentoId == 2) {
-          teses = separaTeses('4,5,6,8,9');
-        }
-        if (documentoId == 3) {
-          teses = separaTeses('2,3,4,5,6,7,8,9');
-        }
-
-      case 4: //Agro/Cerealistas
-        if (documentoId == 1) {
-          teses = separaTeses('1');
-        }
-        if (documentoId == 2) {
-          teses = separaTeses('4,5,6,8,9');
-        }
-        if (documentoId == 3) {
-          teses = separaTeses('2,3,4,5,6,7,8,9');
-        }
-
-      case 5: //Distribuidores de alimentos
-        if (documentoId == 1) {
-          teses = separaTeses('1');
-        }
-        if (documentoId == 2) {
-          teses = separaTeses('4,5,6,8,9');
-        }
-        if (documentoId == 3) {
-          teses = separaTeses('2,3,4,5,6,7,8,9');
-        }
-
-      case 6: // Hortifrutigrangeiros
-        if (documentoId == 1) {
-          teses = separaTeses('1');
-        }
-        if (documentoId == 2) {
-          teses = separaTeses('4,5,6,8,9');
-        }
-        if (documentoId == 3) {
-          teses = separaTeses('2,3,4,5,6,7,8,9');
-        }
-    }
-    emit(state.copyWith(tesesSelect: teses));
-    return teses;
-  }
-
-  List<Tese> searchTesess(SegmentoDB segmento, int documentoId) {
-    final teseStr = segmento.getTesesParaDocumento(documentoId);
-    final teses = separaTeses(teseStr);
-    return teses;
   }
 }

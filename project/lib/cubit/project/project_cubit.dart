@@ -1,5 +1,5 @@
 // lib/features/todo/cubit/todo_cubit.dart
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, collection_methods_unrelated_type
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -31,29 +31,27 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
       this,
       repository: ReceitaRepository(client: HttpClient()),
     );
-    segmentoDAO.segmentosNotifier.addListener(_onSegmentosChanged);
+    segmentoDAO.segmentosNotifier.addListener(_onDbChange);
+    tesesDAO.tesesNotifier.addListener(_onDbChange);
     init();
   }
-
-  void _onSegmentosChanged() {
+  void _onDbChange() {
     final segmentosDb = segmentoDAO.segmentosNotifier.value;
-    final segmentos = segmentosDb.map((s) => Segmento.fromDB(s)).toList();
-    emit(state.copyWith(segmentos: segmentos));
+    final tesesDb = tesesDAO.tesesNotifier.value;
+
+    final segmentos = segmentosDb.map(Segmento.fromDB).toList();
+    final teses = tesesDb.map(Tese.fromDB).toList();
+
+    emit(state.copyWith(segmentos: segmentos, teses: teses));
   }
 
   Future<void> init() async {
-    await sincDbAndInit();
-  }
+    final segmentosDb = segmentoDAO.segmentosNotifier.value;
+    final tesesDb = tesesDAO.tesesNotifier.value;
 
-  // Future<void> initialState() async {
-  //   emit(ProjectState.initialState());
-  // }
-
-  Future<void> sincDbAndInit() async {
-    final teses = tesesDAO.tesesList;
-    final segmentos = segmentoDAO.segmentosNotifier.value;
-    final state = await ProjectState.fromDB(segmentos, teses);
-    emit(state);
+    final segmentos = segmentosDb.map(Segmento.fromDB).toList();
+    final teses = tesesDb.map(Tese.fromDB).toList();
+    emit(ProjectState.initialState(segmentos, teses));
   }
 
   Future<ReceitaModel?> getDadosClient(BuildContext context) async {
@@ -91,7 +89,6 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return doc;
   }
 
-//
   Future<void> selectSeg(int? ide, bool isSelected) async {
     final id = StringUtils.intToString(ide);
     emit(state.copyWith(

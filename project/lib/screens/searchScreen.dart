@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/project_cubit.dart';
@@ -279,7 +281,7 @@ class _SearchScreenState extends State<SearchScreen> {
             textColor: Colors.red,
             color: Colors.white,
             onPressed: () async {
-              await cubit.sincDbAndInit();
+              await cubit.init();
             });
       },
     );

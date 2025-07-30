@@ -1,3 +1,5 @@
+import 'package:project/models/teses_model.dart';
+
 class Tese {
   final int? id;
   final int? codigo;
@@ -27,5 +29,13 @@ class Tese {
       descricao: descricao ?? this.descricao,
       docs: docs ?? this.docs,
     );
+  }
+
+  factory Tese.fromDB(TesesDB db) {
+    return Tese(
+        id: db.codigo,
+        descricao: db.descricao,
+        legenda: db.legenda,
+        docs: db.documentos);
   }
 }

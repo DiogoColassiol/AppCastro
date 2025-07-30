@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:project/database/db.dart';
 import 'package:project/models/teses_model.dart';

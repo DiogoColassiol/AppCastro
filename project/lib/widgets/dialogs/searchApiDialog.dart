@@ -6,8 +6,8 @@ import 'package:project/api/models/receita_model.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/cubit/project/project_state.dart';
 import 'package:project/enum/inputType_enum.dart';
-import 'package:project/screens/mainScreen.dart';
 import 'package:project/utils/theme_utils.dart';
+import 'package:project/widgets/button_sec_widget.dart';
 import 'package:project/widgets/input_widget.dart';
 
 class ApiDialog {
@@ -129,72 +129,43 @@ class _SearchApiDialogState extends State<SearchApiDialog> {
   }
 
   _buttonAdd(BuildContext context) {
-    return ElevatedButton(
+    final cubit = context.read<ProjectCubit>();
+    return ButtonSec(
+      label: 'Adicionar ao Relatório',
+      labelColor: Colors.white,
+      buttonColor: ThemeUtils.primaryColor,
       onPressed: () async {
-        final c = context.read<ProjectCubit>();
-        await c.setReturnApi(receitaReturn);
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const MainScreen()),
-          (route) => false,
-        );
+        await cubit.setReturnApi(receitaReturn);
+        Navigator.pop(context);
       },
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(20, 40),
-        backgroundColor: ThemeUtils.primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      child: const Text('Adicionar ao Relatório',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
     );
   }
 
   _buttonSair(BuildContext context) {
-    return ElevatedButton(
+    final cubit = context.read<ProjectCubit>();
+    return ButtonSec(
+      label: 'Sair',
+      labelColor: Colors.red,
       onPressed: () async {
-        final c = context.read<ProjectCubit>();
-        await c.clearApiResult();
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const MainScreen()),
-          (route) => false,
-        );
+        await cubit.clearApiResult();
+        Navigator.pop(context);
       },
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(20, 40),
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      child: const Text('Sair',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red)),
     );
   }
 
   _buttonSearch(BuildContext context) {
     final c = context.read<ProjectCubit>();
-    return ElevatedButton(
-      onPressed: () async {
-        final receita = await c.getDadosClient(context);
-        if (receita != null) {
-          setState(() {
-            receitaReturn = receita;
-          });
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(20, 40),
-        backgroundColor: ThemeUtils.primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      child: const Text('Buscar dados',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
-    );
+    return ButtonSec(
+        label: 'Buscar Dados',
+        labelColor: Colors.white,
+        buttonColor: ThemeUtils.primaryColor,
+        onPressed: () async {
+          final receita = await c.getDadosClient(context);
+          if (receita != null) {
+            setState(() {
+              receitaReturn = receita;
+            });
+          }
+        });
   }
 }

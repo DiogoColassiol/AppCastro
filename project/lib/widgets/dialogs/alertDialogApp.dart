@@ -1,4 +1,6 @@
 // ignore: file_names
+// ignore_for_file: file_names, duplicate_ignore
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:project/utils/theme_utils.dart';

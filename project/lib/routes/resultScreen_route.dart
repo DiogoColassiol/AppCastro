@@ -8,6 +8,8 @@
 // class ResultScreenRoute extends AbstractRoute {
 //   const ResultScreenRoute({super.key});
 
+// ignore_for_file: file_names
+
 //   @override
 //   Widget build(BuildContext context) {
 //     return BlocProvider(

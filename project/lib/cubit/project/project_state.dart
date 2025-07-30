@@ -5,8 +5,6 @@ import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
-import 'package:project/models/segmentos_model.dart';
-import 'package:project/models/teses_model.dart';
 
 class ProjectState extends AbstractState {
   final String? cliente;
@@ -93,28 +91,12 @@ class ProjectState extends AbstractState {
     );
   }
 
-  static Future<ProjectState> fromDB(
-      List<SegmentoDB> dbList, List<TesesDB> listTeses) async {
-    final segmentos = dbList
-        .map((s) => Segmento(
-              id: s.codigo,
-              nome: s.nome ?? '',
-              numTeses: s.numTeses,
-            ))
-        .toList();
-    final teses = listTeses
-        .map((t) => Tese(
-            id: t.codigo,
-            descricao: t.descricao,
-            legenda: t.legenda,
-            docs: t.documentos))
-        .toList();
-
+  static ProjectState initialState(List<Segmento> segs, List<Tese> teses) {
     return ProjectState(
       state: const ActivityIdle(),
       cliente: '',
       clienteCnpj: '',
-      segmentos: segmentos,
+      segmentos: segs,
       documentos: loadDocumentos(),
       teses: teses,
       segmentoSelectId: null,
@@ -128,26 +110,6 @@ class ProjectState extends AbstractState {
           nome: null, abertura: null, fantasia: null, situacao: null),
     );
   }
-
-  // static ProjectState initialState() {
-  //   return ProjectState(
-  //     state: const ActivityIdle(),
-  //     cliente: '',
-  //     clienteCnpj: '',
-  //     segmentos: loadSegmentos(),
-  //     documentos: loadDocumentos(),
-  //     teses: loadTeses(),
-  //     segmentoSelectId: null,
-  //     documentoSelectId: null,
-  //     tesesSelect: null,
-  //     hasObs: false,
-  //     obs: '',
-  //     obsCount: null,
-  //     result: null,
-  //     apiResult: ReceitaModel(
-  //         nome: null, abertura: null, fantasia: null, situacao: null),
-  //   );
-  // }
 
   static List<Tese> loadTeses() => [
         Tese(

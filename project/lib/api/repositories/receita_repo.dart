@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:project/api/http/exceptions.dart';
 import 'package:project/api/http/http_client.dart';

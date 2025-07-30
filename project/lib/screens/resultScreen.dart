@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -324,7 +324,7 @@ class ResultScreenState extends State<ResultScreen> {
                   if (apiResult!.fantasia != null)
                     Text('Nome fantasia: ${apiResult!.fantasia}'),
                   Text('Segmento: ${segmentoSelect!.nome ?? "N/A"}'),
-                  if (segmentoSelect!.id != 7 && teses!.isNotEmpty)
+                  if (segmentoSelect!.id != 0 && teses!.isNotEmpty)
                     Text(
                         'Regime Tributário: ${documentoSelect!.nome ?? "N/A"}'),
                   if (apiResult!.abertura != null)
@@ -543,7 +543,7 @@ class ResultScreenState extends State<ResultScreen> {
           icon: Icons.replay_circle_filled_sharp,
           textColor: Colors.red,
           onPressed: () async {
-            await cubit.sincDbAndInit();
+            await cubit.init();
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const MainScreen()));
           },

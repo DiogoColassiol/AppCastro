@@ -144,7 +144,7 @@ class ResumoPdfUtil {
       if (result.receita!.nome != null)
         Text('Nome fantasia: ${result.receita!.fantasia}'),
       Text('Segmento: ${result.segmento?.nome ?? "N/A"}'),
-      if (result.segmento!.id != 7 && result.teses!.isNotEmpty)
+      if (result.segmento!.id != 0 && result.teses!.isNotEmpty)
         Text('Regime Tributário: ${result.documento?.nome ?? "N/A"}'),
       if (result.receita!.abertura != null)
         Text('Data de abertura: ${result.receita!.abertura}'),

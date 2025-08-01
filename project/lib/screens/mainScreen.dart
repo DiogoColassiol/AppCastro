@@ -64,7 +64,7 @@ class _MainScreenState extends State<MainScreen>
           tabs: const [
             Tab(text: "Buscar Teses", icon: Icon(Icons.search)),
             Tab(text: "Lista de Teses", icon: Icon(Icons.list_alt_sharp)),
-            Tab(text: "Segmentos", icon: Icon(Icons.edit_document)),
+            Tab(text: "Editar Segmentos", icon: Icon(Icons.edit_document)),
             //     Tab(text: 'Regimes', icon: Icon(Icons.edit_document))
           ],
         ),

@@ -6,6 +6,7 @@ class CardTeses extends StatefulWidget {
   final String? desc;
   final String? docsRequeridos;
   final bool? isLarge;
+  final bool? onlyRead;
   final bool? value;
   final void Function(bool?)? onChanged;
 
@@ -15,6 +16,7 @@ class CardTeses extends StatefulWidget {
     this.desc,
     this.docsRequeridos,
     this.isLarge = false,
+    this.onlyRead = false,
     this.value,
     this.onChanged,
   });
@@ -65,6 +67,35 @@ class _CardTesesState extends State<CardTeses> {
   }
 
   Widget _reducedCard(BuildContext context) {
+    if (widget.onlyRead == true) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCircleIdReduced(),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.desc ?? '',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Requisição: ${widget.docsRequeridos ?? ''}',
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return CheckboxListTile(
       value: widget.value ?? false,
       onChanged: widget.onChanged,

@@ -5,12 +5,14 @@ import 'package:project/models/segmentos_model.dart';
 
 class DbState extends AbstractState {
   final List<Segmento>? listSegmentos;
+  final Segmento? editSegmento;
   final String? segmentoId;
   final String? segmentoNome;
 
   const DbState({
     super.state = const ActivityIdle(),
     this.listSegmentos,
+    this.editSegmento,
     this.segmentoId,
     this.segmentoNome,
   });
@@ -19,6 +21,7 @@ class DbState extends AbstractState {
   DbState copyWith({
     ActivityState? state,
     List<Segmento>? listSegmentos,
+    Segmento? editSegmento,
     String? segmentoId,
     String? segmentoNome,
     String? tesesNacional,
@@ -28,6 +31,7 @@ class DbState extends AbstractState {
     return DbState(
       state: state ?? super.state,
       listSegmentos: listSegmentos ?? this.listSegmentos,
+      editSegmento: editSegmento ?? this.editSegmento,
       segmentoId: segmentoId ?? this.segmentoId,
       segmentoNome: segmentoNome ?? this.segmentoNome,
     );
@@ -54,6 +58,7 @@ class DbState extends AbstractState {
   List<Object?> get props => [
         super.state,
         listSegmentos,
+        editSegmento,
         segmentoId,
         segmentoNome,
       ];

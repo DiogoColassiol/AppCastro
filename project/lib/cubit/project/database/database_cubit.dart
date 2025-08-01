@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:project/abstract/abstract_cubit.dart';
 import 'package:project/cubit/project/database/database_state.dart';
 import 'package:project/entity/segmentos.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/models/segmentos_model.dart';
 import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/repositories/tesesDAO.dart';
@@ -16,13 +16,7 @@ class DbCubit extends AbstractCubit<DbState> {
     required this.segmentoDAO,
     required this.tesesDAO,
   }) : super(const DbState()) {
-    segmentoDAO.segmentosNotifier.addListener(_onSegmentosChanged);
     init();
-  }
-  void _onSegmentosChanged() {
-    final segmentosDb = segmentoDAO.segmentosNotifier.value;
-    final segmentos = segmentosDb.map((s) => Segmento.fromDB(s)).toList();
-    emit(state.copyWith(listSegmentos: segmentos));
   }
 
   Future<void> init() async {
@@ -90,6 +84,10 @@ class DbCubit extends AbstractCubit<DbState> {
 
   SegmentoDB buildSegmentoDB(Segmento doc) {
     return SegmentoDB(id: doc.id, nome: doc.nome);
+  }
+
+  Map<int, List<Tese>> getTesesPorSegmento(Segmento seg) {
+    return {};
   }
 
   // Segmento buildSegmento(String? id, String? nome) {

@@ -16,7 +16,14 @@ class DbCubit extends AbstractCubit<DbState> {
     required this.segmentoDAO,
     required this.tesesDAO,
   }) : super(const DbState()) {
+    segmentoDAO.segmentosNotifier.addListener(_onDbChange);
+
     init();
+  }
+  void _onDbChange() {
+    final segmentosDb = segmentoDAO.segmentosNotifier.value;
+    final segmentos = segmentosDb.map(Segmento.fromDB).toList();
+    emit(state.copyWith(listSegmentos: segmentos));
   }
 
   Future<void> init() async {
@@ -45,8 +52,27 @@ class DbCubit extends AbstractCubit<DbState> {
     await setSegmentoNome('');
   }
 
+  Future<void> updateSegmentoComTeses(
+      {required Map<int, Set<int>> numTesesJson, Segmento? seg}) async {
+    final nome = searchNome();
+    final jsonMap = await montarJsonTeses(numTesesJson);
+    final jsonString = jsonEncode(jsonMap);
+
+    final updateSegmento = SegmentoDB(
+      nome: nome,
+      codigo: seg!.id,
+      numTeses: jsonString,
+    );
+    await segmentoDAO.updateSegmento(updateSegmento);
+    await setSegmentoNome('');
+  }
+
   Future<void> setSegmentoNome(String? value) async {
     emit(state.copyWith(segmentoNome: value));
+  }
+
+  Future<void> setSegmentoEdit(Segmento seg) async {
+    emit(state.copyWith(editSegmento: seg));
   }
 
   String? searchNome() {

@@ -39,8 +39,8 @@ class SegmentoDAO extends ChangeNotifier {
     await db.update(
       'segmento',
       segmento.toMap(),
-      where: 'id = ?',
-      whereArgs: [segmento.id],
+      where: 'codigo = ?',
+      whereArgs: [segmento.codigo],
     );
     await getSegmentos();
   }

@@ -1,8 +1,11 @@
 // ignore_for_file: file_names, use_build_context_synchronously
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/database/database_cubit.dart';
 import 'package:project/cubit/project/database/database_state.dart';
+import 'package:project/entity/segmentos.dart';
 import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/dialogs/alertDialogApp.dart';
@@ -11,20 +14,27 @@ import 'package:project/widgets/card_teses_widget.dart';
 import 'package:project/widgets/input_widget.dart';
 
 class SegmentoDialog {
-  static Future<void> show(BuildContext context) async {
+  static Future<void> show(BuildContext context, {Segmento? seg}) async {
     final cubit = context.read<DbCubit>();
+    if (seg != null) {
+      await cubit.setSegmentoEdit(seg); // opcional: seta no state se quiser
+    }
     return await showDialog(
       context: context,
       builder: (context) {
         return BlocProvider<DbCubit>.value(
-            value: cubit, child: const SegmentosBuildDialog());
+          value: cubit,
+          child: SegmentosBuildDialog(seg: seg),
+        );
       },
     );
   }
 }
 
 class SegmentosBuildDialog extends StatefulWidget {
-  const SegmentosBuildDialog({super.key});
+  final Segmento? seg;
+
+  const SegmentosBuildDialog({super.key, this.seg});
 
   @override
   State<SegmentosBuildDialog> createState() => _SegmentosBuildDialogState();
@@ -46,6 +56,36 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
     super.initState();
     _inputControler = TextEditingController();
     _tabController = TabController(length: 3, vsync: this);
+
+    final cubit = context.read<DbCubit>();
+
+    if (widget.seg != null) {
+      final seg = widget.seg!;
+      _inputControler.text = seg.nome ?? '';
+      cubit.setSegmentoNome(seg.nome ?? '');
+
+      final Map<int, Set<int>> parsed = {
+        1: {},
+        2: {},
+        3: {},
+      };
+
+      if (seg.numTeses is String) {
+        final decoded = jsonDecode(seg.numTeses!) as Map<String, dynamic>;
+        decoded.forEach((docIdStr, teseIdsStr) {
+          final docId = int.tryParse(docIdStr);
+          if (docId != null && teseIdsStr is String) {
+            parsed[docId] = teseIdsStr
+                .split(',')
+                .map((e) => int.tryParse(e))
+                .whereType<int>()
+                .toSet();
+          }
+        });
+      }
+
+      _selectedTesesPorDocumento.addAll(parsed);
+    }
   }
 
   @override
@@ -62,8 +102,10 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(15))),
       backgroundColor: ThemeUtils.surfaceColor,
-      title: const Text('Salvar Segmento',
-          style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(
+        widget.seg != null ? 'Editar Segmento' : 'Salvar Segmento',
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
       content: SingleChildScrollView(child: _content(context)),
       actions: [_buttonSair(context), _buttonAdd(context)],
     );
@@ -174,9 +216,16 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
               context, 'Erro ao salvar novo segmento!', result.message);
           return;
         }
-        await cubit.addSegmentoComTeses(
-          numTesesJson: _selectedTesesPorDocumento,
-        );
+        if (widget.seg == null) {
+          await cubit.addSegmentoComTeses(
+            numTesesJson: _selectedTesesPorDocumento,
+          );
+          await cubit.setSegmentoNome('');
+        } else {
+          await cubit.updateSegmentoComTeses(
+              numTesesJson: _selectedTesesPorDocumento, seg: widget.seg);
+        }
+
         await cubit.setSegmentoNome('');
         Navigator.pop(context);
       },

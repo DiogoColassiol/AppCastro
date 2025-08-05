@@ -49,7 +49,6 @@ class SegmentoDB {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'codigo': codigo,
       'nome': nome,
       'numero_teses': numTeses,

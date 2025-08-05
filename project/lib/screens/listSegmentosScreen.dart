@@ -154,7 +154,10 @@ class _SegmentosScreenState extends State<SegmentosScreen>
           ],
         ),
       ),
-      actions: [_buttonSair(context), _buttonEditar(context)],
+      actions: [
+        _buttonSair(context),
+        _buttonEditar(context, seg),
+      ],
     );
   }
 
@@ -251,12 +254,14 @@ class _SegmentosScreenState extends State<SegmentosScreen>
     );
   }
 
-  Widget _buttonEditar(BuildContext context) {
+  Widget _buttonEditar(BuildContext context, Segmento seg) {
+    //   final c = context.read<DbCubit>();
     return ButtonSec(
       label: 'Editar Segmento',
       labelColor: ThemeUtils.primaryColor,
       onPressed: () async {
         Navigator.pop(context);
+        await SegmentoDialog.show(context, seg: seg);
       },
     );
   }

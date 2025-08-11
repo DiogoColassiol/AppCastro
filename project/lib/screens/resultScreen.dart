@@ -1,5 +1,7 @@
 // ignore_for_file: file_names, use_build_context_synchronously
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +14,7 @@ import 'package:project/entity/tesess.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/utils/theme_utils.dart';
+import 'package:project/widgets/floatButton.dart';
 import 'package:project/widgets/input_widget.dart';
 
 // ignore: must_be_immutable
@@ -58,6 +61,7 @@ class ResultScreenState extends State<ResultScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
+        final cubit = context.read<ProjectCubit>();
         return Scaffold(
           appBar: AppBar(
             toolbarHeight: 90,
@@ -78,20 +82,49 @@ class ResultScreenState extends State<ResultScreen> {
               Expanded(child: state.hasObs ? contentEdit(context) : content()),
             ],
           ),
-          bottomNavigationBar: Container(
-            color: ThemeUtils.surfaceColor,
-            height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buttonDelete(),
-                const SizedBox(width: 30),
-                _buttonPrint(),
-                const SizedBox(width: 30),
-                _hasObs(),
-              ],
+          floatingActionButton:
+              CustomFloatButton(alignment: MainAxisAlignment.end, buttons: [
+            FloatButton(
+              heroTag: 'btn_novo_relatorio',
+              label: 'Novo Relatórios',
+              icon: Icons.replay_circle_filled_sharp,
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.red,
+              onPressed: () async {
+                await cubit.init();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const MainScreen()));
+              },
             ),
-          ),
+            FloatButton(
+              heroTag: 'btn_salvar_pdf',
+              label: 'Salvar PDF',
+              icon: Icons.print,
+              backgroundColor: ThemeUtils.primaryColor,
+              foregroundColor: Colors.white,
+              onPressed: () async {
+                await cubit.printResult(cliente!, segmentoSelect!,
+                    documentoSelect!, listTeses!, docsNedded!, apiResult!);
+              },
+            ),
+            FloatButton(
+              heroTag: 'btn_obs',
+              label: state.hasObs ? 'Com Observações' : 'Sem Observaçoes',
+              icon: state.hasObs
+                  ? Icons.comment_outlined
+                  : Icons.comments_disabled_outlined,
+              backgroundColor: ThemeUtils.primaryColor,
+              foregroundColor: Colors.white,
+              onPressed: () {
+                if (state.hasObs == false) {
+                  cubit.setObs('');
+                }
+                cubit.checkObs(!state.hasObs);
+              },
+            ),
+          ]),
         );
       },
     );
@@ -489,66 +522,5 @@ class ResultScreenState extends State<ResultScreen> {
       return '$doc (válido após: $ano)';
     }
     return doc;
-  }
-
-  Widget _buttonPrint() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-
-        return ButtonApp(
-          text: 'Salvar PDF',
-          icon: Icons.print,
-          textColor: ThemeUtils.primaryColor,
-          onPressed: () async {
-            await cubit.printResult(cliente!, segmentoSelect!, documentoSelect!,
-                listTeses!, docsNedded!, apiResult!);
-          },
-        );
-      },
-    );
-  }
-
-  Widget _hasObs() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        return Row(
-          children: [
-            ButtonApp(
-              text: state.hasObs ? 'Com Observações' : 'Sem Observações',
-              color: ThemeUtils.primaryColor,
-              onPressed: () {
-                if (state.hasObs == false) {
-                  cubit.setObs('');
-                }
-                cubit.checkObs(!state.hasObs);
-              },
-              icon: state.hasObs
-                  ? Icons.comment_outlined
-                  : Icons.comments_disabled_outlined,
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buttonDelete() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        return ButtonApp(
-          text: 'Novo Relatório',
-          icon: Icons.replay_circle_filled_sharp,
-          textColor: Colors.red,
-          onPressed: () async {
-            await cubit.init();
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const MainScreen()));
-          },
-        );
-      },
-    );
   }
 }

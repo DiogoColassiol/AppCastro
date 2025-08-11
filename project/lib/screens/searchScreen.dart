@@ -8,6 +8,7 @@ import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_InfosApi.dart';
 import 'package:project/widgets/card_segAndRegime.dart';
+import 'package:project/widgets/floatButton.dart';
 import 'package:project/widgets/input_widget.dart';
 import 'package:project/widgets/dialogs/searchApiDialog.dart';
 
@@ -46,11 +47,39 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        return Container(
-          color: ThemeUtils.surfaceColor,
-          child: Column(
+    return Scaffold(
+      backgroundColor: ThemeUtils.surfaceColor,
+      floatingActionButton: CustomFloatButton(
+        alignment: MainAxisAlignment.end,
+        buttons: [
+          FloatButton(
+            label: 'Limpar Campos',
+            icon: Icons.delete,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.red,
+            onPressed: () async {
+              final cubit = context.read<ProjectCubit>();
+              await cubit.init();
+            },
+          ),
+          FloatButton(
+            label: 'Gerar Relatório',
+            icon: Icons.search,
+            backgroundColor: ThemeUtils.primaryColor,
+            foregroundColor: Colors.white,
+            onPressed: () async {
+              final cubit = context.read<ProjectCubit>();
+              final hasErro = await cubit.trataErros(context);
+              if (!hasErro) {
+                Navigator.of(context).pushReplacementNamed('result');
+              }
+            },
+          ),
+        ],
+      ),
+      body: BlocBuilder<ProjectCubit, ProjectState>(
+        builder: (context, state) {
+          return Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
@@ -76,28 +105,15 @@ class _SearchScreenState extends State<SearchScreen> {
                         _apiInfos(),
                       _segmentos(),
                       _documentos(),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 80), // espaço pro FAB
                     ],
                   ),
                 ),
               ),
-              Container(
-                color: ThemeUtils.surfaceColor,
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buttonDelete(),
-                    const SizedBox(width: 20),
-                    _buttonSearch(),
-                    const SizedBox(width: 20),
-                  ],
-                ),
-              ),
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

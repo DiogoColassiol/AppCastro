@@ -105,7 +105,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         _apiInfos(),
                       _segmentos(),
                       _documentos(),
-                      const SizedBox(height: 80), // espaço pro FAB
+                      const SizedBox(height: 80),
                     ],
                   ),
                 ),
@@ -287,39 +287,39 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buttonDelete() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        return ButtonApp(
-            text: 'Limpar Campos',
-            icon: Icons.delete,
-            textColor: Colors.red,
-            color: Colors.white,
-            onPressed: () async {
-              await cubit.init();
-            });
-      },
-    );
-  }
+  // Widget _buttonDelete() {
+  //   return BlocBuilder<ProjectCubit, ProjectState>(
+  //     builder: (context, state) {
+  //       final cubit = context.read<ProjectCubit>();
+  //       return ButtonApp(
+  //           text: 'Limpar Campos',
+  //           icon: Icons.delete,
+  //           textColor: Colors.red,
+  //           color: Colors.white,
+  //           onPressed: () async {
+  //             await cubit.init();
+  //           });
+  //     },
+  //   );
+  // }
 
-  Widget _buttonSearch() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        return ButtonApp(
-          text: 'Gerar Relatório',
-          icon: Icons.search,
-          textColor: Colors.white,
-          color: ThemeUtils.primaryColor,
-          onPressed: () async {
-            final hasErro = await cubit.trataErros(context);
-            hasErro == false
-                ? Navigator.of(context).pushReplacementNamed('result')
-                : Container();
-          },
-        );
-      },
-    );
-  }
+  // Widget _buttonSearch() {
+  //   return BlocBuilder<ProjectCubit, ProjectState>(
+  //     builder: (context, state) {
+  //       final cubit = context.read<ProjectCubit>();
+  //       return ButtonApp(
+  //         text: 'Gerar Relatório',
+  //         icon: Icons.search,
+  //         textColor: Colors.white,
+  //         color: ThemeUtils.primaryColor,
+  //         onPressed: () async {
+  //           final hasErro = await cubit.trataErros(context);
+  //           hasErro == false
+  //               ? Navigator.of(context).pushReplacementNamed('result')
+  //               : Container();
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 }

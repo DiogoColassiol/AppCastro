@@ -103,6 +103,8 @@ class _SegmentosScreenState extends State<SegmentosScreen>
                   });
             },
             child: Card(
+              elevation: 5,
+              color: Colors.white,
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -239,9 +241,7 @@ class _SegmentosScreenState extends State<SegmentosScreen>
               final tese = selectedTeses[index];
 
               return CardTeses(
-                id: tese.id.toString(),
-                desc: tese.descricao,
-                docsRequeridos: tese.documentos,
+                tese: tese,
                 isLarge: false,
                 onlyRead: true,
                 value: true,

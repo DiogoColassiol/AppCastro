@@ -5,10 +5,17 @@ class TesesDB {
   final int? codigo;
   final String? descricao;
   final String? legenda;
+  final String? tipo;
   final String? documentos;
 
-  TesesDB(
-      {this.id, this.codigo, this.descricao, this.legenda, this.documentos});
+  TesesDB({
+    this.id,
+    this.codigo,
+    this.descricao,
+    this.legenda,
+    this.tipo,
+    this.documentos,
+  });
 
   factory TesesDB.fromTeses(TesesDB tese) {
     return TesesDB(
@@ -16,6 +23,7 @@ class TesesDB {
       codigo: tese.codigo,
       descricao: tese.descricao,
       legenda: tese.legenda,
+      tipo: tese.tipo,
       documentos: tese.documentos,
     );
   }
@@ -25,6 +33,7 @@ class TesesDB {
       codigo: codigo,
       descricao: descricao,
       legenda: legenda,
+      tipo: tipo,
       docs: documentos,
     );
   }
@@ -35,6 +44,7 @@ class TesesDB {
         codigo: map['codigo'],
         descricao: map['descricao'],
         legenda: map['legenda'],
+        tipo: map['tipo'],
         documentos: map['documentos']);
   }
   Map<String, dynamic> toMap() {
@@ -43,6 +53,7 @@ class TesesDB {
       'codigo': codigo,
       'descricao': descricao,
       'legenda': legenda,
+      'tipo': tipo,
       'documentos': documentos
     };
   }

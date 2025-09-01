@@ -1,7 +1,4 @@
 // ignore_for_file: file_names, use_build_context_synchronously
-
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +9,6 @@ import 'package:project/entity/documentos.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/screens/mainScreen.dart';
-import 'package:project/widgets/button_widget.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/floatButton.dart';
 import 'package:project/widgets/input_widget.dart';
@@ -85,8 +81,7 @@ class ResultScreenState extends State<ResultScreen> {
           floatingActionButton:
               CustomFloatButton(alignment: MainAxisAlignment.end, buttons: [
             FloatButton(
-              heroTag: 'btn_novo_relatorio',
-              label: 'Novo Relatórios',
+              label: 'Cancelar Relatório',
               icon: Icons.replay_circle_filled_sharp,
               backgroundColor: Colors.white,
               foregroundColor: Colors.red,
@@ -99,7 +94,6 @@ class ResultScreenState extends State<ResultScreen> {
               },
             ),
             FloatButton(
-              heroTag: 'btn_salvar_pdf',
               label: 'Salvar PDF',
               icon: Icons.print,
               backgroundColor: ThemeUtils.primaryColor,
@@ -110,7 +104,6 @@ class ResultScreenState extends State<ResultScreen> {
               },
             ),
             FloatButton(
-              heroTag: 'btn_obs',
               label: state.hasObs ? 'Com Observações' : 'Sem Observaçoes',
               icon: state.hasObs
                   ? Icons.comment_outlined

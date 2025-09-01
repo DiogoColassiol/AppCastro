@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:project/models/teses_model.dart';
 import 'package:project/utils/theme_utils.dart';
 
 class CardTeses extends StatefulWidget {
-  final String? id;
-  final String? desc;
-  final String? docsRequeridos;
+  final TesesDB? tese;
   final bool? isLarge;
   final bool? onlyRead;
   final bool? value;
@@ -12,9 +11,7 @@ class CardTeses extends StatefulWidget {
 
   const CardTeses({
     super.key,
-    this.id,
-    this.desc,
-    this.docsRequeridos,
+    this.tese,
     this.isLarge = false,
     this.onlyRead = false,
     this.value,
@@ -45,20 +42,38 @@ class _CardTesesState extends State<CardTeses> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            _buildCircleId(),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                widget.desc ?? '',
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              _buildCircleId(),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${widget.tese!.descricao} - (${widget.tese!.tipo}).',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
-            )
-          ]),
+            ],
+          ),
+          // const Row(
+          //   children: [
+          //     Padding(
+          //       padding: EdgeInsets.only(left: 60),
+          //       child: Text(
+          //         '(Administrativa)',
+          //         style: TextStyle(fontSize: 14, color: Colors.black54),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          //      const SizedBox(height: 15),
+          // Text(
+          //   'Documentação: ${widget.tese!.documentos}',
+          //   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          // ),
           const SizedBox(height: 15),
           Text(
-            widget.docsRequeridos ?? '',
+            widget.tese!.legenda ?? '',
             style: const TextStyle(fontSize: 14, color: Colors.black54),
           ),
         ],
@@ -80,13 +95,13 @@ class _CardTesesState extends State<CardTeses> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.desc ?? '',
+                    widget.tese!.descricao ?? '',
                     style: const TextStyle(
                         fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Requisição: ${widget.docsRequeridos ?? ''}',
+                    'Requisição: ${widget.tese!.documentos ?? ''}',
                     style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                 ],
@@ -106,13 +121,13 @@ class _CardTesesState extends State<CardTeses> {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              widget.desc ?? '',
+              widget.tese!.descricao ?? '',
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
           )
         ],
       ),
-      subtitle: Text('Requisição: ${widget.docsRequeridos ?? ''}'),
+      subtitle: Text('Requisição: ${widget.tese!.documentos ?? ''}'),
     );
   }
 
@@ -126,7 +141,7 @@ class _CardTesesState extends State<CardTeses> {
       ),
       alignment: Alignment.center,
       child: Text(
-        widget.id ?? '',
+        widget.tese!.codigo.toString(),
         style: const TextStyle(
             fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
       ),
@@ -143,7 +158,7 @@ class _CardTesesState extends State<CardTeses> {
       ),
       alignment: Alignment.center,
       child: Text(
-        widget.id ?? '',
+        widget.tese!.id.toString(),
         style: const TextStyle(
             fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
       ),

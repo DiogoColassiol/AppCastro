@@ -62,9 +62,9 @@ class _MainScreenState extends State<MainScreen>
           unselectedLabelColor: Colors.black,
           controller: _tabController,
           tabs: const [
-            Tab(text: "Buscar Teses", icon: Icon(Icons.search)),
-            Tab(text: "Lista de Teses", icon: Icon(Icons.list_alt_sharp)),
-            Tab(text: "Editar Segmentos", icon: Icon(Icons.edit_document)),
+            Tab(text: "Gerar Documentos", icon: Icon(Icons.edit_document)),
+            Tab(text: "Teses", icon: Icon(Icons.list_alt_sharp)),
+            Tab(text: "Segmentos", icon: Icon(Icons.add_business_outlined)),
             //     Tab(text: 'Regimes', icon: Icon(Icons.edit_document))
           ],
         ),

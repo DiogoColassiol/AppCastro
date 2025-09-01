@@ -28,7 +28,6 @@ class DB {
 
   _onCreate(db, versao) async {
     await db.execute(_segmento);
-    // await db.execute(_razao);
     await db.execute(_teses);
     await addDefault(db);
   }
@@ -42,18 +41,11 @@ class DB {
  );
 ''';
 
-//   String get _razao => '''
-//     CREATE TABLE regime (
-//      id INTEGER PRIMARY KEY AUTOINCREMENT,
-//      codigo INTEGER,
-//      nome TEXT
-//  );
-// ''';
-
   String get _teses => '''
     CREATE TABLE teses (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      codigo INTEGER,
+     tipo TEXT,
      descricao TEXT,
      documentos TEXT,
      legenda TEXT
@@ -68,15 +60,11 @@ class DB {
         'numero_teses': segmento.numTeses?.toString() ?? '{}',
       });
     }
-    // for (final documento in loadDocumentosDefault()) {
-    //   await db.insert('regime', {
-    //     'codigo': documento.id,
-    //     'nome': documento.nome,
-    //   });
-    // }
+
     for (final tese in loadTesesDefault()) {
       await db.insert('teses', {
         'codigo': tese.id,
+        'tipo': tese.tipo,
         'documentos': tese.docs,
         'descricao': tese.descricao,
         'legenda': tese.legenda,
@@ -146,6 +134,7 @@ class DB {
   static List<Tese> loadTesesDefault() => [
         Tese(
           id: 1,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital',
           descricao:
               'PRODUTOS SOB O REGIME MONOFÁSICO OU CONCENTRADO DE PIS E COFINS E O ICMS ST NO SIMPLES NACIONAL',
@@ -161,6 +150,7 @@ class DB {
         ),
         Tese(
           id: 2,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, Balanço, DRE',
           descricao:
               'COMPENSAÇÃO DE PREJUÍZOS FISCAIS E BASE DE CÁLCULO NEGATIVA DA CONTRIBUIÇÃO SOCIAL',
@@ -172,6 +162,7 @@ class DB {
         ),
         Tese(
           id: 3,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, DRE',
           descricao: 'RECUPERAÇÃO DE CRÉDITOS DE PIS E COFINS NÃO UTILIZADOS',
           legenda: '''
@@ -186,6 +177,7 @@ class DB {
         ),
         Tese(
           id: 4,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO ICMS DA BASE DE CÁLCULO',
@@ -197,6 +189,7 @@ class DB {
         ),
         Tese(
           id: 5,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO ICMS SUBSTITUIÇÃO TRIBUTÁRIA DA BASE DE CÁLCULO',
@@ -212,6 +205,7 @@ class DB {
         ),
         Tese(
           id: 6,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO DIFERENCIAL DE ALÍQUOTAS DO ICMS DEVIDO NAS VENDAS INTERESTADUAIS DA BASE DE CÁLCULO DE PIS E COFINS',
@@ -225,6 +219,7 @@ class DB {
         ),
         Tese(
           id: 7,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, Balanço, DRE',
           descricao:
               'SUBVENÇÕES PARA INVESTIMENTOS E DOAÇÕES RECEBIDAS DO PODER PÚBLICO – EXCLUSÃO NO IRPJ E CSLL',
@@ -234,6 +229,7 @@ class DB {
         ),
         Tese(
           id: 8,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, DRE',
           descricao:
               'RECUPERAÇÃO DE CONTRIBUIÇÕES PREVIDENCIÁRIAS PAGAS SOBRE VERBAS INDENIZATÓRIAS',
@@ -250,6 +246,7 @@ class DB {
         ),
         Tese(
           id: 9,
+          tipo: 'judicialadm',
           docs: 'Certificado Digital, DRE',
           descricao:
               'RECUPERAÇÃO DA CONTRIBUIÇÃO PREVIDENCIÁRIA RELATIVA AOS 11% DE INSS RETIDO NA FONTE NOS SERVIÇOS PRESTADOS POR TERCEIRIZADOS',

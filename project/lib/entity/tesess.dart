@@ -5,6 +5,7 @@ class Tese {
   final int? codigo;
   final String? legenda;
   final String? descricao;
+  final String? tipo;
   final String? docs;
 
   Tese({
@@ -12,6 +13,7 @@ class Tese {
     this.codigo,
     this.legenda,
     this.descricao,
+    this.tipo,
     this.docs,
   });
 
@@ -19,6 +21,7 @@ class Tese {
     int? id,
     int? codigo,
     String? legenda,
+    String? tipo,
     String? descricao,
     String? docs,
   }) {
@@ -27,6 +30,7 @@ class Tese {
       codigo: codigo ?? this.codigo,
       legenda: legenda ?? this.legenda,
       descricao: descricao ?? this.descricao,
+      tipo: tipo ?? this.tipo,
       docs: docs ?? this.docs,
     );
   }

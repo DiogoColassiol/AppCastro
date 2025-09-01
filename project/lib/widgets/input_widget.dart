@@ -133,7 +133,7 @@ class _InputState extends State<Input> {
             focusNode: focusNode,
             readOnly: widget.readonly,
             maxLength: widget.maxDigitsLength,
-            maxLines: null,
+            maxLines: widget.maxLines,
             textInputAction: widget.action,
             decoration: InputDecoration(
                 contentPadding: widget.contentPadding,

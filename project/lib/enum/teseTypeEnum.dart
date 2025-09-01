@@ -1,0 +1,4 @@
+enum TeseTypeEnum {
+  adminstrativo,
+  judicial,
+}

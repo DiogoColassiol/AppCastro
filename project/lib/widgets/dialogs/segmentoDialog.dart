@@ -172,9 +172,7 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
         final isSelected =
             _selectedTesesPorDocumento[documentoId]!.contains(tese.id!);
         return CardTeses(
-          id: tese.id.toString(),
-          desc: tese.descricao,
-          docsRequeridos: tese.documentos,
+          tese: tese,
           isLarge: false,
           value: isSelected,
           onChanged: (value) {

@@ -22,7 +22,7 @@ class CardSegDoc extends StatelessWidget {
     return Card(
       elevation: 5,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15))),
+          borderRadius: BorderRadius.all(Radius.circular(20))),
       color: Colors.white,
       child: CheckboxListTile(
         key: keyTile,

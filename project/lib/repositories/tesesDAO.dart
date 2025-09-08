@@ -51,4 +51,12 @@ class TesesDAO extends ChangeNotifier {
     );
     await getTeses();
   }
+
+  Future<int> getMaiorCod() async {
+    db = await DB.instance.database;
+    final result =
+        await db.rawQuery('SELECT MAX(codigo) as max_codigo FROM teses');
+    final maxCod = result.first['max_codigo'] as int?;
+    return maxCod ?? 0;
+  }
 }

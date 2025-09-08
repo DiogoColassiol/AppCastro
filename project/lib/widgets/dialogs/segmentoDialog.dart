@@ -17,7 +17,7 @@ class SegmentoDialog {
   static Future<void> show(BuildContext context, {Segmento? seg}) async {
     final cubit = context.read<DbCubit>();
     if (seg != null) {
-      await cubit.setSegmentoEdit(seg); // opcional: seta no state se quiser
+      await cubit.setSegmentoEdit(seg);
     }
     return await showDialog(
       context: context,

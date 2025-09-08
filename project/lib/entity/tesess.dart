@@ -5,7 +5,7 @@ class Tese {
   final int? codigo;
   final String? legenda;
   final String? descricao;
-  final String? tipo;
+  final int? tipo;
   final String? docs;
 
   Tese({
@@ -21,7 +21,7 @@ class Tese {
     int? id,
     int? codigo,
     String? legenda,
-    String? tipo,
+    int? tipo,
     String? descricao,
     String? docs,
   }) {

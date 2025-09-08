@@ -5,7 +5,7 @@ class TesesDB {
   final int? codigo;
   final String? descricao;
   final String? legenda;
-  final String? tipo;
+  final int? tipo;
   final String? documentos;
 
   TesesDB({

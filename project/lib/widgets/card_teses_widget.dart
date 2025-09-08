@@ -48,7 +48,7 @@ class _CardTesesState extends State<CardTeses> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  '${widget.tese!.descricao} - (${widget.tese!.tipo}).',
+                  '${widget.tese!.descricao}.',
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),

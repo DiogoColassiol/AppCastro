@@ -4,7 +4,9 @@ import 'package:project/abstract/abstract_cubit.dart';
 import 'package:project/cubit/project/database/database_state.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
+import 'package:project/enum/teseTypeEnum.dart';
 import 'package:project/models/segmentos_model.dart';
+import 'package:project/models/teses_model.dart';
 import 'package:project/repositories/segmentoDAO.dart';
 import 'package:project/repositories/tesesDAO.dart';
 
@@ -17,6 +19,7 @@ class DbCubit extends AbstractCubit<DbState> {
     required this.tesesDAO,
   }) : super(const DbState()) {
     segmentoDAO.segmentosNotifier.addListener(_onDbChange);
+    tesesDAO.tesesNotifier.addListener(_onDbChange);
 
     init();
   }
@@ -24,6 +27,10 @@ class DbCubit extends AbstractCubit<DbState> {
     final segmentosDb = segmentoDAO.segmentosNotifier.value;
     final segmentos = segmentosDb.map(Segmento.fromDB).toList();
     emit(state.copyWith(listSegmentos: segmentos));
+
+    final tesesDb = tesesDAO.tesesNotifier.value;
+    final teses = tesesDb.map(Tese.fromDB).toList();
+    emit(state.copyWith(listTeses: teses));
   }
 
   Future<void> init() async {
@@ -32,7 +39,8 @@ class DbCubit extends AbstractCubit<DbState> {
 
   Future<void> sinc() async {
     final segmentos = segmentoDAO.segmentosNotifier.value;
-    final state = await DbState.fromDB(segmentos);
+    final teses = tesesDAO.tesesNotifier.value;
+    final state = await DbState.fromDB(segmentos, teses);
     emit(state);
   }
 
@@ -108,18 +116,27 @@ class DbCubit extends AbstractCubit<DbState> {
     await segmentoDAO.deleteSegmento(seg.id!);
   }
 
-  SegmentoDB buildSegmentoDB(Segmento doc) {
-    return SegmentoDB(id: doc.id, nome: doc.nome);
+  ///////////////////// TESES ///////////////////////
+
+  Future<void> setTeseDesc(String nome) async {}
+  Future<void> setTeseLegenda(String legenda) async {}
+  Future<void> addTese(TeseTypeEnum? tipo, Set<String> docs) async {
+    final nome = searchNomeTese();
+    final type = tipo!.index;
+
+    final tese = TesesDB(
+      descricao: nome,
+      legenda: '',
+      tipo: null,
+      documentos: '',
+      codigo: await tesesDAO.getMaiorCod(),
+    );
+    await tesesDAO.insertTese(tese);
+    await setTeseDesc('');
+    await setTeseLegenda('');
   }
 
-  Map<int, List<Tese>> getTesesPorSegmento(Segmento seg) {
-    return {};
+  String? searchNomeTese() {
+    return state.teseNome;
   }
-
-  // Segmento buildSegmento(String? id, String? nome) {
-  //   return Segmento(
-  //     id: StringUtils.stringToInt(id),
-  //     nome: nome,
-  //   );
-  // }
 }

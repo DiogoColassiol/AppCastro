@@ -45,7 +45,7 @@ class DB {
     CREATE TABLE teses (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      codigo INTEGER,
-     tipo TEXT,
+     tipo INTEGER,
      descricao TEXT,
      documentos TEXT,
      legenda TEXT
@@ -134,7 +134,7 @@ class DB {
   static List<Tese> loadTesesDefault() => [
         Tese(
           id: 1,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital',
           descricao:
               'PRODUTOS SOB O REGIME MONOFÁSICO OU CONCENTRADO DE PIS E COFINS E O ICMS ST NO SIMPLES NACIONAL',
@@ -150,7 +150,7 @@ class DB {
         ),
         Tese(
           id: 2,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, Balanço, DRE',
           descricao:
               'COMPENSAÇÃO DE PREJUÍZOS FISCAIS E BASE DE CÁLCULO NEGATIVA DA CONTRIBUIÇÃO SOCIAL',
@@ -162,7 +162,7 @@ class DB {
         ),
         Tese(
           id: 3,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, DRE',
           descricao: 'RECUPERAÇÃO DE CRÉDITOS DE PIS E COFINS NÃO UTILIZADOS',
           legenda: '''
@@ -177,7 +177,7 @@ class DB {
         ),
         Tese(
           id: 4,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO ICMS DA BASE DE CÁLCULO',
@@ -189,7 +189,7 @@ class DB {
         ),
         Tese(
           id: 5,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO ICMS SUBSTITUIÇÃO TRIBUTÁRIA DA BASE DE CÁLCULO',
@@ -205,7 +205,7 @@ class DB {
         ),
         Tese(
           id: 6,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, DRE, Balancete',
           descricao:
               'RECUPERAÇÃO DE PIS E COFINS – EXCLUSÃO DO DIFERENCIAL DE ALÍQUOTAS DO ICMS DEVIDO NAS VENDAS INTERESTADUAIS DA BASE DE CÁLCULO DE PIS E COFINS',
@@ -219,7 +219,7 @@ class DB {
         ),
         Tese(
           id: 7,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, Balanço, DRE',
           descricao:
               'SUBVENÇÕES PARA INVESTIMENTOS E DOAÇÕES RECEBIDAS DO PODER PÚBLICO – EXCLUSÃO NO IRPJ E CSLL',
@@ -229,7 +229,7 @@ class DB {
         ),
         Tese(
           id: 8,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, DRE',
           descricao:
               'RECUPERAÇÃO DE CONTRIBUIÇÕES PREVIDENCIÁRIAS PAGAS SOBRE VERBAS INDENIZATÓRIAS',
@@ -246,7 +246,7 @@ class DB {
         ),
         Tese(
           id: 9,
-          tipo: 'judicialadm',
+          tipo: 1,
           docs: 'Certificado Digital, DRE',
           descricao:
               'RECUPERAÇÃO DA CONTRIBUIÇÃO PREVIDENCIÁRIA RELATIVA AOS 11% DE INSS RETIDO NA FONTE NOS SERVIÇOS PRESTADOS POR TERCEIRIZADOS',

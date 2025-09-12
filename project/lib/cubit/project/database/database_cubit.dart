@@ -122,7 +122,7 @@ class DbCubit extends AbstractCubit<DbState> {
   Future<void> setTeseLegenda(String legenda) async {}
   Future<void> addTese(TeseTypeEnum? tipo, Set<String> docs) async {
     final nome = searchNomeTese();
-    final type = tipo!.index;
+    // final type = tipo!.index;
 
     final tese = TesesDB(
       descricao: nome,

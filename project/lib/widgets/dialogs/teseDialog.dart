@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/database/database_cubit.dart';
@@ -214,7 +216,7 @@ class _TesesBuildDialogState extends State<TesesBuildDialog> {
   }
 
   Widget _buttonSair(BuildContext context) {
-    final cubit = context.read<DbCubit>();
+    //   final cubit = context.read<DbCubit>();
     return ButtonSec(
       label: 'Sair',
       labelColor: Colors.red,

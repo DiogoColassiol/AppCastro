@@ -7,8 +7,6 @@ import 'package:project/cubit/project/project_state.dart';
 import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/card_teses_widget.dart';
-import 'package:project/widgets/dialogs/teseDialog.dart';
-import 'package:project/widgets/floatButton.dart';
 
 class ListTesesScreen extends StatelessWidget {
   const ListTesesScreen({super.key});
@@ -18,20 +16,20 @@ class ListTesesScreen extends StatelessWidget {
     final tesesRepo = context.watch<TesesDAO>();
     return Scaffold(
       backgroundColor: ThemeUtils.surfaceColor,
-      floatingActionButton: CustomFloatButton(
-        alignment: MainAxisAlignment.end,
-        buttons: [
-          FloatButton(
-            label: 'Adicionar Tese',
-            icon: Icons.add,
-            backgroundColor: ThemeUtils.primaryColor,
-            foregroundColor: Colors.white,
-            onPressed: () async {
-              await TeseDialog.show(context);
-            },
-          ),
-        ],
-      ),
+      // floatingActionButton: CustomFloatButton(
+      //   alignment: MainAxisAlignment.end,
+      //   buttons: [
+      //     FloatButton(
+      //       label: 'Adicionar Tese',
+      //       icon: Icons.add,
+      //       backgroundColor: ThemeUtils.primaryColor,
+      //       foregroundColor: Colors.white,
+      //       onPressed: () async {
+      //         await TeseDialog.show(context);
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: BlocBuilder<ProjectCubit, ProjectState>(
         builder: (context, state) {
           return Container(

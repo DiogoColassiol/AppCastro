@@ -159,8 +159,10 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   }
 
   List<Tese> separaTesesNew(Segmento seg, Documento doc) {
+    final tesesRepo = tesesDAO.tesesList;
     final numTeses = obterTesesPorDocumento(seg.numTeses!, doc.id!);
-
+    //numero das tese chegando certo
+    print(numTeses);
     final listTesesEscolha = state.teses!.where((tese) {
       return tese.id != null && numTeses.contains(tese.id);
     }).toList();

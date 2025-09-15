@@ -1,6 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:sqflite/sqflite.dart';
@@ -15,12 +17,16 @@ class DB {
 
   get database async {
     if (_database != null) return _database;
-    return await _initDatabase();
+    return await _initDB();
   }
 
-  _initDatabase() async {
+  Future<Database> _initDB() async {
+    Directory dir = await getApplicationSupportDirectory();
+    //C:\Users\Diogo L Colassiol\AppData\Roaming\com.example\project
+    String path = join(dir.path, 'castro.db');
+
     return await openDatabase(
-      join(await getDatabasesPath(), 'castro.db'),
+      path,
       version: 1,
       onCreate: _onCreate,
     );
@@ -73,14 +79,6 @@ class DB {
   }
 
   static List<Segmento> loadSegmentosDefault() => [
-        Segmento(
-            id: 0,
-            nome: 'Outros',
-            numTeses: jsonEncode({
-              '1': '',
-              '2': '',
-              '3': '',
-            })),
         Segmento(
             id: 1,
             nome: 'Transportadoras',

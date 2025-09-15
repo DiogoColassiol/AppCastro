@@ -200,7 +200,6 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _documentos() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
-        final outros = state.segmentoSelectId == '0' ? false : true;
         final cubit = context.read<ProjectCubit>();
         final documentos =
             (state.documentos ?? []).where((doc) => doc.id != 0).toList();
@@ -215,34 +214,26 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            outros
-                ? GridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 8.0,
-                    crossAxisSpacing: 8.0,
-                    childAspectRatio: getScreenWidth(context),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(8.0),
-                    children: documentos.map((documento) {
-                      final isSelected =
-                          '${documento.id}' == state.documentoSelectId;
-                      return CardSegDoc(
-                        nome: documento.nome.toString(),
-                        selecionado: isSelected,
-                        onChanged: (value) {
-                          cubit.selectDoc(documento.id, value!);
-                        },
-                        keyTile: Key(documento.id.toString()),
-                      );
-                    }).toList(),
-                  )
-                : const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Text(
-                      'Outros não é necessário informar o regime tributário!',
-                    ),
-                  ),
+            GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
+              childAspectRatio: getScreenWidth(context),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(8.0),
+              children: documentos.map((documento) {
+                final isSelected = '${documento.id}' == state.documentoSelectId;
+                return CardSegDoc(
+                  nome: documento.nome.toString(),
+                  selecionado: isSelected,
+                  onChanged: (value) {
+                    cubit.selectDoc(documento.id, value!);
+                  },
+                  keyTile: Key(documento.id.toString()),
+                );
+              }).toList(),
+            )
           ],
         );
       },
@@ -286,40 +277,4 @@ class _SearchScreenState extends State<SearchScreen> {
       },
     );
   }
-
-  // Widget _buttonDelete() {
-  //   return BlocBuilder<ProjectCubit, ProjectState>(
-  //     builder: (context, state) {
-  //       final cubit = context.read<ProjectCubit>();
-  //       return ButtonApp(
-  //           text: 'Limpar Campos',
-  //           icon: Icons.delete,
-  //           textColor: Colors.red,
-  //           color: Colors.white,
-  //           onPressed: () async {
-  //             await cubit.init();
-  //           });
-  //     },
-  //   );
-  // }
-
-  // Widget _buttonSearch() {
-  //   return BlocBuilder<ProjectCubit, ProjectState>(
-  //     builder: (context, state) {
-  //       final cubit = context.read<ProjectCubit>();
-  //       return ButtonApp(
-  //         text: 'Gerar Relatório',
-  //         icon: Icons.search,
-  //         textColor: Colors.white,
-  //         color: ThemeUtils.primaryColor,
-  //         onPressed: () async {
-  //           final hasErro = await cubit.trataErros(context);
-  //           hasErro == false
-  //               ? Navigator.of(context).pushReplacementNamed('result')
-  //               : Container();
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }

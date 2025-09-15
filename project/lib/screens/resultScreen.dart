@@ -1,5 +1,8 @@
 // ignore_for_file: file_names, use_build_context_synchronously
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:project/api/models/receita_model.dart';
@@ -29,7 +32,6 @@ class ResultScreenState extends State<ResultScreen> {
   late List<Tese>? listTeses;
   late List<String>? docsNedded;
   late ReceitaModel? apiResult;
-  late bool? outros;
   late bool? hasObs;
 
   @override
@@ -42,7 +44,6 @@ class ResultScreenState extends State<ResultScreen> {
     listTeses = c.separaTesesNew(segmentoSelect!, documentoSelect!);
     docsNedded = c.searchDocs(listTeses!);
     apiResult = c.searchApi();
-    outros = segmentoSelect!.id == 0 ? true : false;
     hasObs = false;
     _inputControler = TextEditingController();
   }
@@ -152,14 +153,11 @@ class ResultScreenState extends State<ResultScreen> {
                           width: 600,
                           child: SingleChildScrollView(
                             child: Column(
-                              children: [
-                                outros! ? pdfOutros() : pdf(),
-                              ],
+                              children: [pdf()],
                             ),
                           ),
                         ),
                         const SizedBox(width: 35),
-
                         // Observações
                         SizedBox(
                           width: 500,
@@ -241,7 +239,7 @@ class ResultScreenState extends State<ResultScreen> {
                 color: ThemeUtils.surfaceColor,
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [outros! ? pdfOutros() : pdf()],
+                    children: [pdf()],
                   ),
                 ),
               ),
@@ -252,8 +250,7 @@ class ResultScreenState extends State<ResultScreen> {
     );
   }
 
-//
-  Widget pdfOutros() {
+  Widget pdf() {
     return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         return Center(
@@ -269,143 +266,15 @@ class ResultScreenState extends State<ResultScreen> {
                   _buildHeader('Relatório Final'),
                   const SizedBox(height: 1),
                   const Divider(thickness: 1, color: Colors.black),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   ..._buildInfoText(
-                      'Relatório gerado com a escolha de "Outros"'),
+                      'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:'),
                   const SizedBox(height: 10),
                   ..._buildClientAndSeg(),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   ..._buildDocsNedded(),
                   const SizedBox(height: 20),
-                  if (state.hasObs)
-                    const Text(
-                      'Observações:',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  if (state.hasObs)
-                    Text(
-                      '${state.obs}',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget pdf() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final data = DateTime.now();
-        final formatedData = DateFormat('dd/MM/yyyy').format(data);
-        final formatedHora = DateFormat('HH:mm').format(data);
-        //      final hasApi = apiResult != null ? true : false;
-        final teses = listTeses;
-
-        return Center(
-          child: SingleChildScrollView(
-            child: Container(
-              width: 595,
-              constraints: const BoxConstraints(minHeight: 842),
-              color: Colors.white,
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Relatório Final',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "Data: $formatedData - Horário: $formatedHora",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 1),
-                  const Divider(thickness: 1, color: Colors.black),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  Text('Cliente: ${apiResult!.nome ?? cliente}'),
-                  if (apiResult!.fantasia != null)
-                    Text('Nome fantasia: ${apiResult!.fantasia}'),
-                  Text('Segmento: ${segmentoSelect!.nome ?? "N/A"}'),
-                  if (segmentoSelect!.id != 0 && teses!.isNotEmpty)
-                    Text(
-                        'Regime Tributário: ${documentoSelect!.nome ?? "N/A"}'),
-                  if (apiResult!.abertura != null)
-                    Text('Data de abertura: ${apiResult!.abertura}'),
-                  if (apiResult!.situacao != null)
-                    Text('Situação: ${apiResult!.situacao}'),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Documentos requeridos:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ...docsNedded!.map((doc) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '• ',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Expanded(
-                            child: Text(
-                              _doc(doc),
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      )),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Teses Consolidadas:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ...teses!.map(
-                    (tese) => Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('• ', style: TextStyle(fontSize: 14)),
-                        Expanded(
-                          child: Text(
-                            '${tese.id}- ${tese.descricao}',
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ..._buildTesesNedded(),
                   const SizedBox(height: 20),
                   if (state.hasObs)
                     const Text(
@@ -441,20 +310,35 @@ class ResultScreenState extends State<ResultScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title ?? 'Relatório Final',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title ?? 'Relatório Final',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "Data: $formatedData - Horário: $formatedHora",
+              style: const TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
         ),
-        Text(
-          "Data: $formatedData - Horário: $formatedHora",
-          style: const TextStyle(
-            fontSize: 12,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
+        // Column(
+        //   children: [
+        //     Image.memory(
+        //       logoBytes,
+        //       width: 225,
+        //       height: 50,
+        //       fit: BoxFit.cover,
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }
@@ -475,7 +359,7 @@ class ResultScreenState extends State<ResultScreen> {
       if (apiResult!.abertura != null)
         Text('Data de abertura: ${apiResult!.abertura}'),
       if (apiResult!.situacao != null) Text('Situação: ${apiResult!.situacao}'),
-      if (!outros!) Text('Regime Tributário: ${documentoSelect!.nome ?? "N/A"}')
+      Text('Regime Tributário: ${documentoSelect!.nome ?? "N/A"}')
     ];
   }
 
@@ -505,6 +389,36 @@ class ResultScreenState extends State<ResultScreen> {
               ),
             ],
           )),
+    ];
+    return widgets;
+  }
+
+  List<Widget> _buildTesesNedded() {
+    final teses = listTeses;
+    List<Widget> widgets = [
+      const Text(
+        'Teses Consolidadas:',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      const SizedBox(height: 10),
+      ...teses!.map(
+        (tese) => Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('• ', style: TextStyle(fontSize: 14)),
+            Expanded(
+              child: Text(
+                '${tese.id}- ${tese.descricao}',
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
     ];
     return widgets;
   }

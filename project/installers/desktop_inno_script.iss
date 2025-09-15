@@ -5,15 +5,12 @@
 #define MyAppVersion "1.5"
 #define MyAppPublisher "My Company, Inc."
 #define MyAppURL "https://www.example.com/"
-#define MyAppExeName "MyProg-x64.exe"
-#define MyAppAssocName MyAppName + " File"
-#define MyAppAssocExt ".myp"
-#define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
+#define MyAppExeName "AppCastro.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{B63E959A-78FF-4DF2-87EE-818939A7E300}
+AppId={{72A67EEA-DB64-4E9A-9932-4D16012BB06F}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -31,30 +28,34 @@ ArchitecturesAllowed=x64compatible
 ; meaning it should use the native 64-bit Program Files directory and
 ; the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64compatible
-ChangesAssociations=yes
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
-OutputBaseFilename=mysetup
+OutputDir=C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\installers
+OutputBaseFilename=AppCastro
+Password=123
+Encryption=yes
 SolidCompression=yes
 WizardStyle=modern
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Program Files (x86)\Inno Setup 6\Examples\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\file_saver_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\isar.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\isar_flutter_libs_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\pdfium.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\printing_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\rive_common_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\window_size_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\build\windows\x64\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
-[Registry]
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

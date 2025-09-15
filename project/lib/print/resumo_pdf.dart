@@ -18,6 +18,9 @@ class ResumoPdfUtil {
   }
 
   Future<Document> createResumoPDF() async {
+    final logo = MemoryImage(
+      (await rootBundle.load('lib/images/logo1.png')).buffer.asUint8List(),
+    );
     final pdf = Document(theme: await _myTheme());
 
     pdf.addPage(
@@ -25,16 +28,8 @@ class ResumoPdfUtil {
         maxPages: 100,
         pageFormat: PdfPageFormat.a4,
         mainAxisAlignment: MainAxisAlignment.start,
-        footer: (context) => Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Text(''),
-          ),
-        ),
         build: (context) => [
-          _buildHeader('Relatório Final'),
-          SizedBox(height: 16),
+          _buildHeader('Relatório Final', logo),
           ..._buildInfoText(
               'Relatório gerado com base nas escolhas do Segmento/Regime tributário informado:'),
           SizedBox(height: 10),
@@ -65,6 +60,9 @@ class ResumoPdfUtil {
   }
 
   Future<Document> createResumoOutrosPDF() async {
+    final logo = MemoryImage(
+      (await rootBundle.load('lib/images/logo1.png')).buffer.asUint8List(),
+    );
     final pdf = Document(theme: await _myTheme());
     pdf.addPage(
       MultiPage(
@@ -72,14 +70,14 @@ class ResumoPdfUtil {
         pageFormat: PdfPageFormat.a4,
         mainAxisAlignment: MainAxisAlignment.start,
         footer: (context) => Padding(
-          padding: const EdgeInsets.only(top: 20),
+          padding: const EdgeInsets.only(top: 10),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(''),
           ),
         ),
         build: (context) => [
-          _buildHeader('Relatório Final'),
+          _buildHeader('Relatório Final', logo),
           SizedBox(height: 16),
           ..._buildInfoText('Relatório gerado com a escolha de "Outros"'),
           SizedBox(height: 10),
@@ -107,25 +105,45 @@ class ResumoPdfUtil {
     return pdf;
   }
 
-  _buildHeader(String? title) {
+  Widget _buildHeader(String? title, ImageProvider image) {
     final data = DateTime.now();
     final formatedData = DateFormat('dd/MM/yyyy').format(data);
     final formatedHora = DateFormat('HH:mm').format(data);
+
     return Header(
-      level: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title ?? 'Relatório Final',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            "Data: $formatedData - Horário: $formatedHora",
-            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-          ),
-        ],
-      ),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              title ?? 'Relatório Final',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "Data: $formatedData - Horário: $formatedHora",
+              style: TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            Center(
+              child: Image(
+                image,
+                width: 225,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        )
+      ]),
     );
   }
 

@@ -72,7 +72,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   Segmento? searchSeg() {
     final segmentos = state.segmentos;
     final id = state.segmentoSelectId;
-    if (id == null) {
+    if (id == '' || id == null) {
       return null;
     }
     final seg = segmentos!.firstWhere((e) => "${e.id}" == id);
@@ -82,7 +82,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   Documento? searchDoc() {
     final documentos = state.documentos;
     final id = state.documentoSelectId;
-    if (id == null) {
+    if (id == '' || id == null) {
       return null;
     }
     final doc = documentos!.firstWhere((e) => '${e.id}' == id);

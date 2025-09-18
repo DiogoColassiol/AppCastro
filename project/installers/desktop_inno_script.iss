@@ -10,7 +10,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{72A67EEA-DB64-4E9A-9932-4D16012BB06F}
+AppId={{0BFE11E9-5CA5-4891-A760-CA559879B4DD}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -32,7 +32,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\installers
-OutputBaseFilename=AppCastro
+OutputBaseFilename=AppCastroSetup
 Password=123
 Encryption=yes
 SolidCompression=yes

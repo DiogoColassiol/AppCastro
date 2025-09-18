@@ -1,8 +1,6 @@
 // ignore_for_file: file_names, use_build_context_synchronously
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:project/api/models/receita_model.dart';
@@ -259,7 +257,7 @@ class ResultScreenState extends State<ResultScreen> {
               width: 595,
               constraints: const BoxConstraints(minHeight: 842),
               color: Colors.white,
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -308,15 +306,25 @@ class ResultScreenState extends State<ResultScreen> {
     final formatedHora = DateFormat('HH:mm').format(data);
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        SizedBox(
+          width: 250,
+          height: 60,
+          child: Image.asset(
+            'lib/images/logo1.png',
+            fit: BoxFit.cover,
+            height: 70,
+            width: 90,
+          ),
+        ),
+        const SizedBox(width: 50),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title ?? 'Relatório Final',
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -329,16 +337,6 @@ class ResultScreenState extends State<ResultScreen> {
             ),
           ],
         ),
-        // Column(
-        //   children: [
-        //     Image.memory(
-        //       logoBytes,
-        //       width: 225,
-        //       height: 50,
-        //       fit: BoxFit.cover,
-        //     ),
-        //   ],
-        // ),
       ],
     );
   }

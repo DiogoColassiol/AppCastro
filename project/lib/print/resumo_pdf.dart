@@ -70,7 +70,7 @@ class ResumoPdfUtil {
         pageFormat: PdfPageFormat.a4,
         mainAxisAlignment: MainAxisAlignment.start,
         footer: (context) => Padding(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 0),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(''),
@@ -111,38 +111,38 @@ class ResumoPdfUtil {
     final formatedHora = DateFormat('HH:mm').format(data);
 
     return Header(
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      child: Row(children: [
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              title ?? 'Relatório Final',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              "Data: $formatedData - Horário: $formatedHora",
-              style: TextStyle(
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
+            Center(
+              child: Image(
+                image,
+                width: 275,
+                height: 60,
+                fit: BoxFit.cover,
               ),
             ),
           ],
         ),
         Column(
           children: [
-            Center(
-              child: Image(
-                image,
-                width: 225,
-                height: 50,
-                fit: BoxFit.cover,
+            Text(
+              title ?? 'Relatório Final',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "Data: $formatedData - Horário: $formatedHora",
+              style: TextStyle(
+                fontSize: 10,
+                fontStyle: FontStyle.italic,
               ),
             ),
           ],
-        )
+        ),
       ]),
     );
   }

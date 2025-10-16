@@ -159,7 +159,7 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   }
 
   List<Tese> separaTesesNew(Segmento seg, Documento doc) {
-    final tesesRepo = tesesDAO.tesesList;
+    //final tesesRepo = tesesDAO.tesesList;
     final numTeses = obterTesesPorDocumento(seg.numTeses!, doc.id!);
     //numero das tese chegando certo
     print(numTeses);

@@ -10,7 +10,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{0BFE11E9-5CA5-4891-A760-CA559879B4DD}
+AppId={{B90AA6CF-AB34-4FCA-A19B-4A39D17F776E}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -33,8 +33,6 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\Diogo L Colassiol\Documents\Projetos\AppCastro\project\installers
 OutputBaseFilename=AppCastroSetup
-Password=123
-Encryption=yes
 SolidCompression=yes
 WizardStyle=modern
 

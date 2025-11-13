@@ -1,0 +1,25 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "appcastro-66262",
+                    "appId": "1:196900937:android:aa356bae6b10748eb7a798",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "appcastro-66262",
+                    "configurations": {
+                        "android": "1:196900937:android:aa356bae6b10748eb7a798",
+                        "ios": "1:196900937:ios:f5672813f1b8e824b7a798",
+                        "macos": "1:196900937:ios:f5672813f1b8e824b7a798",
+                        "web": "1:196900937:web:815bece36358ec96b7a798",
+                        "windows": "1:196900937:web:e95887cd62bbacc8b7a798"
+                    }
+                }
+            }
+        }
+    }
+}

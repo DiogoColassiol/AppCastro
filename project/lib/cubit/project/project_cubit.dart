@@ -9,50 +9,31 @@ import 'package:project/api/http/http_client.dart';
 import 'package:project/api/models/receita_model.dart';
 import 'package:project/api/receita_store.dart';
 import 'package:project/api/repositories/receita_repo.dart';
+import 'package:project/database/firedb.dart';
 import 'package:project/entity/documentos.dart';
 import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/print/resumo_pdf.dart';
-import 'package:project/repositories/segmentoDAO.dart';
-import 'package:project/repositories/tesesDAO.dart';
 import 'package:project/utils/string_utils.dart';
 import 'package:project/widgets/alertBar.dart';
 import 'package:project/widgets/dialogs/alertDialogApp.dart';
 
 class ProjectCubit extends AbstractCubit<ProjectState> {
+  final FirestoreDB firestoreDB;
   late final ReceitaStore store;
-  final SegmentoDAO segmentoDAO;
-  final TesesDAO tesesDAO;
 
-  ProjectCubit(this.segmentoDAO, this.tesesDAO) : super(const ProjectState()) {
+  ProjectCubit(this.firestoreDB) : super(const ProjectState()) {
     store = ReceitaStore(
       this,
       repository: ReceitaRepository(client: HttpClient()),
     );
-    segmentoDAO.segmentosNotifier.addListener(_onDbChange);
-    tesesDAO.tesesNotifier.addListener(_onDbChange);
+
     init();
   }
-  void _onDbChange() {
-    final segmentosDb = segmentoDAO.segmentosNotifier.value;
-    final tesesDb = tesesDAO.tesesNotifier.value;
 
-    final segmentos = segmentosDb.map(Segmento.fromDB).toList();
-    final teses = tesesDb.map(Tese.fromDB).toList();
-
-    emit(state.copyWith(segmentos: segmentos, teses: teses));
-  }
-
-  Future<void> init() async {
-    final segmentosDb = segmentoDAO.segmentosNotifier.value;
-    final tesesDb = tesesDAO.tesesNotifier.value;
-
-    final segmentos = segmentosDb.map(Segmento.fromDB).toList();
-    final teses = tesesDb.map(Tese.fromDB).toList();
-    emit(ProjectState.initialState(segmentos, teses));
-  }
+  Future<void> init() async {}
 
   Future<ReceitaModel?> getDadosClient(BuildContext context) async {
     String cnpj = searchClienteCnpj();
@@ -283,5 +264,28 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     resumoPdf.format = PdfPageFormat.a4;
     await resumoPdf.createResumoPDF();
     return;
+  }
+
+/////////////////////////////// FIREBASE DATABASE ///////////////////////////////
+
+//converte o map do db em lista de segmento/tese
+  List<Segmento> createListSegs(List<Map<String, dynamic>> data) {
+    return data.map((map) => Segmento.fromMap(map)).toList();
+  }
+
+  List<Tese> createListTese(List<Map<String, dynamic>> data) {
+    return data.map((map) => Tese.fromMap(map)).toList();
+  }
+
+  Future<List<Segmento>> getlistSegs() async {
+    var segs = await firestoreDB.getSegmentos();
+    var segsList = createListSegs(segs);
+    return segsList;
+  }
+
+  Future<List<Tese>> getlistTese() async {
+    var teses = await firestoreDB.getTeses();
+    var tesesList = createListTese(teses);
+    return tesesList;
   }
 }

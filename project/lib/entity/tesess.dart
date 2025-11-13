@@ -2,24 +2,20 @@ import 'package:project/models/teses_model.dart';
 
 class Tese {
   final int? id;
-  final int? codigo;
   final String? legenda;
   final String? descricao;
-  final int? tipo;
+
   final String? docs;
 
   Tese({
     this.id,
-    this.codigo,
     this.legenda,
     this.descricao,
-    this.tipo,
     this.docs,
   });
 
   Tese copyWith({
     int? id,
-    int? codigo,
     String? legenda,
     int? tipo,
     String? descricao,
@@ -27,10 +23,8 @@ class Tese {
   }) {
     return Tese(
       id: id ?? this.id,
-      codigo: codigo ?? this.codigo,
       legenda: legenda ?? this.legenda,
       descricao: descricao ?? this.descricao,
-      tipo: tipo ?? this.tipo,
       docs: docs ?? this.docs,
     );
   }
@@ -41,5 +35,22 @@ class Tese {
         descricao: db.descricao,
         legenda: db.legenda,
         docs: db.documentos);
+  }
+
+  factory Tese.fromMap(Map<String, dynamic> map) {
+    return Tese(
+      id: map['id'] ?? 0,
+      legenda: map['legenda'] ?? '',
+      descricao: map['descricao'] ?? '',
+      docs: map['documentos'] ?? '',
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'legenda': legenda,
+      'descricao': descricao,
+      'docs': docs,
+    };
   }
 }

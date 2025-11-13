@@ -30,4 +30,21 @@ class Segmento {
       numTeses: db.numTeses,
     );
   }
+  // Construtor auxiliar para criar a partir de um Map
+  factory Segmento.fromMap(Map<String, dynamic> map) {
+    return Segmento(
+      id: map['id'] ?? 0,
+      nome: map['nome'] ?? '',
+      numTeses: map['numero_teses'] ?? 0,
+    );
+  }
+
+  // Método opcional para converter de volta para Map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nome': nome,
+      'numero_teses': numTeses,
+    };
+  }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/models/teses_model.dart';
 import 'package:project/utils/theme_utils.dart';
 
 class CardTeses extends StatefulWidget {
-  final TesesDB? tese;
+  final Tese? tese;
   final bool? isLarge;
   final bool? onlyRead;
   final bool? value;
@@ -101,7 +102,7 @@ class _CardTesesState extends State<CardTeses> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Requisição: ${widget.tese!.documentos ?? ''}',
+                    'Requisição: ${widget.tese!.docs ?? ''}',
                     style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                 ],
@@ -127,7 +128,7 @@ class _CardTesesState extends State<CardTeses> {
           )
         ],
       ),
-      subtitle: Text('Requisição: ${widget.tese!.documentos ?? ''}'),
+      subtitle: Text('Requisição: ${widget.tese!.docs ?? ''}'),
     );
   }
 
@@ -141,7 +142,7 @@ class _CardTesesState extends State<CardTeses> {
       ),
       alignment: Alignment.center,
       child: Text(
-        widget.tese!.codigo.toString(),
+        widget.tese!.id.toString(),
         style: const TextStyle(
             fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
       ),

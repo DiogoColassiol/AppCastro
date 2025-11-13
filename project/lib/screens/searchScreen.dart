@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/cubit/project/project_state.dart';
+import 'package:project/entity/documentos.dart';
+import 'package:project/entity/segmentos.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_InfosApi.dart';
@@ -20,12 +22,17 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  late Future<List<Segmento>> _listSegmentos;
+
   late final FocusNode _node;
   late TextEditingController _inputControler;
 
   @override
   void initState() {
     super.initState();
+    final cubit = context.read<ProjectCubit>();
+    _listSegmentos = cubit.getlistSegs();
+
     _node = FocusNode();
     _inputControler = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,6 +82,13 @@ class _SearchScreenState extends State<SearchScreen> {
               }
             },
           ),
+          FloatButton(
+            label: 'teste',
+            icon: Icons.search,
+            backgroundColor: ThemeUtils.primaryColor,
+            foregroundColor: Colors.white,
+            onPressed: () async {},
+          ),
         ],
       ),
       body: BlocBuilder<ProjectCubit, ProjectState>(
@@ -103,7 +117,21 @@ class _SearchScreenState extends State<SearchScreen> {
                           state.apiResult?.fantasia != null &&
                           state.apiResult?.situacao != null)
                         _apiInfos(),
-                      _segmentos(),
+                      FutureBuilder<List<Segmento>>(
+                        future: _listSegmentos,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Text('Erro: ${snapshot.error}');
+                          } else {
+                            final segmentos = snapshot.data ?? [];
+                            return _buildSegmentos(segmentos);
+                          }
+                        },
+                      ),
                       _documentos(),
                       const SizedBox(height: 80),
                     ],
@@ -162,15 +190,17 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _segmentos() {
+  Widget _buildSegmentos(List<Segmento> segmentos) {
     final cubit = context.read<ProjectCubit>();
-    final segmentos = cubit.state.segmentos ?? [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Center(
-            child: Text('Segmentos',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
+          child: Text(
+            'Segmentos',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+        ),
         const SizedBox(height: 12),
         GridView.count(
           crossAxisCount: 3,
@@ -202,7 +232,7 @@ class _SearchScreenState extends State<SearchScreen> {
       builder: (context, state) {
         final cubit = context.read<ProjectCubit>();
         final documentos =
-            (state.documentos ?? []).where((doc) => doc.id != 0).toList();
+            (loadDocumentos()).where((doc) => doc.id != 0).toList();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,6 +269,13 @@ class _SearchScreenState extends State<SearchScreen> {
       },
     );
   }
+
+  List<Documento> loadDocumentos() => [
+        Documento(id: 0, nome: 'Outros'),
+        Documento(id: 1, nome: 'Simples Nacional'),
+        Documento(id: 2, nome: 'Lucro Presumido'),
+        Documento(id: 3, nome: 'Lucro Real'),
+      ];
 
   Widget _iconApiButton(BuildContext context) {
     return BlocBuilder<ProjectCubit, ProjectState>(

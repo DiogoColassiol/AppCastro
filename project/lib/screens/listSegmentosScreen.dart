@@ -209,47 +209,47 @@ class _SegmentosScreenState extends State<SegmentosScreen>
                 Tab(text: _tabTitle(3, 'Lucro Real')),
               ],
             ),
-            SizedBox(
-              height: 250,
-              width: 600,
-              child: TabBarView(
-                controller: _tabController,
-                children: [1, 2, 3]
-                    .map((docId) => _buildTeseList(docId, seg))
-                    .toList(),
-              ),
-            ),
+            // SizedBox(
+            //   height: 250,
+            //   width: 600,
+            //   child: TabBarView(
+            //     controller: _tabController,
+            //     children: [1, 2, 3]
+            //         .map((docId) => _buildTeseList(docId, seg))
+            //         .toList(),
+            //   ),
+            // ),
           ],
         );
       },
     );
   }
 
-  Widget _buildTeseList(int documentoId, Segmento seg) {
-    final tesesRepo = context.watch<TesesDAO>();
-    final listTeses = tesesRepo.tesesList;
-    final selectedIds = _tesesDoSegmento[documentoId] ?? {};
+  // Widget _buildTeseList(int documentoId, Segmento seg) {
+  //   final tesesRepo = context.watch<TesesDAO>();
+  //   final listTeses = tesesRepo.tesesList;
+  //   final selectedIds = _tesesDoSegmento[documentoId] ?? {};
 
-    final selectedTeses =
-        listTeses.where((tese) => selectedIds.contains(tese.id)).toList();
+  //   final selectedTeses =
+  //       listTeses.where((tese) => selectedIds.contains(tese.id)).toList();
 
-    return selectedTeses.isEmpty
-        ? const Center(child: Text('Nenhuma tese para este regime.'))
-        : ListView.builder(
-            itemCount: selectedTeses.length,
-            itemBuilder: (context, index) {
-              final tese = selectedTeses[index];
+  //   return selectedTeses.isEmpty
+  //       ? const Center(child: Text('Nenhuma tese para este regime.'))
+  //       : ListView.builder(
+  //           itemCount: selectedTeses.length,
+  //           itemBuilder: (context, index) {
+  //             final tese = selectedTeses[index];
 
-              return CardTeses(
-                tese: tese,
-                isLarge: false,
-                onlyRead: true,
-                value: true,
-                onChanged: (value) {},
-              );
-            },
-          );
-  }
+  //             return CardTeses(
+  //               tese: tese,
+  //               isLarge: false,
+  //               onlyRead: true,
+  //               value: true,
+  //               onChanged: (value) {},
+  //             );
+  //           },
+  //         );
+  // }
 
   String _tabTitle(int docId, String label) {
     return label;

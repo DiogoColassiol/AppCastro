@@ -31,6 +31,8 @@ dependencies:
   another_flushbar: ^1.12.30
   sqflite: ^2.4.1
   sqflite_common_ffi: ^2.3.4+4
+  firebase_core: ^4.2.1
+  cloud_firestore: ^6.1.0
 
 
 dev_dependencies:

@@ -1,27 +1,27 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project/cubit/project/database/database_cubit.dart';
+import 'package:project/cubit/project/database/firebase_cubit.dart';
 import 'package:project/cubit/project/project_cubit.dart';
-import 'package:project/database/db.dart';
-import 'package:project/repositories/segmentoDAO.dart';
-import 'package:project/repositories/tesesDAO.dart';
+import 'package:project/database/firedb.dart';
 import 'package:project/screens/mainScreen.dart';
 import 'package:project/screens/resultScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'firebase_options.dart';
 
 import 'package:window_size/window_size.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
-  await DB.instance.database;
   setWindowMinSize(const Size(820, 820));
   setWindowMaxSize(const Size(1920, 1080));
   setWindowFrame(const Rect.fromLTWH(100, 100, 820, 820));
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirestoreDB.instance.initialize();
 
   runApp(const MyApp());
 }
@@ -46,19 +46,8 @@ class MyApp extends StatelessWidget {
 
   List<SingleChildWidget> buildAppProviders() {
     return [
-      ChangeNotifierProvider(create: (context) => SegmentoDAO()),
-      ChangeNotifierProvider(create: (context) => TesesDAO()),
-      BlocProvider(
-          create: (context) => DbCubit(
-                segmentoDAO: context.read<SegmentoDAO>(),
-                tesesDAO: context.read<TesesDAO>(),
-              )),
-      BlocProvider(
-        create: (context) => ProjectCubit(
-          context.read<SegmentoDAO>(),
-          context.read<TesesDAO>(),
-        ),
-      ),
+      // BlocProvider(create: (context) => DbFirebaseCubit(FirestoreDB.instance)),
+      BlocProvider(create: (context) => ProjectCubit(FirestoreDB.instance)),
     ];
   }
 }

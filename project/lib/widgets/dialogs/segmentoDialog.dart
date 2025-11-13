@@ -142,15 +142,15 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
                 Tab(text: _tabTitle(3, 'Lucro Real')),
               ],
             ),
-            SizedBox(
-              height: 250,
-              width: 600,
-              child: TabBarView(
-                controller: _tabController,
-                children:
-                    [1, 2, 3].map((docId) => _buildTeseList(docId)).toList(),
-              ),
-            ),
+            // SizedBox(
+            //   height: 250,
+            //   width: 600,
+            //   child: TabBarView(
+            //     controller: _tabController,
+            //     children:
+            //         [1, 2, 3].map((docId) => _buildTeseList(docId)).toList(),
+            //   ),
+            // ),
           ],
         );
       },
@@ -162,32 +162,32 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
     return '$label ($count)';
   }
 
-  Widget _buildTeseList(int documentoId) {
-    final tesesRepo = context.watch<TesesDAO>();
+  // Widget _buildTeseList(int documentoId) {
+  //   final tesesRepo = context.watch<TesesDAO>();
 
-    return ListView.builder(
-      itemCount: tesesRepo.tesesList.length,
-      itemBuilder: (context, index) {
-        final tese = tesesRepo.tesesList[index];
-        final isSelected =
-            _selectedTesesPorDocumento[documentoId]!.contains(tese.id!);
-        return CardTeses(
-          tese: tese,
-          isLarge: false,
-          value: isSelected,
-          onChanged: (value) {
-            setState(() {
-              if (value == true) {
-                _selectedTesesPorDocumento[documentoId]!.add(tese.id!);
-              } else {
-                _selectedTesesPorDocumento[documentoId]!.remove((tese.id!));
-              }
-            });
-          },
-        );
-      },
-    );
-  }
+  //   return ListView.builder(
+  //     itemCount: tesesRepo.tesesList.length,
+  //     itemBuilder: (context, index) {
+  //       final tese = tesesRepo.tesesList[index];
+  //       final isSelected =
+  //           _selectedTesesPorDocumento[documentoId]!.contains(tese.id!);
+  //       return CardTeses(
+  //         tese: tese,
+  //         isLarge: false,
+  //         value: isSelected,
+  //         onChanged: (value) {
+  //           setState(() {
+  //             if (value == true) {
+  //               _selectedTesesPorDocumento[documentoId]!.add(tese.id!);
+  //             } else {
+  //               _selectedTesesPorDocumento[documentoId]!.remove((tese.id!));
+  //             }
+  //           });
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buttonSair(BuildContext context) {
     final cubit = context.read<DbCubit>();

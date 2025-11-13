@@ -30,10 +30,8 @@ class TesesDB {
   Tese toTeses() {
     return Tese(
       id: id,
-      codigo: codigo,
       descricao: descricao,
       legenda: legenda,
-      tipo: tipo,
       docs: documentos,
     );
   }
@@ -41,19 +39,15 @@ class TesesDB {
   factory TesesDB.fromMap(Map<String, dynamic> map) {
     return TesesDB(
         id: map['id'],
-        codigo: map['codigo'],
         descricao: map['descricao'],
         legenda: map['legenda'],
-        tipo: map['tipo'],
         documentos: map['documentos']);
   }
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'codigo': codigo,
       'descricao': descricao,
       'legenda': legenda,
-      'tipo': tipo,
       'documentos': documentos
     };
   }

@@ -67,7 +67,6 @@ class DbState extends AbstractState {
               id: t.codigo,
               descricao: t.descricao,
               legenda: t.legenda,
-              tipo: t.tipo,
               docs: t.documentos,
             ))
         .toList();

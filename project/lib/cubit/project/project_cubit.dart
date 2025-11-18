@@ -15,6 +15,7 @@ import 'package:project/entity/result.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/tesess.dart';
+import 'package:project/enum/teseTypeEnum.dart';
 import 'package:project/print/resumo_pdf.dart';
 import 'package:project/utils/string_utils.dart';
 import 'package:project/widgets/alertBar.dart';
@@ -33,7 +34,9 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     init();
   }
 
-  Future<void> init() async {}
+  Future<void> init() async {
+    emit(ProjectState.initialState());
+  }
 
   Future<ReceitaModel?> getDadosClient(BuildContext context) async {
     String cnpj = searchClienteCnpj();
@@ -143,7 +146,6 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     //final tesesRepo = tesesDAO.tesesList;
     final numTeses = obterTesesPorDocumento(seg.numTeses!, doc.id!);
     //numero das tese chegando certo
-    print(numTeses);
     final listTesesEscolha = state.teses!.where((tese) {
       return tese.id != null && numTeses.contains(tese.id);
     }).toList();
@@ -280,12 +282,89 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   Future<List<Segmento>> getlistSegs() async {
     var segs = await firestoreDB.getSegmentos();
     var segsList = createListSegs(segs);
+    emit(state.copyWith(segmentos: segsList));
     return segsList;
   }
 
   Future<List<Tese>> getlistTese() async {
     var teses = await firestoreDB.getTeses();
     var tesesList = createListTese(teses);
+    emit(state.copyWith(teses: tesesList));
     return tesesList;
+  }
+
+/////////////////////////////////////////////////////////////////////////////
+  Future<void> setSegmentoEdit(Segmento seg) async {
+    emit(state.copyWith(editSegmento: seg));
+  }
+
+  Future<void> setSegmentoNome(String? value) async {
+    emit(state.copyWith(segmentoNome: value));
+  }
+
+  Future<({bool hasError, String? message})> trataErrosEditSeg(
+      Map<int, Set<int>> escolhas) async {
+    final nome = searchNome();
+
+    if (nome == null || nome.isEmpty) {
+      return (
+        hasError: true,
+        message: 'O nome do segmento não pode estar vazio.'
+      );
+    }
+
+    return (hasError: false, message: null);
+  }
+
+  Future<void> removeSegmento(Segmento seg, BuildContext context) async {}
+
+  ///////////////////// TESES ///////////////////////
+
+  Future<void> setTeseDesc(String nome) async {}
+  Future<void> setTeseLegenda(String legenda) async {}
+  Future<void> addTese(TeseTypeEnum? tipo, Set<String> docs) async {}
+
+  Future<void> addSegmentoComTeses(
+      {required Map<int, Set<int>> numTesesJson}) async {
+    final nome = searchNome();
+    final jsonMap = await montarJsonTeses(numTesesJson);
+    final jsonString = jsonEncode(jsonMap);
+
+    await setSegmentoNome('');
+  }
+
+  Future<void> updateSegmentoComTeses(
+      {required Map<int, Set<int>> numTesesJson, Segmento? seg}) async {
+    final nome = searchNome();
+    final jsonMap = await montarJsonTeses(numTesesJson);
+    final jsonString = jsonEncode(jsonMap);
+
+    await setSegmentoNome('');
+  }
+
+  String? searchNome() {
+    return state.segmentoNome;
+  }
+
+  Future<Map<String, String>> montarJsonTeses(
+      Map<int, Set<int>> escolhas) async {
+    final Map<String, String> map = {};
+    escolhas.forEach((docId, teses) {
+      final ordenadas = teses.toList()..sort();
+      map[docId.toString()] = ordenadas.join(',');
+    });
+
+    return map;
+  }
+
+  Future<List<Documento>> loadDocumentos() async {
+    List<Documento> listDoc = [
+      Documento(id: 0, nome: 'Outros'),
+      Documento(id: 1, nome: 'Simples Nacional'),
+      Documento(id: 2, nome: 'Lucro Presumido'),
+      Documento(id: 3, nome: 'Lucro Real'),
+    ];
+    emit(state.copyWith(documentos: listDoc));
+    return listDoc;
   }
 }

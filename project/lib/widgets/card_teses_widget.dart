@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project/entity/tesess.dart';
-import 'package:project/models/teses_model.dart';
 import 'package:project/utils/theme_utils.dart';
 
 class CardTeses extends StatefulWidget {

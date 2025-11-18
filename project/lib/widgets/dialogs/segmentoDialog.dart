@@ -3,29 +3,26 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project/cubit/project/database/database_cubit.dart';
-import 'package:project/cubit/project/database/database_state.dart';
+import 'package:project/cubit/project/project_cubit.dart';
+import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/segmentos.dart';
-import 'package:project/repositories/tesesDAO.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/utils/theme_utils.dart';
+import 'package:project/widgets/card_teses_widget.dart';
 import 'package:project/widgets/dialogs/alertDialogApp.dart';
 import 'package:project/widgets/button_sec_widget.dart';
-import 'package:project/widgets/card_teses_widget.dart';
 import 'package:project/widgets/input_widget.dart';
 
 class SegmentoDialog {
   static Future<void> show(BuildContext context, {Segmento? seg}) async {
-    final cubit = context.read<DbCubit>();
+    final cubit = context.read<ProjectCubit>();
     if (seg != null) {
       await cubit.setSegmentoEdit(seg);
     }
     return await showDialog(
       context: context,
       builder: (context) {
-        return BlocProvider<DbCubit>.value(
-          value: cubit,
-          child: SegmentosBuildDialog(seg: seg),
-        );
+        return SegmentosBuildDialog(seg: seg);
       },
     );
   }
@@ -44,6 +41,7 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
     with SingleTickerProviderStateMixin {
   late TextEditingController _inputControler;
   late TabController _tabController;
+  List<Tese>? _listTeses = [];
 
   final Map<int, Set<int>> _selectedTesesPorDocumento = {
     1: {},
@@ -54,12 +52,15 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
   @override
   void initState() {
     super.initState();
+
     _inputControler = TextEditingController();
     _tabController = TabController(length: 3, vsync: this);
 
-    final cubit = context.read<DbCubit>();
+    final cubit = context.read<ProjectCubit>();
 
-    if (widget.seg != null) {
+    if (widget.seg == null) {
+      _listTeses = cubit.state.teses;
+    } else {
       final seg = widget.seg!;
       _inputControler.text = seg.nome ?? '';
       cubit.setSegmentoNome(seg.nome ?? '');
@@ -83,7 +84,6 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
           }
         });
       }
-
       _selectedTesesPorDocumento.addAll(parsed);
     }
   }
@@ -112,8 +112,8 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
   }
 
   Widget _content(BuildContext context) {
-    final cubit = context.read<DbCubit>();
-    return BlocBuilder<DbCubit, DbState>(
+    final cubit = context.read<ProjectCubit>();
+    return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -142,15 +142,15 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
                 Tab(text: _tabTitle(3, 'Lucro Real')),
               ],
             ),
-            // SizedBox(
-            //   height: 250,
-            //   width: 600,
-            //   child: TabBarView(
-            //     controller: _tabController,
-            //     children:
-            //         [1, 2, 3].map((docId) => _buildTeseList(docId)).toList(),
-            //   ),
-            // ),
+            SizedBox(
+              height: 250,
+              width: 600,
+              child: TabBarView(
+                controller: _tabController,
+                children:
+                    [1, 2, 3].map((docId) => _buildTeseList(docId)).toList(),
+              ),
+            ),
           ],
         );
       },
@@ -162,35 +162,33 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
     return '$label ($count)';
   }
 
-  // Widget _buildTeseList(int documentoId) {
-  //   final tesesRepo = context.watch<TesesDAO>();
-
-  //   return ListView.builder(
-  //     itemCount: tesesRepo.tesesList.length,
-  //     itemBuilder: (context, index) {
-  //       final tese = tesesRepo.tesesList[index];
-  //       final isSelected =
-  //           _selectedTesesPorDocumento[documentoId]!.contains(tese.id!);
-  //       return CardTeses(
-  //         tese: tese,
-  //         isLarge: false,
-  //         value: isSelected,
-  //         onChanged: (value) {
-  //           setState(() {
-  //             if (value == true) {
-  //               _selectedTesesPorDocumento[documentoId]!.add(tese.id!);
-  //             } else {
-  //               _selectedTesesPorDocumento[documentoId]!.remove((tese.id!));
-  //             }
-  //           });
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+  Widget _buildTeseList(int documentoId) {
+    return ListView.builder(
+      itemCount: _listTeses!.length,
+      itemBuilder: (context, index) {
+        final tese = _listTeses![index];
+        final isSelected =
+            _selectedTesesPorDocumento[documentoId]!.contains(tese.id!);
+        return CardTeses(
+          tese: tese,
+          isLarge: false,
+          value: isSelected,
+          onChanged: (value) {
+            setState(() {
+              if (value == true) {
+                _selectedTesesPorDocumento[documentoId]!.add(tese.id!);
+              } else {
+                _selectedTesesPorDocumento[documentoId]!.remove((tese.id!));
+              }
+            });
+          },
+        );
+      },
+    );
+  }
 
   Widget _buttonSair(BuildContext context) {
-    final cubit = context.read<DbCubit>();
+    final cubit = context.read<ProjectCubit>();
     return ButtonSec(
       label: 'Sair',
       labelColor: Colors.red,
@@ -202,13 +200,14 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
   }
 
   Widget _buttonAdd(BuildContext context) {
-    final cubit = context.read<DbCubit>();
+    final cubit = context.read<ProjectCubit>();
     return ButtonSec(
       label: 'Salvar',
       buttonColor: ThemeUtils.primaryColor,
       labelColor: Colors.white,
       onPressed: () async {
-        final result = await cubit.trataErros(_selectedTesesPorDocumento);
+        final result =
+            await cubit.trataErrosEditSeg(_selectedTesesPorDocumento);
         if (result.hasError) {
           DialogApp.warning(
               context, 'Erro ao salvar novo segmento!', result.message);

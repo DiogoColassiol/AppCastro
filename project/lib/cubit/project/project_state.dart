@@ -20,6 +20,15 @@ class ProjectState extends AbstractState {
   final int? obsCount;
   final Result? result;
   final ReceitaModel? apiResult;
+//
+  final List<Segmento>? listSegmentos;
+  final List<Tese>? listTeses;
+  final Segmento? editSegmento;
+  final Tese? editTese;
+  final String? segmentoId;
+  final String? teseId;
+  final String? segmentoNome;
+  final String? teseNome;
 
   const ProjectState({
     super.state = const ActivityIdle(),
@@ -35,7 +44,16 @@ class ProjectState extends AbstractState {
     this.obs = '',
     this.obsCount,
     this.result,
+    //
     this.apiResult,
+    this.listSegmentos,
+    this.listTeses,
+    this.editSegmento,
+    this.editTese,
+    this.segmentoId,
+    this.teseId,
+    this.segmentoNome,
+    this.teseNome,
   });
 
   @override
@@ -54,6 +72,15 @@ class ProjectState extends AbstractState {
         obsCount,
         result,
         apiResult,
+        //
+        listSegmentos,
+        listTeses,
+        editSegmento,
+        editTese,
+        segmentoId,
+        teseId,
+        segmentoNome,
+        teseNome,
       ];
 
   @override
@@ -72,6 +99,15 @@ class ProjectState extends AbstractState {
     int? obsCount,
     Result? result,
     ReceitaModel? apiResult,
+    //
+    List<Segmento>? listSegmentos,
+    List<Tese>? listTeses,
+    Segmento? editSegmento,
+    Tese? editTese,
+    String? segmentoId,
+    String? teseId,
+    String? segmentoNome,
+    String? teseNome,
   }) {
     return ProjectState(
       state: state ?? super.state,
@@ -88,33 +124,41 @@ class ProjectState extends AbstractState {
       obsCount: obsCount ?? this.obsCount,
       result: result ?? this.result,
       apiResult: apiResult ?? this.apiResult,
+      //
+      listSegmentos: listSegmentos ?? this.listSegmentos,
+      listTeses: listTeses ?? this.listTeses,
+      editSegmento: editSegmento ?? this.editSegmento,
+      editTese: editTese ?? this.editTese,
+      segmentoId: segmentoId ?? this.segmentoId,
+      teseId: teseId ?? this.teseId,
+      segmentoNome: segmentoNome ?? this.segmentoNome,
+      teseNome: teseNome ?? this.teseNome,
     );
   }
 
-  // static ProjectState initialState(List<Segmento> segs, List<Tese> teses) {
-  //   return ProjectState(
-  //     state: const ActivityIdle(),
-  //     cliente: '',
-  //     clienteCnpj: '',
-  //     segmentos: segs,
-  //     documentos: loadDocumentos(),
-  //     teses: teses,
-  //     segmentoSelectId: null,
-  //     documentoSelectId: null,
-  //     tesesSelect: null,
-  //     hasObs: false,
-  //     obs: '',
-  //     obsCount: null,
-  //     result: null,
-  //     apiResult: ReceitaModel(
-  //         nome: null, abertura: null, fantasia: null, situacao: null),
-  //   );
-  // }
-
-  static List<Documento> loadDocumentos() => [
-        Documento(id: 0, nome: 'Outros'),
-        Documento(id: 1, nome: 'Simples Nacional'),
-        Documento(id: 2, nome: 'Lucro Presumido'),
-        Documento(id: 3, nome: 'Lucro Real'),
-      ];
+  static ProjectState initialState() {
+    return ProjectState(
+      state: const ActivityIdle(),
+      cliente: '',
+      clienteCnpj: '',
+      segmentoSelectId: null,
+      documentoSelectId: null,
+      tesesSelect: null,
+      hasObs: false,
+      obs: '',
+      obsCount: null,
+      result: null,
+      apiResult: ReceitaModel(
+          nome: null, abertura: null, fantasia: null, situacao: null),
+      //
+      listSegmentos: null,
+      listTeses: null,
+      editSegmento: null,
+      editTese: null,
+      segmentoId: null,
+      teseId: null,
+      segmentoNome: '',
+      teseNome: '',
+    );
+  }
 }

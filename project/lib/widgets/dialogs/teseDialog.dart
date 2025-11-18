@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project/cubit/project/database/database_cubit.dart';
-import 'package:project/cubit/project/database/database_state.dart';
+import 'package:project/cubit/project/project_cubit.dart';
+import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/tesess.dart';
 import 'package:project/enum/teseTypeEnum.dart';
 import 'package:project/utils/theme_utils.dart';
@@ -13,11 +13,11 @@ import 'package:project/widgets/input_widget.dart';
 
 class TeseDialog {
   static Future<void> show(BuildContext context, {Tese? tese}) async {
-    final cubit = context.read<DbCubit>();
+    final cubit = context.read<ProjectCubit>();
     return await showDialog(
       context: context,
       builder: (context) {
-        return BlocProvider<DbCubit>.value(
+        return BlocProvider<ProjectCubit>.value(
           value: cubit,
           child: const TesesBuildDialog(),
         );
@@ -74,13 +74,15 @@ class _TesesBuildDialogState extends State<TesesBuildDialog> {
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       content: SingleChildScrollView(child: content(context)),
-      actions: [_buttonSair(context), _buttonAdd(context)],
+      actions: [
+        _buttonSair(context),
+      ],
     );
   }
 
   Widget content(BuildContext context) {
-    final cubit = context.read<DbCubit>();
-    return BlocBuilder<DbCubit, DbState>(builder: (context, state) {
+    final cubit = context.read<ProjectCubit>();
+    return BlocBuilder<ProjectCubit, ProjectState>(builder: (context, state) {
       return SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -226,18 +228,18 @@ class _TesesBuildDialogState extends State<TesesBuildDialog> {
     );
   }
 
-  Widget _buttonAdd(BuildContext context) {
-    final cubit = context.read<DbCubit>();
-    return ButtonSec(
-      label: 'Salvar',
-      buttonColor: ThemeUtils.primaryColor,
-      labelColor: Colors.white,
-      onPressed: () async {
-        await cubit.addTese(_tipoSelecionado, _documentosSelecionados);
+  // Widget _buttonAdd(BuildContext context) {
+  //   final cubit = context.read<DbCubit>();
+  //   return ButtonSec(
+  //     label: 'Salvar',
+  //     buttonColor: ThemeUtils.primaryColor,
+  //     labelColor: Colors.white,
+  //     onPressed: () async {
+  //       await cubit.addTese(_tipoSelecionado, _documentosSelecionados);
 
-        await cubit.setTeseDesc('');
-        await cubit.setTeseLegenda('');
-      },
-    );
-  }
+  //       await cubit.setTeseDesc('');
+  //       await cubit.setTeseLegenda('');
+  //     },
+  //   );
+  // }
 }

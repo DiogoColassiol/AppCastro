@@ -2,18 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project/cubit/project/database/database_cubit.dart';
+import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/entity/segmentos.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_sec_widget.dart';
 
 class SegmentoDeleteDialog {
   static Future<void> show(Segmento seg, BuildContext context) async {
-    final cubit = context.read<DbCubit>();
+    final cubit = context.read<ProjectCubit>();
     return await showDialog(
       context: context,
       builder: (context) {
-        return BlocProvider<DbCubit>.value(
+        return BlocProvider<ProjectCubit>.value(
             value: cubit, child: SegDeleteBuildDialog(segmento: seg));
       },
     );
@@ -68,7 +68,7 @@ class _SegDeleteBuildDialogState extends State<SegDeleteBuildDialog> {
   }
 
   Widget _buttonConfirm(BuildContext context) {
-    final cubit = context.read<DbCubit>();
+    final cubit = context.read<ProjectCubit>();
     return ButtonSec(
       label: 'Excluir',
       labelColor: Colors.white,

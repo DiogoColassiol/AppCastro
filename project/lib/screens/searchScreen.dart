@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/documentos.dart';
+
 import 'package:project/entity/segmentos.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_InfosApi.dart';
@@ -22,17 +24,13 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late Future<List<Segmento>> _listSegmentos;
-
   late final FocusNode _node;
   late TextEditingController _inputControler;
 
   @override
   void initState() {
     super.initState();
-    final cubit = context.read<ProjectCubit>();
-    _listSegmentos = cubit.getlistSegs();
-
+    _loadData();
     _node = FocusNode();
     _inputControler = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -45,6 +43,20 @@ class _SearchScreenState extends State<SearchScreen> {
     _node.dispose();
     _inputControler.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    final cubit = context.read<ProjectCubit>();
+    if (cubit.state.documentos == null) {
+      await cubit.loadDocumentos();
+    }
+
+    if (cubit.state.segmentos == null) {
+      await cubit.getlistSegs();
+    }
+    if (cubit.state.teses == null) {
+      await cubit.getlistTese();
+    }
   }
 
   double getScreenWidth(BuildContext context) {
@@ -67,6 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
             onPressed: () async {
               final cubit = context.read<ProjectCubit>();
               await cubit.init();
+              await _loadData();
             },
           ),
           FloatButton(
@@ -81,13 +94,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 Navigator.of(context).pushReplacementNamed('result');
               }
             },
-          ),
-          FloatButton(
-            label: 'teste',
-            icon: Icons.search,
-            backgroundColor: ThemeUtils.primaryColor,
-            foregroundColor: Colors.white,
-            onPressed: () async {},
           ),
         ],
       ),
@@ -117,21 +123,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           state.apiResult?.fantasia != null &&
                           state.apiResult?.situacao != null)
                         _apiInfos(),
-                      FutureBuilder<List<Segmento>>(
-                        future: _listSegmentos,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Text('Erro: ${snapshot.error}');
-                          } else {
-                            final segmentos = snapshot.data ?? [];
-                            return _buildSegmentos(segmentos);
-                          }
-                        },
-                      ),
+                      _buildSegmentos(),
                       _documentos(),
                       const SizedBox(height: 80),
                     ],
@@ -190,7 +182,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildSegmentos(List<Segmento> segmentos) {
+  Widget _buildSegmentos() {
     final cubit = context.read<ProjectCubit>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,6 +190,50 @@ class _SearchScreenState extends State<SearchScreen> {
         const Center(
           child: Text(
             'Segmentos',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 12),
+        cubit.state.segmentos == null
+            ? const Center(child: CircularProgressIndicator())
+            : GridView.count(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                childAspectRatio: getScreenWidth(context),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(8.0),
+                children: cubit.state.segmentos!.map((segmento) {
+                  final isSelected =
+                      '${segmento.id}' == cubit.state.segmentoSelectId;
+
+                  return CardSegDoc(
+                    nome: segmento.nome ?? '',
+                    selecionado: isSelected,
+                    onChanged: (value) async {
+                      await cubit.selectSeg(segmento.id, value!);
+                    },
+                    keyTile: Key(segmento.id.toString()),
+                  );
+                }).toList(),
+              ),
+      ],
+    );
+  }
+
+  Widget _documentos() {
+    final cubit = context.read<ProjectCubit>();
+
+    final documentos =
+        (cubit.state.documentos)!.where((doc) => doc.id != 0).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Center(
+          child: Text(
+            'Regimes Tributários',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
         ),
@@ -210,108 +246,58 @@ class _SearchScreenState extends State<SearchScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.all(8.0),
-          children: segmentos.map((segmento) {
-            final isSelected = '${segmento.id}' == cubit.state.segmentoSelectId;
-
+          children: documentos.map((documento) {
+            final isSelected =
+                '${documento.id}' == cubit.state.documentoSelectId;
             return CardSegDoc(
-              nome: segmento.nome ?? '',
+              nome: documento.nome.toString(),
               selecionado: isSelected,
-              onChanged: (value) async {
-                await cubit.selectSeg(segmento.id, value!);
+              onChanged: (value) {
+                cubit.selectDoc(documento.id, value!);
               },
-              keyTile: Key(segmento.id.toString()),
+              keyTile: Key(documento.id.toString()),
             );
           }).toList(),
-        ),
+        )
       ],
     );
   }
+}
 
-  Widget _documentos() {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final cubit = context.read<ProjectCubit>();
-        final documentos =
-            (loadDocumentos()).where((doc) => doc.id != 0).toList();
+Widget _iconApiButton(BuildContext context) {
+  return BlocBuilder<ProjectCubit, ProjectState>(
+    builder: (context, state) {
+      final hasApi = state.apiResult?.nome != null &&
+          state.apiResult?.fantasia != null &&
+          state.apiResult?.situacao != null;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Center(
-              child: Text(
-                'Regimes Tributários',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 12),
-            GridView.count(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8.0,
-              crossAxisSpacing: 8.0,
-              childAspectRatio: getScreenWidth(context),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(8.0),
-              children: documentos.map((documento) {
-                final isSelected = '${documento.id}' == state.documentoSelectId;
-                return CardSegDoc(
-                  nome: documento.nome.toString(),
-                  selecionado: isSelected,
-                  onChanged: (value) {
-                    cubit.selectDoc(documento.id, value!);
-                  },
-                  keyTile: Key(documento.id.toString()),
-                );
-              }).toList(),
+      return !hasApi
+          ? ButtonApp(
+              onPressed: () async {
+                await ApiDialog.show(context);
+              },
+              text: 'Busca API',
+              color: ThemeUtils.primaryColor,
+              icon: Icons.add,
             )
-          ],
-        );
-      },
-    );
-  }
+          : _buttonDeleteApi(context);
+    },
+  );
+}
 
-  List<Documento> loadDocumentos() => [
-        Documento(id: 0, nome: 'Outros'),
-        Documento(id: 1, nome: 'Simples Nacional'),
-        Documento(id: 2, nome: 'Lucro Presumido'),
-        Documento(id: 3, nome: 'Lucro Real'),
-      ];
-
-  Widget _iconApiButton(BuildContext context) {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final hasApi = state.apiResult?.nome != null &&
-            state.apiResult?.fantasia != null &&
-            state.apiResult?.situacao != null;
-
-        return !hasApi
-            ? ButtonApp(
-                onPressed: () async {
-                  await ApiDialog.show(context);
-                },
-                text: 'Busca API',
-                color: ThemeUtils.primaryColor,
-                icon: Icons.add,
-              )
-            : _buttonDeleteApi(context);
-      },
-    );
-  }
-
-  Widget _buttonDeleteApi(BuildContext context) {
-    return BlocBuilder<ProjectCubit, ProjectState>(
-      builder: (context, state) {
-        final c = context.read<ProjectCubit>();
-        return ButtonApp(
-          onPressed: () async {
-            await c.clearApiResult();
-          },
-          text: 'Remover API',
-          textColor: Colors.red,
-          color: Colors.white,
-          icon: Icons.delete,
-        );
-      },
-    );
-  }
+Widget _buttonDeleteApi(BuildContext context) {
+  return BlocBuilder<ProjectCubit, ProjectState>(
+    builder: (context, state) {
+      final c = context.read<ProjectCubit>();
+      return ButtonApp(
+        onPressed: () async {
+          await c.clearApiResult();
+        },
+        text: 'Remover API',
+        textColor: Colors.red,
+        color: Colors.white,
+        icon: Icons.delete,
+      );
+    },
+  );
 }

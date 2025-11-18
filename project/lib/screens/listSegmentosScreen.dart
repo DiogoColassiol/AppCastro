@@ -4,10 +4,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project/cubit/project/database/database_cubit.dart';
-import 'package:project/cubit/project/database/database_state.dart';
+import 'package:project/cubit/project/project_cubit.dart';
+import 'package:project/cubit/project/project_state.dart';
 import 'package:project/entity/segmentos.dart';
-import 'package:project/repositories/tesesDAO.dart';
+import 'package:project/entity/tesess.dart';
 import 'package:project/widgets/button_sec_widget.dart';
 import 'package:project/widgets/card_teses_widget.dart';
 import 'package:project/widgets/dialogs/deleteSegDialog.dart';
@@ -25,6 +25,8 @@ class SegmentosScreen extends StatefulWidget {
 class _SegmentosScreenState extends State<SegmentosScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  List<Segmento> _listSegmentos = [];
+  List<Tese> _listTeses = [];
 
   final Map<int, Set<int>> _tesesDoSegmento = {
     1: {},
@@ -35,7 +37,32 @@ class _SegmentosScreenState extends State<SegmentosScreen>
   @override
   void initState() {
     super.initState();
+    _loadData();
     _tabController = TabController(length: 3, vsync: this);
+  }
+
+  Future<void> _loadData() async {
+    final cubit = context.read<ProjectCubit>();
+    if (cubit.state.segmentos == null) {
+      final list = await cubit.getlistSegs();
+      setState(() {
+        _listSegmentos = list;
+      });
+    } else {
+      setState(() {
+        _listSegmentos = cubit.state.segmentos!;
+      });
+    }
+    if (cubit.state.teses == null) {
+      final list = await cubit.getlistTese();
+      setState(() {
+        _listTeses = list;
+      });
+    } else {
+      setState(() {
+        _listTeses = cubit.state.teses!;
+      });
+    }
   }
 
   @override
@@ -62,19 +89,13 @@ class _SegmentosScreenState extends State<SegmentosScreen>
           ),
         ],
       ),
-      body: BlocBuilder<DbCubit, DbState>(
+      body: BlocBuilder<ProjectCubit, ProjectState>(
         builder: (context, state) {
           return Column(
             children: [
-              state.listSegmentos == null
-                  ? const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : Expanded(
-                      child: _cardSegs(context),
-                    ),
+              Expanded(
+                child: _cardSegs(context),
+              ),
             ],
           );
         },
@@ -83,17 +104,12 @@ class _SegmentosScreenState extends State<SegmentosScreen>
   }
 
   _cardSegs(BuildContext context) {
-    final cubit = context.read<DbCubit>();
-    final segmentos = cubit.state.listSegmentos!
-        .where((seg) => seg.nome != 'Outros')
-        .toList();
-
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: ListView.builder(
-        itemCount: segmentos.length,
+        itemCount: _listSegmentos.length,
         itemBuilder: (context, index) {
-          final seg = segmentos[index];
+          final seg = _listSegmentos[index];
           return GestureDetector(
             onTap: () {
               showDialog(
@@ -175,7 +191,7 @@ class _SegmentosScreenState extends State<SegmentosScreen>
   }
 
   Widget _content(BuildContext context, Segmento seg) {
-    return BlocBuilder<DbCubit, DbState>(
+    return BlocBuilder<ProjectCubit, ProjectState>(
       builder: (context, state) {
         if (seg.numTeses != null && seg.numTeses!.isNotEmpty) {
           final Map<String, dynamic> decoded = jsonDecode(seg.numTeses!);
@@ -209,47 +225,45 @@ class _SegmentosScreenState extends State<SegmentosScreen>
                 Tab(text: _tabTitle(3, 'Lucro Real')),
               ],
             ),
-            // SizedBox(
-            //   height: 250,
-            //   width: 600,
-            //   child: TabBarView(
-            //     controller: _tabController,
-            //     children: [1, 2, 3]
-            //         .map((docId) => _buildTeseList(docId, seg))
-            //         .toList(),
-            //   ),
-            // ),
+            SizedBox(
+              height: 250,
+              width: 600,
+              child: TabBarView(
+                controller: _tabController,
+                children: [1, 2, 3]
+                    .map((docId) => _buildTeseList(docId, seg))
+                    .toList(),
+              ),
+            ),
           ],
         );
       },
     );
   }
 
-  // Widget _buildTeseList(int documentoId, Segmento seg) {
-  //   final tesesRepo = context.watch<TesesDAO>();
-  //   final listTeses = tesesRepo.tesesList;
-  //   final selectedIds = _tesesDoSegmento[documentoId] ?? {};
+  Widget _buildTeseList(int documentoId, Segmento seg) {
+    final listTeses = _listTeses;
+    final selectedIds = _tesesDoSegmento[documentoId] ?? {};
+    final selectedTeses =
+        listTeses.where((tese) => selectedIds.contains(tese.id)).toList();
 
-  //   final selectedTeses =
-  //       listTeses.where((tese) => selectedIds.contains(tese.id)).toList();
+    return selectedTeses.isEmpty
+        ? const Center(child: Text('Nenhuma tese para este regime.'))
+        : ListView.builder(
+            itemCount: selectedTeses.length,
+            itemBuilder: (context, index) {
+              final tese = selectedTeses[index];
 
-  //   return selectedTeses.isEmpty
-  //       ? const Center(child: Text('Nenhuma tese para este regime.'))
-  //       : ListView.builder(
-  //           itemCount: selectedTeses.length,
-  //           itemBuilder: (context, index) {
-  //             final tese = selectedTeses[index];
-
-  //             return CardTeses(
-  //               tese: tese,
-  //               isLarge: false,
-  //               onlyRead: true,
-  //               value: true,
-  //               onChanged: (value) {},
-  //             );
-  //           },
-  //         );
-  // }
+              return CardTeses(
+                tese: tese,
+                isLarge: false,
+                onlyRead: true,
+                value: true,
+                onChanged: (value) {},
+              );
+            },
+          );
+  }
 
   String _tabTitle(int docId, String label) {
     return label;
@@ -266,7 +280,6 @@ class _SegmentosScreenState extends State<SegmentosScreen>
   }
 
   Widget _buttonEditar(BuildContext context, Segmento seg) {
-    //   final c = context.read<DbCubit>();
     return ButtonSec(
       label: 'Editar Segmento',
       labelColor: ThemeUtils.primaryColor,

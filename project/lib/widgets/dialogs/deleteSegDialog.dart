@@ -48,7 +48,10 @@ class _SegDeleteBuildDialogState extends State<SegDeleteBuildDialog> {
       title: const Text('Excluir Segmento',
           style: TextStyle(fontWeight: FontWeight.bold)),
       content: SingleChildScrollView(child: _content(context)),
-      actions: [_buttonSair(context), _buttonConfirm(context)],
+      actions: [
+        _buttonSair(context),
+        _buttonConfirm(context),
+      ],
     );
   }
 
@@ -57,7 +60,6 @@ class _SegDeleteBuildDialogState extends State<SegDeleteBuildDialog> {
   }
 
   Widget _buttonSair(BuildContext context) {
-    //   final cubit = context.read<DbCubit>();
     return ButtonSec(
       label: 'Sair',
       labelColor: ThemeUtils.primaryColor,
@@ -74,7 +76,7 @@ class _SegDeleteBuildDialogState extends State<SegDeleteBuildDialog> {
       labelColor: Colors.white,
       buttonColor: ThemeUtils.accentError,
       onPressed: () async {
-        await cubit.removeSegmento(widget.segmento, context);
+        await cubit.deleteSegmento(widget.segmento);
         Navigator.pop(context);
       },
     );

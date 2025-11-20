@@ -104,6 +104,11 @@ class _SegmentosScreenState extends State<SegmentosScreen>
   }
 
   _cardSegs(BuildContext context) {
+    final cubit = context.read<ProjectCubit>();
+    if (cubit.state.segmentos != _listSegmentos) {
+      //atualiza a lista logo apos mudanças
+      _listSegmentos = cubit.state.segmentos!;
+    }
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: ListView.builder(

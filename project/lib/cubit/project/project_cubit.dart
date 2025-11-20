@@ -268,7 +268,62 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return;
   }
 
-/////////////////////////////// FIREBASE DATABASE ///////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+  Future<void> setSegmentoEdit(Segmento seg) async {
+    emit(state.copyWith(editSegmento: seg));
+  }
+
+  Future<void> setSegmentoNome(String? value) async {
+    emit(state.copyWith(segmentoNome: value));
+  }
+
+  Future<({bool hasError, String? message})> trataErrosEditSeg(
+      Map<int, Set<int>> escolhas) async {
+    final nome = searchNome();
+
+    if (nome == null || nome.isEmpty) {
+      return (
+        hasError: true,
+        message: 'O nome do segmento não pode estar vazio.'
+      );
+    }
+
+    return (hasError: false, message: null);
+  }
+
+  ///////////////////// TESES ///////////////////////
+
+  Future<void> setTeseDesc(String nome) async {}
+  Future<void> setTeseLegenda(String legenda) async {}
+  Future<void> addTese(TeseTypeEnum? tipo, Set<String> docs) async {}
+
+  String? searchNome() {
+    return state.segmentoNome;
+  }
+
+  // monta o json das teses do segmento
+  Future<Map<String, String>> montarJsonTeses(
+      Map<int, Set<int>> escolhas) async {
+    final Map<String, String> map = {};
+    escolhas.forEach((docId, teses) {
+      final ordenadas = teses.toList()..sort();
+      map[docId.toString()] = ordenadas.join(',');
+    });
+
+    return map;
+  }
+
+  Future<List<Documento>> loadDocumentos() async {
+    List<Documento> listDoc = [
+      Documento(id: 0, nome: 'Outros'),
+      Documento(id: 1, nome: 'Simples Nacional'),
+      Documento(id: 2, nome: 'Lucro Presumido'),
+      Documento(id: 3, nome: 'Lucro Real'),
+    ];
+    emit(state.copyWith(documentos: listDoc));
+    return listDoc;
+  }
+  /////////////////////////////// FIREBASE DATABASE ///////////////////////////////
 
 //converte o map do db em lista de segmento/tese
   List<Segmento> createListSegs(List<Map<String, dynamic>> data) {
@@ -293,44 +348,24 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     return tesesList;
   }
 
-/////////////////////////////////////////////////////////////////////////////
-  Future<void> setSegmentoEdit(Segmento seg) async {
-    emit(state.copyWith(editSegmento: seg));
-  }
-
-  Future<void> setSegmentoNome(String? value) async {
-    emit(state.copyWith(segmentoNome: value));
-  }
-
-  Future<({bool hasError, String? message})> trataErrosEditSeg(
-      Map<int, Set<int>> escolhas) async {
-    final nome = searchNome();
-
-    if (nome == null || nome.isEmpty) {
-      return (
-        hasError: true,
-        message: 'O nome do segmento não pode estar vazio.'
-      );
-    }
-
-    return (hasError: false, message: null);
-  }
-
-  Future<void> removeSegmento(Segmento seg, BuildContext context) async {}
-
-  ///////////////////// TESES ///////////////////////
-
-  Future<void> setTeseDesc(String nome) async {}
-  Future<void> setTeseLegenda(String legenda) async {}
-  Future<void> addTese(TeseTypeEnum? tipo, Set<String> docs) async {}
-
-  Future<void> addSegmentoComTeses(
-      {required Map<int, Set<int>> numTesesJson}) async {
+  Future<void> addSegmento({required Map<int, Set<int>> numTesesJson}) async {
+    final segId = await firestoreDB.getMaxSegmentoId();
     final nome = searchNome();
     final jsonMap = await montarJsonTeses(numTesesJson);
-    final jsonString = jsonEncode(jsonMap);
+    final jsonTeses = jsonEncode(jsonMap);
 
-    await setSegmentoNome('');
+    final newSegmento = Segmento(
+      id: segId + 1,
+      nome: nome,
+      numTeses: jsonTeses,
+    );
+    await firestoreDB.addSegmento(newSegmento);
+    await getlistSegs();
+  }
+
+  Future<void> deleteSegmento(Segmento seg) async {
+    await firestoreDB.deleteSegmento(seg);
+    await getlistSegs();
   }
 
   Future<void> updateSegmentoComTeses(
@@ -339,32 +374,12 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     final jsonMap = await montarJsonTeses(numTesesJson);
     final jsonString = jsonEncode(jsonMap);
 
-    await setSegmentoNome('');
-  }
-
-  String? searchNome() {
-    return state.segmentoNome;
-  }
-
-  Future<Map<String, String>> montarJsonTeses(
-      Map<int, Set<int>> escolhas) async {
-    final Map<String, String> map = {};
-    escolhas.forEach((docId, teses) {
-      final ordenadas = teses.toList()..sort();
-      map[docId.toString()] = ordenadas.join(',');
-    });
-
-    return map;
-  }
-
-  Future<List<Documento>> loadDocumentos() async {
-    List<Documento> listDoc = [
-      Documento(id: 0, nome: 'Outros'),
-      Documento(id: 1, nome: 'Simples Nacional'),
-      Documento(id: 2, nome: 'Lucro Presumido'),
-      Documento(id: 3, nome: 'Lucro Real'),
-    ];
-    emit(state.copyWith(documentos: listDoc));
-    return listDoc;
+    final updateSegmento = Segmento(
+      id: seg!.id,
+      nome: nome,
+      numTeses: jsonString,
+    );
+    await firestoreDB.updateSegmento(updateSegmento);
+    await getlistSegs();
   }
 }

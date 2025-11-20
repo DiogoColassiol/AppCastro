@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/cubit/project/project_state.dart';
-import 'package:project/entity/documentos.dart';
-
-import 'package:project/entity/segmentos.dart';
-import 'package:project/entity/tesess.dart';
 import 'package:project/utils/theme_utils.dart';
 import 'package:project/widgets/button_widget.dart';
 import 'package:project/widgets/card_InfosApi.dart';

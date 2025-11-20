@@ -61,6 +61,7 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
     if (widget.seg == null) {
       _listTeses = cubit.state.teses;
     } else {
+      _listTeses = cubit.state.teses;
       final seg = widget.seg!;
       _inputControler.text = seg.nome ?? '';
       cubit.setSegmentoNome(seg.nome ?? '');
@@ -214,7 +215,7 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
           return;
         }
         if (widget.seg == null) {
-          await cubit.addSegmentoComTeses(
+          await cubit.addSegmento(
             numTesesJson: _selectedTesesPorDocumento,
           );
           await cubit.setSegmentoNome('');
@@ -223,7 +224,6 @@ class _SegmentosBuildDialogState extends State<SegmentosBuildDialog>
               numTesesJson: _selectedTesesPorDocumento, seg: widget.seg);
         }
 
-        await cubit.setSegmentoNome('');
         Navigator.pop(context);
       },
     );

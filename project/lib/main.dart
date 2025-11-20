@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project/cubit/project/database/firebase_cubit.dart';
 import 'package:project/cubit/project/project_cubit.dart';
 import 'package:project/database/firedb.dart';
 import 'package:project/screens/mainScreen.dart';
@@ -46,7 +45,6 @@ class MyApp extends StatelessWidget {
 
   List<SingleChildWidget> buildAppProviders() {
     return [
-      // BlocProvider(create: (context) => DbFirebaseCubit(FirestoreDB.instance)),
       BlocProvider(create: (context) => ProjectCubit(FirestoreDB.instance)),
     ];
   }

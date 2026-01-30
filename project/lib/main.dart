@@ -14,10 +14,9 @@ import 'package:window_size/window_size.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setWindowMinSize(const Size(820, 820));
+  setWindowMinSize(const Size(414, 896));
   setWindowMaxSize(const Size(1920, 1080));
   setWindowFrame(const Rect.fromLTWH(100, 100, 820, 820));
-  WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirestoreDB.instance.initialize();

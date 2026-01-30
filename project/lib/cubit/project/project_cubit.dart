@@ -325,8 +325,9 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
   }
   /////////////////////////////// FIREBASE DATABASE ///////////////////////////////
 
-//converte o map do db em lista de segmento/tese
+  ////////////////////////////////SEGMENTOS///////////////////////////////////////
   List<Segmento> createListSegs(List<Map<String, dynamic>> data) {
+    //converte o map do db em lista de segmento
     return data.map((map) => Segmento.fromMap(map)).toList();
   }
 
@@ -382,4 +383,5 @@ class ProjectCubit extends AbstractCubit<ProjectState> {
     await firestoreDB.updateSegmento(updateSegmento);
     await getlistSegs();
   }
+  //////////////////////////TESES//////////////////////////////
 }

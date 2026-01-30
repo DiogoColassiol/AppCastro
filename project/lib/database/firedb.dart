@@ -38,15 +38,11 @@ class FirestoreDB {
     }
   }
 
+///////////////////////////// SEGMENTOS ///////////////////////////
+
   Future<List<Map<String, dynamic>>> getSegmentos() async {
     final snapshot =
         await _db.collection('segmento').orderBy('id', descending: false).get();
-    return snapshot.docs.map((e) => e.data()).toList();
-  }
-
-  Future<List<Map<String, dynamic>>> getTeses() async {
-    final snapshot =
-        await _db.collection('teses').orderBy('id', descending: false).get();
     return snapshot.docs.map((e) => e.data()).toList();
   }
 
@@ -93,5 +89,13 @@ class FirestoreDB {
     if (query.docs.isEmpty) return 0; // nenhum segmento
 
     return query.docs.first.data()['id'] as int;
+  }
+
+  //////////////////////////// TESES /////////////////////////////
+
+  Future<List<Map<String, dynamic>>> getTeses() async {
+    final snapshot =
+        await _db.collection('teses').orderBy('id', descending: false).get();
+    return snapshot.docs.map((e) => e.data()).toList();
   }
 }

@@ -35,50 +35,16 @@ class ProjectState {
     List<Tese>? tesesSelect,
     List<Tese>? teses,
     Result? result,
-    //  bool? error,
   }) {
     return ProjectState(
       cliente: cliente ?? this.cliente,
       segmentos: segmentos ?? this.segmentos,
       documentos: documentos ?? this.documentos,
       teses: teses ?? this.teses,
-      segmentoSelect: segmentoSelect ?? segmentoSelect,
-      documentoSelect: documentoSelect ?? documentoSelect,
+      segmentoSelect: segmentoSelect ?? this.segmentoSelect,
+      documentoSelect: documentoSelect ?? this.documentoSelect,
       tesesSelect: tesesSelect ?? this.tesesSelect,
       result: result ?? this.result,
-      //  error: error ?? this.error,
     );
   }
 }
-// import 'package:project/entity/documentos.dart';
-// import 'package:project/entity/result.dart';
-// import 'package:project/entity/segmento.dart';
-// import 'package:project/entity/teses.dart';
-
-// class ProjectState {
-//   final Segmento? segmentoSelect;
-//   final Documento? documentoSelect;
-//   final List<Tese>? teses;
-//   final Result? result;
-
-//   const ProjectState({
-//     this.segmentoSelect,
-//     this.documentoSelect,
-//     this.teses,
-//     this.result,
-//   });
-
-//   ProjectState copyWith({
-//     Segmento? segmentosSelect,
-//     Documento? documentosSelect,
-//     List<Tese>? teses,
-//     Result? result,
-//   }) {
-//     return ProjectState(
-//       segmentoSelect: segmentoSelect ?? segmentoSelect,
-//       documentoSelect: documentoSelect ?? documentoSelect,
-//       result: result ?? this.result,
-//       teses: teses ?? this.teses,
-//     );
-//   }
-// }

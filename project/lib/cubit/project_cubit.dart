@@ -52,6 +52,11 @@ class ProjectCubit extends Cubit<ProjectState> {
     final segSelect = await searchSeg();
     final docSelect = await searchDoc();
     final erro = await trataErros(context, cliente, segSelect, docSelect);
+
+    if (erro) {
+      return Result(erro: true);
+    }
+
     final tesesSelect = await searchTeses(segSelect!, docSelect!);
     final needDocs = await searchDocs(tesesSelect);
 
@@ -61,7 +66,7 @@ class ProjectCubit extends Cubit<ProjectState> {
       docSelect,
       tesesSelect,
       needDocs,
-      erro,
+      false,
     );
   }
 
@@ -78,8 +83,8 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(state.copyWith(cliente: ''));
   }
 
-  Future<bool> trataErros(BuildContext context, String? cliente, Segmento? doc,
-      Documento? seg) async {
+  Future<bool> trataErros(BuildContext context, String? cliente, Segmento? seg,
+      Documento? doc) async {
     if (cliente == null || cliente == '') {
       showDialog(
         context: context,

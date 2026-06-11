@@ -35,7 +35,7 @@ class Result {
       segmento: segmento ?? this.segmento,
       documento: documento ?? this.documento,
       teses: teses ?? this.teses,
-      docsNecessarios: docsNecessarios ?? docsNecessarios,
+      docsNecessarios: docsNecessarios ?? this.docsNecessarios,
       dataDoc: dataDoc ?? this.dataDoc,
       erro: erro ?? this.erro,
     );
